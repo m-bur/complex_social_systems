@@ -11,6 +11,12 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
+from utils import utils as ut
+
+for path in sys.path:
+    print(path)
+
+
 project = 'BJSS Model'
 author = 'Moritz Buerger, Emanuel Jucker, Maximilian Spitaler, Linghang Sun'
 release = '0.1'
@@ -33,7 +39,7 @@ napoleon_numpy_docstring = True
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
-    'private-members': False,
+    'private-members': True,
     'special-members': False,
     'inherited-members': True,
     'show-inheritance': True,
