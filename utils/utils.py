@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 
@@ -7,10 +6,14 @@ class Voter:
         """
         Initialize a Voter object.
 
-        Parameters:
-        i (int): The row coordinate of the voter.
-        j (int): The column coordinate of the voter.
-        opinion (int): The opinion of the voter, which can be -1, 0, or 1. Default is 0.
+        Parameters
+        ----------
+        i : int
+            The row coordinate of the voter.
+        j : int
+            The column coordinate of the voter.
+        opinion : int, optional
+            The opinion of the voter, which can be -1, 0, or 1. Default is 0.
         """
         self.i = i
         self.j = j
@@ -21,9 +24,12 @@ class Voter:
         """
         Adds a neighbor's coordinates to the list of neighbors.
 
-        Parameters:
-        neighbor_i (int): The row coordinate of the neighbor.
-        neighbor_j (int): The column coordinate of the neighbor.
+        Parameters
+        ----------
+        neighbor_i : int
+            The row coordinate of the neighbor.
+        neighbor_j : int
+            The column coordinate of the neighbor.
         """
         self.neighbors.append((neighbor_i, neighbor_j))
 
@@ -31,8 +37,15 @@ class Voter:
         """
         Sets the voter's opinion.
 
-        Parameters:
-        opinion (int): The new opinion of the voter, which should be -1, 0, or 1.
+        Parameters
+        ----------
+        opinion : int
+            The new opinion of the voter, which should be -1, 0, or 1.
+
+        Raises
+        ------
+        ValueError
+            If the opinion is not -1, 0, or 1.
         """
         if opinion in [-1, 0, 1]:
             self.opinion = opinion
@@ -43,24 +56,31 @@ class Voter:
         """
         Returns the list of neighbors' coordinates.
 
-        Returns:
-        list: A list of tuples representing the coordinates of neighboring voters.
+        Returns
+        -------
+        list of tuple
+            A list of tuples representing the coordinates of neighboring voters.
         """
         return self.neighbors
     
     def get_number_of_neighbors(self):
         """
-        Returns the list of neighbors' coordinates.
+        Returns the number of neighbors.
 
-        Returns:
-        list: A list of tuples representing the coordinates of neighboring voters.
+        Returns
+        -------
+        int
+            The number of neighboring voters.
         """
         return len(self.neighbors)
 
     def __repr__(self):
         """
         Returns a string representation of the Voter object for debugging purposes.
+
+        Returns
+        -------
+        str
+            A string representation of the Voter object.
         """
         return f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors})"
-    
-
