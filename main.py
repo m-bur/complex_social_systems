@@ -1,4 +1,5 @@
-import numpy as np
+
+from utils import first_level_connection
 
 
 L = 100         # side length
@@ -8,3 +9,4 @@ b = a / 4       # parameter for probability function
 N = L ** 2      # total number of nodes
 
 
+val_try = first_level_connection(30)
