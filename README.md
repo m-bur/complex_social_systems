@@ -6,4 +6,4 @@ I suggest we use [numpy doc style](https://numpydoc.readthedocs.io/en/latest/for
 
 ## CI Status:
 
-![tests](https://github.com/m-bur/complex_social_systems/actions/workflows/tests.yml/badge.svg)
+![tests](https://github.com/m-bur/complex_social_systems/actions/workflows/style-check.yml/badge.svg)
