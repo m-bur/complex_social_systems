@@ -16,7 +16,7 @@ def deg_distribution(network):
     unique_elements, counts = np.unique(k, return_counts=True)
     params, covariance = curve_fit(power_law, unique_elements, counts)
     a, b = params
-    xvals = np.linspace(min(unique_elements),max(unique_elements),num=100)
+    xvals = np.linspace(min(unique_elements),max(unique_elements), num=100)
     yvals = power_law(xvals, a, b)
     plt.plot(xvals, yvals, 'k--', label=f"exponent b = {b}")
     plt.plot(unique_elements, counts, 'ko', label="degree distribution")
