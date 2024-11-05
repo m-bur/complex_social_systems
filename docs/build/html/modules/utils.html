@@ -45,10 +45,19 @@
 <li><a class="reference internal" href="#">utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-utils.utils">utils.utils module</a><ul>
+<li><a class="reference internal" href="#utils.utils.Media"><code class="docutils literal notranslate"><span class="pre">Media</span></code></a><ul>
+<li><a class="reference internal" href="#utils.utils.Media.get_id"><code class="docutils literal notranslate"><span class="pre">Media.get_id()</span></code></a></li>
+<li><a class="reference internal" href="#utils.utils.Media.get_opinion"><code class="docutils literal notranslate"><span class="pre">Media.get_opinion()</span></code></a></li>
+<li><a class="reference internal" href="#utils.utils.Media.set_opinion"><code class="docutils literal notranslate"><span class="pre">Media.set_opinion()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#utils.utils.Voter"><code class="docutils literal notranslate"><span class="pre">Voter</span></code></a><ul>
+<li><a class="reference internal" href="#utils.utils.Voter.add_media_connection"><code class="docutils literal notranslate"><span class="pre">Voter.add_media_connection()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.add_neighbor"><code class="docutils literal notranslate"><span class="pre">Voter.add_neighbor()</span></code></a></li>
+<li><a class="reference internal" href="#utils.utils.Voter.get_media_connections"><code class="docutils literal notranslate"><span class="pre">Voter.get_media_connections()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.get_neighbors"><code class="docutils literal notranslate"><span class="pre">Voter.get_neighbors()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.get_number_of_neighbors"><code class="docutils literal notranslate"><span class="pre">Voter.get_number_of_neighbors()</span></code></a></li>
+<li><a class="reference internal" href="#utils.utils.Voter.remove_media_connection"><code class="docutils literal notranslate"><span class="pre">Voter.remove_media_connection()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.set_opinion"><code class="docutils literal notranslate"><span class="pre">Voter.set_opinion()</span></code></a></li>
 </ul>
 </li>
@@ -91,9 +100,68 @@
 <section id="module-utils.utils">
 <span id="utils-utils-module"></span><h2>utils.utils module<a class="headerlink" href="#module-utils.utils" title="Link to this heading"></a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="utils.utils.Media">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.utils.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Media" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Media.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Media.get_id" title="Link to this definition"></a></dt>
+<dd><p>Returns the unique identifier of the media.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The unique identifier of the media node.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int or str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Media.get_opinion">
+<span class="sig-name descname"><span class="pre">get_opinion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Media.get_opinion" title="Link to this definition"></a></dt>
+<dd><p>Returns the opinion of the media.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The opinion of the media.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Media.set_opinion">
+<span class="sig-name descname"><span class="pre">set_opinion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opinion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Media.set_opinion" title="Link to this definition"></a></dt>
+<dd><p>Sets the media’s opinion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>opinion</strong> (<em>float</em>) – The new opinion of the media, which should be between -1 and 1.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the opinion is not within the range [-1, 1].</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="utils.utils.Voter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.utils.</span></span><span class="sig-name descname"><span class="pre">Voter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Voter.add_media_connection">
+<span class="sig-name descname"><span class="pre">add_media_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.add_media_connection" title="Link to this definition"></a></dt>
+<dd><p>Connects the voter to a media node by adding the media_id to the media_connections list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>media_id</strong> (<em>int</em><em> or </em><em>str</em>) – A unique identifier for the media node.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.utils.Voter.add_neighbor">
 <span class="sig-name descname"><span class="pre">add_neighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.add_neighbor" title="Link to this definition"></a></dt>
@@ -104,6 +172,20 @@
 <li><p><strong>neighbor_i</strong> (<em>int</em>) – The row coordinate of the neighbor.</p></li>
 <li><p><strong>neighbor_j</strong> (<em>int</em>) – The column coordinate of the neighbor.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Voter.get_media_connections">
+<span class="sig-name descname"><span class="pre">get_media_connections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.get_media_connections" title="Link to this definition"></a></dt>
+<dd><p>Returns the list of connected media node IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of media node IDs to which the voter is connected.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -132,6 +214,20 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Voter.remove_media_connection">
+<span class="sig-name descname"><span class="pre">remove_media_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.remove_media_connection" title="Link to this definition"></a></dt>
+<dd><p>Removes a media connection by removing the media_id from the media_connections list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>media_id</strong> (<em>int</em><em> or </em><em>str</em>) – The unique identifier of the media node to disconnect.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the media_id is not found in the media_connections list.</p>
 </dd>
 </dl>
 </dd></dl>
