@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 def power_law(x, a, b):
     return a * np.power(x, b)
 
+
 def deg_distribution(network):
     k = np.array([])
     n = np.shape(network)
