@@ -31,3 +31,4 @@ def deg_distribution(network):
     plt.legend()
     plt.savefig('figures/deg_distribution.pdf')
     return b
+

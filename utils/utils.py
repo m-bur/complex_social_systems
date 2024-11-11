@@ -73,3 +73,4 @@ class Voter:
         return f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors})"
     
 
+

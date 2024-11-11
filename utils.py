@@ -10,7 +10,7 @@ def first_connection_p(l, L_G, L):
 
 
 def build_first_connection(L_G=20, L=100):
-    df_first_con = pd.DataFrame(columns=['x', 'y', 'num', 'first_connection'])
+    df_first_con = pd.DataFrame(columns=["x", "y", "num", "first_connection"])
     # Loop over the L * L network to create each node
     for i in range(L):
         for j in range(L):
@@ -31,14 +31,18 @@ def build_first_connection(L_G=20, L=100):
                     # Search the existing connection before the node
                     elif m < i or (m == i and n < j):
                         idx = L * m + n
-                        search_list = df_first_con.at[idx, 'first_connection']
+                        search_list = df_first_con.at[idx, "first_connection"]
                         if (i, j) in search_list:
                             neighbor_list.append((m, n))
                     else:
                         pass
 
             # Store the row with 'x', 'y', 'number connections', and 'connection list'
-            df_first_con.loc[len(df_first_con)] = [i, j, len(neighbor_list), neighbor_list]
+            df_first_con.loc[len(df_first_con)] = [
+                i,
+                j,
+                len(neighbor_list),
+                neighbor_list,
+            ]
 
         print(i)
-
