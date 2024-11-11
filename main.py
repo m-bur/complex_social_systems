@@ -10,5 +10,3 @@ N = L ** 2      # total number of nodes
 
 df_first_con = build_first_connection(L_G, L)
 
-
-

@@ -56,6 +56,15 @@ class Voter:
         list: A list of tuples representing the coordinates of neighboring voters.
         """
         return len(self.neighbors)
+    
+    def get_opinion(self):
+        """
+        Returns the opinion of the voter.
+
+        Returns:
+        integer: opinion as -1, 0, 1
+        """
+        return self.opinion
 
     def __repr__(self):
         """
