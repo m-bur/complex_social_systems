@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 import numpy as np
 import pandas as pd
 
 
-=======
->>>>>>> c0920d7adb2f4a10f8a3c748074b39cb8b05cc41
 class Voter:
     def __init__(self, i, j, opinion=0):
         """
