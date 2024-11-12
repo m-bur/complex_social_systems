@@ -94,6 +94,17 @@ class Voter:
             A list of tuples representing the coordinates of neighboring voters.
         """
         return self.neighbors
+    
+    def get_opinion(self):
+        """
+        Returns the opinion.
+
+        Returns
+        -------
+        int
+            The opinion of the voters.
+        """
+        return self.opinion
 
     def get_number_of_neighbors(self):
         """

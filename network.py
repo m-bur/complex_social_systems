@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import pandas as pd
+import random
 
 
 def init_df_conx(c_min, c_max, gamma, L):
@@ -134,5 +135,44 @@ def update_df_conx(L, df_conx, connection_matrix):
 
     df_conx = df_conx[['x', 'y', 'num', 'connection']]
     return df_conx
+
+
+
+def init_network(df_conx, network):
+    """
+    Initiliaize the voter network with given connections. Returns the list of network nodes with neighbors according to df_conx.
+    """
+    for i in range(df_conx.shape[0]):
+        row = df_conx.iloc[i]
+        neighbors = row["connection"]
+        voter = network[row["x"]][row["y"]]
+        voter.set_opinion(random.choice([-1,0,1]))
+        for ncoordinates in neighbors:
+            voter.add_neighbor(ncoordinates[0], ncoordinates[1])
+    return network
+
+
+
+def init_media(mu, sigma, media):
+    """
+    Initialize the media network. Opionion follows countinuous uniform probability distribution.
+    """
+    for m in media:
+        m.set_opinion(np.clip(random.gauss(mu, sigma), -1 ,1))
+    return media
+
+
+def media_conx(network, media, Nc):
+    """
+    Make connections between Media and voters. Each media node is connected to Nc random voters. Return the updated voter network with media connections.
+    """
+    n = np.shape(network)
+    for m in media:
+        for _ in range(Nc):                    # make Nc connections per media node
+            x = random.randint(0, n[0] - 1)    # random x voter value
+            y = random.randint(0, n[1] - 1)    # random y voter value
+            voter = network[x][y]
+            voter.add_media_connection(m.get_id())
+    return network
 
 

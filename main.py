@@ -1,7 +1,9 @@
 
 import argparse
 from network import *
-import matplotlib.pyplot as plt
+from utils.measure import *
+from utils.utils import *
+from ast import literal_eval
 
 
 def parse_args():
@@ -14,6 +16,10 @@ def parse_args():
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
     parser.add_argument("--regen_network", type=bool, default=False)
     parser.add_argument("--network_path", type=str, default='network.csv')
+    parser.add_argument("--average_media_opinion", type=float, default=0)
+    parser.add_argument("--std_media_opinion", type=float, default=1)
+    parser.add_argument("--number_media", type=int, default=50)
+    parser.add_argument("--number_media_connection", type=int, default=250)
     return parser.parse_args()
 
 
@@ -26,6 +32,10 @@ def main(args=None):
     p_c = args.prob_second_conx
     regen_network = args.regen_network
     network_path = args.network_path
+    mu = args.average_media_opinion
+    sigma = args.std_media_opinion
+    Nm = args.number_media
+    Nc = args.number_media_connection
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -35,10 +45,18 @@ def main(args=None):
         df_conx = update_df_conx(L, df_conx, connection_matrix)
         df_conx.to_csv(network_path)
     else:
-        df_conx = pd.read_csv(network_path)
+        df_conx = pd.read_csv(network_path,converters={'connection': literal_eval})
 
-    plt.hist(df_conx['num'])
-    plt.show()
+    
+    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])    # LxL network of voters
+    media = init_media(mu,sigma, [Media(i) for i in range(Nm)])                             # Nm media network with average opinion mu
+    network = media_conx(network, media, Nc)                                                # Nc random connections per media node
+    
+    deg_distribution(network)
+    neighbor_opinion_distribution(network)
+    number_media_distribution(network)
+    print("polarization = ", polarization(network))
+    print("clustering = ", clustering(network))
 
 
 if __name__ == "__main__":

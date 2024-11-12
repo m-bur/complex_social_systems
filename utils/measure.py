@@ -61,20 +61,24 @@ def neighbor_opinion_distribution(network):
     """
     n = np.shape(network)
     neigh_opinion_dist = {-1: [], 0: [], 1: []}
+    neigh_opinion_values = {-1: [], 0: [], 1: []}
     for i in range(n[0]):
         for j in range(n[1]):
             voter = network[i][j]
             opinion = voter.get_opinion()
             neigh_opinion = neighbor_opinion(voter, network)
-            np.append(neigh_opinion_dist[opinion], neigh_opinion)
+            neigh_opinion_dist[opinion].append(neigh_opinion)
+    plt.figure()
     for i in neigh_opinion_dist:
         avg = np.average(neigh_opinion_dist[i])
         std = np.std(neigh_opinion_dist[i])
-        plt.hist(neigh_opinion_dist[i],label=f"Opinion {i}: ave = {avg}, std = {std}")
+        neigh_opinion_values[i].append([avg, std])
+        plt.hist(neigh_opinion_dist[i], alpha=0.5, label=f"Opinion {i}: ave = {avg:.2f}, std = {std:.2f}")
     plt.legend()
     plt.xlabel('xi')
     plt.ylabel('Frequency of xi')
     plt.savefig('figures/neighbor_distribution.pdf')
+    return neigh_opinion_values
 
 
 def power_law(x, a, b):
@@ -98,6 +102,7 @@ def deg_distribution(network):
     #plot the results
     xvals = np.linspace(min(unique_elements),max(unique_elements),num=100)
     yvals = power_law(xvals, a, b)
+    plt.figure()
     plt.plot(xvals, yvals, 'k--', label=f"exponent b = {b}")
     plt.plot(unique_elements, counts, 'ko', label="degree distribution")
     plt.xlabel("k")
@@ -105,3 +110,24 @@ def deg_distribution(network):
     plt.legend()
     plt.savefig('figures/deg_distribution.pdf')
     return b
+
+
+def number_media_distribution(network):
+    """
+    Displays the distribution of media connections of each voter. Returns the average and standard deviation.
+    """
+    n = np.shape(network)
+    m_conx = []
+    for i in range(n[0]):
+        for j in range(n[1]):
+            voter = network[i][j]
+            m_conx.append(len(voter.get_media_connections()))
+    avg = np.average(m_conx)
+    std = np.std(m_conx)
+    plt.figure()
+    plt.hist(m_conx, alpha=0.5, label=f"Media connections: ave = {avg:.2f}, std = {std:.2f}")
+    plt.legend()
+    plt.xlabel('nm')
+    plt.ylabel('Frequency of nm')
+    plt.savefig('figures/number_media_distribution.pdf')
+    return avg, std
