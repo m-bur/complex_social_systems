@@ -1,5 +1,7 @@
+
 import argparse
 from network import *
+import matplotlib.pyplot as plt
 
 
 def parse_args():
@@ -10,7 +12,7 @@ def parse_args():
     parser.add_argument("--max_neighbors", type=int, default=52)
     parser.add_argument("--prob_first_conx", type=float, default=3.0)
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
-    parser.add_argument("--regen_network", type=bool, default=True)
+    parser.add_argument("--regen_network", type=bool, default=False)
     parser.add_argument("--network_path", type=str, default='network.csv')
     return parser.parse_args()
 
@@ -35,7 +37,8 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path)
 
-    
+    plt.hist(df_conx['num'])
+    plt.show()
 
 
 if __name__ == "__main__":
