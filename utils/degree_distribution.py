@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 
 def power_law(x, a, b):
     """
-    fit function for degree distribution. For y scale free network 2 < b < 3
+    Fit function for degree distribution. For y scale free network 2 < b < 3.
     """
     return a * np.power(x, b)
 
 def deg_distribution(network):
     """
-    fit the degree distribution of the network to a power law and plot the results
+    Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.
     """
     k = np.array([]) # list of the degrees of each node
     n = np.shape(network)
