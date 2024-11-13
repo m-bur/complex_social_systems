@@ -2,6 +2,7 @@ import random
 import numpy as np
 import pandas as pd
 import random
+from utils.measure import polarization
 
 
 def init_df_conx(c_min, c_max, gamma, L):
@@ -168,11 +169,80 @@ def media_conx(network, media, Nc):
     """
     n = np.shape(network)
     for m in media:
-        for _ in range(Nc):                    # make Nc connections per media node
+        i = 0
+        while i < Nc:                          # make Nc connections per media node
             x = random.randint(0, n[0] - 1)    # random x voter value
             y = random.randint(0, n[1] - 1)    # random y voter value
             voter = network[x][y]
-            voter.add_media_connection(m.get_id())
+            if m.get_id() not in voter.get_media_connections():     # make sure that there are no double connections
+                voter.add_media_connection(m.get_id())
+                i += 1
     return network
 
 
+def voter_update(voter, h, S, alpha, t0):
+    """
+    Update the opinion of the voters based on the local field h. The threshold to change the opinion depends on the initial threshold t0 and the total polarization S.
+    It favors the party which has the minority.
+    """
+    opinion = voter.get_opinion()
+    if S > 0:                                       # if red has the majority
+        t_rn = t0[0]                                # threshold to change from red to neutral (unchanged)
+        t_bn = max(min(t0[0] + alpha*S, 0.5), 0)    # threshold to change from blue to neutral (higher, less likely)
+        t_nr = max(min(t0[1] + alpha*S, 0.5), 0)    # threshold to change from neutral to red (higher, less likely)
+        t_nb = max(min(t0[1] - alpha*S, 0.5), 0)    # threshold to change from neutral to blue (lower, more likely)
+        if opinion == 1 and h < t_rn:
+            voter.set_opinion(0)
+        elif opinion == 0:
+            if h > t_nr:
+                voter.set_opinion(1)
+            elif h < -t_nb:
+                voter.set_opinion(-1)
+        elif opinion == -1 and h > t_bn:
+            voter.set_opinion(0)
+    if S <= 0:                                      # if blue has the majority
+        t_bn = t0[0]                                # threshold to change from blue to neutral (unchanged)
+        t_rn = max(min(t0[0] - alpha*S, 0.5), 0)    # threshold to change from red to neutral (higher, less likely)
+        t_nr = max(min(t0[1] + alpha*S, 0.5), 0)    # threshold to change from neutral to red (lower, more likely)
+        t_nb = max(min(t0[1] - alpha*S, 0.5), 0)    # threshold to change from neutral to blue (higher, less likely)
+        if opinion == 1 and h < -t_rn:
+            voter.set_opinion(0)
+        elif opinion == 0:
+            if h > t_nr:
+                voter.set_opinion(1)
+            elif h < -t_nb:
+                voter.set_opinion(-1)
+        elif opinion == -1 and h > t_bn:
+            voter.set_opinion(0)
+    return voter
+
+
+def local_field(voter, network, media, W):
+    """
+    Computes the local opinion field for the voter. The media authority is W 
+    """
+    h = 0
+    neighbors = voter.get_neighbors()
+    n = voter.get_number_of_neighbors()
+    con_media = voter.get_media_connections()
+    m = len(con_media)
+    for coordinate in neighbors:
+        h += network[coordinate[0]][coordinate[1]].get_opinion()
+    for mid in con_media:
+        h += W*media[mid].get_opinion()
+    return h /(n + W*m)
+
+
+def network_update(network, media, Nv, W, t0, alpha):
+    """
+    Update the network one timestep by randomly picking Nv voters and updating their opinion. Media authority W and initial thresholds t0 with parameter alpha.
+    """
+    for _ in range(Nv):
+        n = np.shape(network)
+        x = random.randint(0, n[0] - 1)    # random x voter value
+        y = random.randint(0, n[1] - 1)    # random y voter value
+        voter = network[x][y]
+        h = local_field(voter, network, media, W)
+        s = polarization(network)
+        voter_update(voter, h, s, alpha, t0)
+    return network
