@@ -14,6 +14,18 @@ def polarization(network):
             s += network[i][j].get_opinion()
     return s / (n[0]*n[1]) # returns the average opinon for the network
 
+def opinion_share(network):
+    """
+    Returns the share of opinion of the entire network.
+    """
+    s = {-1: 0, 0: 0, 1: 0}
+    n = np.shape(network)
+    for i in range(n[0]):
+        for j in range(n[1]):
+            voter = network[i][j]
+            s[voter.get_opinion()] += 1
+    return s
+
 
 def local_clustering(voter, network):
     """
@@ -55,7 +67,7 @@ def neighbor_opinion(voter, network):
     return s / n
 
 
-def neighbor_opinion_distribution(network):
+def neighbor_opinion_distribution(network, name="neighbor_distribution"):
     """
     Displays the distribution of the average opinion of neighbors depending on the opinon of the voter. Returns the the mean and standard deviation for each catagory.
     """
@@ -77,7 +89,7 @@ def neighbor_opinion_distribution(network):
     plt.legend()
     plt.xlabel('xi')
     plt.ylabel('Frequency of xi')
-    plt.savefig('figures/neighbor_distribution.pdf')
+    plt.savefig('figures/'+name+'.pdf')
     return neigh_opinion_values
 
 
@@ -131,3 +143,17 @@ def number_media_distribution(network):
     plt.ylabel('Frequency of nm')
     plt.savefig('figures/number_media_distribution.pdf')
     return avg, std
+
+
+def opinion_trend(df):
+    """
+    plots the opinion share in op_trend
+    """
+    op_trend = df.div(df.sum(axis=1), axis=0)
+    plt.figure()
+    for column in op_trend.columns:
+        plt.plot(op_trend.index, op_trend[column], label=f'Opinion {column}')
+    plt.xlabel('Days')
+    plt.ylabel('Opinion Share')
+    plt.legend()
+    plt.savefig('figures/opinion_share.pdf')
