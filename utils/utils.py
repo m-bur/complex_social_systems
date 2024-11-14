@@ -14,16 +14,52 @@ class Voter:
         meadia_feedback_threshold_replacement_neutral=0.1,
     ):
         """
-        Initialize a Voter object.
+        Initialize a Voter object, representing a voter with specific coordinates, opinion, 
+        and media-related attributes, including feedback mechanisms and media connections.
 
         Parameters
+        ----------
+        i : int
+            The row coordinate of the voter in the grid or network.
+        j : int
+            The column coordinate of the voter in the grid or network.
+        opinion : int, optional
+            The initial opinion of the voter, which can be -1 (against), 0 (neutral), or 1 (supportive).
+            Default is 0 (neutral).
+        media_weight : int, optional
+            A weight factor indicating the importance of media in influencing the voter's opinion 
+            relative to neighboring voters. Default is 10.
+        media_feedback_turned_on : bool, optional
+            A flag indicating whether media feedback is active. If `True`, the voter can be influenced 
+            by media nodes. Default is `False`.
+        media_feedback_probability : float, optional
+            The probability that the voter will seek to change media they disagree with. (When media feedback is enabled.) 
+            This corresponds to the parameter beta in the associated paper (Media preference increases polarization in an agent-based
+            election model by Di Benedetto et al.). Default is 0.5.
+        meadia_feedback_threshold_replacement_neutral : float, optional
+            The threshold that defines the range of media opinions considered neutral for the voter with opinion 0.
+            Only media opinions within this range will be accepted, otherwise the voter will seek to replace the media node. Default is 0.1.
+
+        Attributes
         ----------
         i : int
             The row coordinate of the voter.
         j : int
             The column coordinate of the voter.
-        opinion : int, optional
-            The opinion of the voter, which can be -1, 0, or 1. Default is 0.
+        opinion : int
+            The voter's current opinion (-1, 0, or 1).
+        neighbors : list of tuple of int
+            A list to hold the coordinates of neighboring voters.
+        media_connections : list of int
+            A list to store IDs of connected media nodes influencing the voter's opinion.
+        media_weight : int
+            The weight by which media influences the voter's opinion relative to other voters.
+        media_feedback_turned_on : bool
+            A flag indicating whether the voter can be influenced by media feedback.
+        media_feedback_probability : float
+            The probability that the voter will cut ties with media nodes they disagree with, feedback when activated.
+        meadia_feedback_threshold_replacement_neutral : float
+            The threshold for accepting new media opinions if the voter is neutral.
         """
         self.i = i
         self.j = j
@@ -136,7 +172,7 @@ class Voter:
 
         Parameters
         ----------
-        network : pd.DataFrame
+        media_df : pd.DataFrame
             A DataFrame which contains all the media nodes and their media_ids
 
         Returns
@@ -147,15 +183,44 @@ class Voter:
         """
 
         res = [
-            media_df.loc[media_id, "node"].get_opinion() for media_id in self.get_media_connections()
+            media_df.loc[media_id, "node"].get_opinion()
+            for media_id in self.get_media_connections()
         ]
         return res
+
+    def get_weighted_average_opinion_of_enviroment(self, network, media_df):
+        """
+        This function calculates the weighted average of the opinion of the connected voter and media nodes.
+
+        Parameters
+        ----------
+        network : 2d np.array
+            The matrix on which all the voter nodes are placed.
+        media_df : pd.DataFrame
+            A DataFrame which contains all the media nodes and their media_ids
+
+        Returns
+        -------
+        float
+            the weighted average of the opinion of nodes that are connected to this voter.
+        """
+        neighbor_opinions = self.get_opinion_of_neighbours(network)
+        media_opinions = self.get_opinion_of_media(media_df)
+
+        weighted_average = (
+            sum(neighbor_opinions) + self.media_weight * sum(media_opinions)
+        ) / (len(neighbor_opinions) + self.media_weight * len(media_opinions))
+
+        return weighted_average
 
     def media_feedback(self, media_df):
         """
         This is the algorithm for media feedback as defined in the paper.
 
-
+        Parameters
+        ----------
+        media_df : pd.DataFrame
+            A DataFrame which contains all the media nodes and their media_ids
         """
 
         if self.get_opinion() == -1:
@@ -185,11 +250,60 @@ class Voter:
                             self.add_media_connection(new_media_id)
 
         elif self.get_opinion() == 1:
-            pass
-        elif self.get_opinion() == 0:
-            pass
+            for media_id in self.media_connections:
+                p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
 
-        return
+                if (
+                    media_df.loc[media_id, "node"].get_opinion() < 0
+                    and p < self.media_feedback_probability
+                ):
+
+                    # check if there are any media nodes left that are not yet connected to this voter
+                    if len(media_df) > len(self.media_connections):
+                        # get all the media nodes that are not connected to this voter in a new dataframe
+                        unconnected_media_df = media_df.loc[
+                            ~media_df["media_id"].isin(self.media_connections)
+                        ]
+
+                        # generate a random integer to pick a random node:
+                        i = np.random.randint(0, len(unconnected_media_df) - 1)
+
+                        new_media_id = unconnected_media_df["media_id"].iloc[i]
+
+                        # if the randomly chosen new
+                        if media_df.loc[new_media_id, "node"].get_opinion() >= 0:
+                            self.remove_media_connection(media_id)
+                            self.add_media_connection(new_media_id)
+
+        elif self.get_opinion() == 0:
+            for media_id in self.media_connections:
+                p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
+
+                if (
+                    abs(media_df.loc[media_id, "node"].get_opinion())
+                    > self.meadia_feedback_threshold_replacement_neutral
+                    and p < self.media_feedback_probability
+                ):
+
+                    # check if there are any media nodes left that are not yet connected to this voter
+                    if len(media_df) > len(self.media_connections):
+                        # get all the media nodes that are not connected to this voter in a new dataframe
+                        unconnected_media_df = media_df.loc[
+                            ~media_df["media_id"].isin(self.media_connections)
+                        ]
+
+                        # generate a random integer to pick a random node:
+                        i = np.random.randint(0, len(unconnected_media_df) - 1)
+
+                        new_media_id = unconnected_media_df["media_id"].iloc[i]
+
+                        # if the randomly chosen new
+                        if (
+                            abs(media_df.loc[new_media_id, "node"].get_opinion())
+                            <= self.meadia_feedback_threshold_replacement_neutral
+                        ):
+                            self.remove_media_connection(media_id)
+                            self.add_media_connection(new_media_id)
 
     def get_neighbors(self):
         """
@@ -327,7 +441,39 @@ def generate_media_landscape(
     number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1
 ):
     """
-    generate a pandas dataframe which contains the medianodes and their ids
+    Generate a pandas DataFrame containing media nodes and their respective IDs, 
+    where the opinions of the media nodes are generated based on the specified mode.
+
+    Parameters
+    ----------
+    number_of_media : int
+        The number of media nodes to generate.
+    mode : str, optional
+        The distribution mode for generating opinions. Can be one of the following:
+        - 'standard': Uniform distribution between -1 and 1 (default).
+        - 'uniform': Uniform distribution between -lower_bound and upper_bound.
+        - 'gaussian': Gaussian (normal) distribution with mean `mu` and standard deviation `sigma`.
+    mu : float, optional
+        The mean of the Gaussian distribution (default is 0).
+    sigma : float, optional
+        The standard deviation of the Gaussian distribution (default is 0.25).
+    lower_bound : float, optional
+        The lower bound of the uniform distribution for 'uniform' mode (default is -1).
+    upper_bound : float, optional
+        The upper bound of the uniform distribution for 'uniform' mode (default is 1).
+
+    Returns
+    -------
+    pandas.DataFrame
+        A DataFrame with 'media_id' as the index and a column 'node' containing media nodes. 
+        Each node is represented by an ID and an associated opinion.
+
+    Notes
+    -----
+    - In 'standard' mode, opinions are uniformly distributed between -1 and 1.
+    - In 'uniform' mode, opinions are uniformly distributed between -lower_bound and upper_bound.
+    - In 'gaussian' mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].
+
     """
 
     if mode == "standard":
@@ -336,7 +482,7 @@ def generate_media_landscape(
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         df = pd.DataFrame({"media_id": IDs, "node": media_nodes})
         df.set_index("media_id", inplace=True)  # Set media_id as the index
-        df['media_id'] = df.index
+        df["media_id"] = df.index
         return df
 
     elif mode == "uniform":
@@ -346,6 +492,8 @@ def generate_media_landscape(
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         df = pd.DataFrame({"media_id": IDs, "node": media_nodes})
+        df.set_index("media_id", inplace=True)  # Set media_id as the index
+        df["media_id"] = df.index
         return df
 
     elif mode == "gaussian":
@@ -355,4 +503,6 @@ def generate_media_landscape(
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         df = pd.DataFrame({"media_id": IDs, "node": media_nodes})
+        df.set_index("media_id", inplace=True)  # Set media_id as the index
+        df["media_id"] = df.index
         return df
