@@ -1,4 +1,3 @@
-
 import argparse
 from network import *
 from utils.measure import *
@@ -15,7 +14,7 @@ def parse_args():
     parser.add_argument("--prob_first_conx", type=float, default=3.0)
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
     parser.add_argument("--regen_network", type=bool, default=False)
-    parser.add_argument("--network_path", type=str, default='network.csv')
+    parser.add_argument("--network_path", type=str, default="network.csv")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=1)
     parser.add_argument("--number_media", type=int, default=50)
@@ -23,7 +22,7 @@ def parse_args():
     parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
-    parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
+    parser.add_argument("--initFial_threshold", type=list, default=[0, 0.18])
     parser.add_argument("--number_days", type=int, default=365)
     return parser.parse_args()
 
@@ -55,13 +54,12 @@ def main(args=None):
         df_conx = update_df_conx(L, df_conx, connection_matrix)
         df_conx.to_csv(network_path)
     else:
-        df_conx = pd.read_csv(network_path,converters={'connection': literal_eval})
+        df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    
-    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])    # LxL network of voters
+    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     deg_distribution(network)
-    media = init_media(mu,sigma, [Media(i) for i in range(Nm)])                             # Nm media network with average opinion mu
-    media_conx(network, media, Nc)                                                          # Nc random connections per media node
+    media = init_media(mu, sigma, [Media(i) for i in range(Nm)])  # Nm media network with average opinion mu
+    media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network)
 
     neighbor_opinion_distribution(network, "init_neighbour_dist")
@@ -72,10 +70,10 @@ def main(args=None):
         network_update(network, media, Nv, w, t0, alpha)
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)
-    
-    opinion_trend(op_trend)                                   
+
+    opinion_trend(op_trend)
     neighbor_opinion_distribution(network, "neighbour_dist_1")
-   
+
 
 if __name__ == "__main__":
     _args = parse_args()

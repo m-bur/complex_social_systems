@@ -1,7 +1,3 @@
-import numpy as np
-import pandas as pd
-
-
 class Voter:
     def __init__(self, i, j, opinion=0):
         """
@@ -94,7 +90,7 @@ class Voter:
             A list of tuples representing the coordinates of neighboring voters.
         """
         return self.neighbors
-    
+
     def get_opinion(self):
         """
         Returns the opinion.
@@ -137,7 +133,8 @@ class Voter:
         str
             A string representation of the Voter object.
         """
-        return f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors}, media_connections={self.media_connections})"
+        return (f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, "
+                f"neighbors={self.neighbors}, media_connections={self.media_connections})")
 
 
 class Media:
