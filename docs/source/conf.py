@@ -11,6 +11,8 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
 
+from utils import measure as ms
+
 
 project = "BJSS Model"
 author = "Moritz Buerger, Emanuel Jucker, Maximilian Spitaler, Linghang Sun"

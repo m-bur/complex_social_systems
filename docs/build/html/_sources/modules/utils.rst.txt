@@ -19,3 +19,37 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+
+utils.measure module
+------------------
+
+.. automodule:: utils.measure
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: measure
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.visualization module
+------------------
+
+.. automodule:: utils.visualization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: visualization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+

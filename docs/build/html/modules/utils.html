@@ -57,6 +57,7 @@
 <li><a class="reference internal" href="#utils.utils.Voter.get_media_connections"><code class="docutils literal notranslate"><span class="pre">Voter.get_media_connections()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.get_neighbors"><code class="docutils literal notranslate"><span class="pre">Voter.get_neighbors()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.get_number_of_neighbors"><code class="docutils literal notranslate"><span class="pre">Voter.get_number_of_neighbors()</span></code></a></li>
+<li><a class="reference internal" href="#utils.utils.Voter.get_opinion"><code class="docutils literal notranslate"><span class="pre">Voter.get_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.remove_media_connection"><code class="docutils literal notranslate"><span class="pre">Voter.remove_media_connection()</span></code></a></li>
 <li><a class="reference internal" href="#utils.utils.Voter.set_opinion"><code class="docutils literal notranslate"><span class="pre">Voter.set_opinion()</span></code></a></li>
 </ul>
@@ -64,6 +65,26 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-utils">Module contents</a></li>
+<li><a class="reference internal" href="#utils-measure-module">utils.measure module</a><ul>
+<li><a class="reference internal" href="#utils.measure.clustering"><code class="docutils literal notranslate"><span class="pre">clustering()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.deg_distribution"><code class="docutils literal notranslate"><span class="pre">deg_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.local_clustering"><code class="docutils literal notranslate"><span class="pre">local_clustering()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.neighbor_opinion"><code class="docutils literal notranslate"><span class="pre">neighbor_opinion()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.neighbor_opinion_distribution"><code class="docutils literal notranslate"><span class="pre">neighbor_opinion_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.number_media_distribution"><code class="docutils literal notranslate"><span class="pre">number_media_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.opinion_share"><code class="docutils literal notranslate"><span class="pre">opinion_share()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.opinion_trend"><code class="docutils literal notranslate"><span class="pre">opinion_trend()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.polarization"><code class="docutils literal notranslate"><span class="pre">polarization()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.power_law"><code class="docutils literal notranslate"><span class="pre">power_law()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">Module contents</a></li>
+<li><a class="reference internal" href="#utils-visualization-module">utils.visualization module</a><ul>
+<li><a class="reference internal" href="#utils.visualization.test_visualize_matrix"><code class="docutils literal notranslate"><span class="pre">test_visualize_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.visualize_matrix"><code class="docutils literal notranslate"><span class="pre">visualize_matrix()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -219,6 +240,20 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="utils.utils.Voter.get_opinion">
+<span class="sig-name descname"><span class="pre">get_opinion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.get_opinion" title="Link to this definition"></a></dt>
+<dd><p>Returns the opinion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The opinion of the voters.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="utils.utils.Voter.remove_media_connection">
 <span class="sig-name descname"><span class="pre">remove_media_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.utils.Voter.remove_media_connection" title="Link to this definition"></a></dt>
 <dd><p>Removes a media connection by removing the media_id from the media_connections list.</p>
@@ -251,6 +286,98 @@
 </section>
 <section id="module-utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utils" title="Link to this heading"></a></h2>
+</section>
+<section id="utils-measure-module">
+<h2>utils.measure module<a class="headerlink" href="#utils-measure-module" title="Link to this heading"></a></h2>
+<dl class="py function" id="module-utils.measure">
+<dt class="sig sig-object py" id="utils.measure.clustering">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.clustering" title="Link to this definition"></a></dt>
+<dd><p>Return the clustering (degree of agreement between neighbours)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.deg_distribution">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">deg_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.deg_distribution" title="Link to this definition"></a></dt>
+<dd><p>Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.local_clustering">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">local_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.local_clustering" title="Link to this definition"></a></dt>
+<dd><p>Returns the local clustering (i.e. the fraction of agreement between one voter and its neighbors)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.neighbor_opinion">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">neighbor_opinion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.neighbor_opinion" title="Link to this definition"></a></dt>
+<dd><p>Return the average opinion of the neighbors of the voter</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.neighbor_opinion_distribution">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">neighbor_opinion_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neighbor_distribution'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.neighbor_opinion_distribution" title="Link to this definition"></a></dt>
+<dd><p>Displays the distribution of the average opinion of neighbors depending on the opinon of the voter. Returns the the mean and standard deviation for each catagory.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.number_media_distribution">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">number_media_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.number_media_distribution" title="Link to this definition"></a></dt>
+<dd><p>Displays the distribution of media connections of each voter. Returns the average and standard deviation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.opinion_share">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">opinion_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.opinion_share" title="Link to this definition"></a></dt>
+<dd><p>Returns the share of opinion of the entire network.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.opinion_trend">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">opinion_trend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.opinion_trend" title="Link to this definition"></a></dt>
+<dd><p>plots the opinion share in op_trend</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.polarization">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">polarization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.polarization" title="Link to this definition"></a></dt>
+<dd><p>Returns the average opinion of  the network.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.power_law">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">power_law</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.power_law" title="Link to this definition"></a></dt>
+<dd><p>Fit function for degree distribution. For y scale free network 2 &lt; b &lt; 3.</p>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h2>Module contents<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+</section>
+<section id="utils-visualization-module">
+<h2>utils.visualization module<a class="headerlink" href="#utils-visualization-module" title="Link to this heading"></a></h2>
+<dl class="py function" id="module-utils.visualization">
+<dt class="sig sig-object py" id="utils.visualization.test_visualize_matrix">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">test_visualize_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.test_visualize_matrix" title="Link to this definition"></a></dt>
+<dd><p>Test function for visualize_matrix.
+Generates a sample matrix with structured regions, visualizes it, and checks if the image is saved.
+Each run generates a different filename to prevent overwriting.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization.visualize_matrix">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.visualize_matrix" title="Link to this definition"></a></dt>
+<dd><p>Visualizes a matrix with values -1 (red), 0 (grey), 1 (blue) and saves it as an image.</p>
+<p>Parameters:
+- matrix: 2D numpy array with values -1, 0, 1.
+- output_folder: str, path to the folder where the image will be saved.
+- filename: str, name of the output image file. If None, a unique filename is generated.</p>
+<p>Returns:
+- None</p>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>Module contents<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 </section>
 </section>
 
