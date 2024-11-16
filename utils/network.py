@@ -213,7 +213,7 @@ def generate_media_landscape(
 
     elif mode == "uniform":
         opinions = np.random.uniform(
-            low=-lower_bound, high=upper_bound, size=number_of_media
+            low=lower_bound, high=upper_bound, size=number_of_media
         )
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
@@ -221,7 +221,7 @@ def generate_media_landscape(
     
     elif mode == "fixed":
         opinions = np.linspace(
-            start=-lower_bound, stop=upper_bound, num=number_of_media
+            start=lower_bound, stop=upper_bound, num=number_of_media
         )
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
