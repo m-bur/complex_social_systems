@@ -8,13 +8,13 @@ from ast import literal_eval
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--side_length", type=int, default=100)
-    parser.add_argument("--local_length", type=int, default=20)
+    parser.add_argument("--side_length", type=int, default=50)
+    parser.add_argument("--local_length", type=int, default=10)
     parser.add_argument("--min_neighbors", type=int, default=18)
     parser.add_argument("--max_neighbors", type=int, default=52)
     parser.add_argument("--prob_first_conx", type=float, default=3.0)
-    parser.add_argument("--prob_second_conx", type=float, default=0.1)
-    parser.add_argument("--regen_network", type=bool, default=False)
+    parser.add_argument("--prob_second_conx", type=float, default=0.3)
+    parser.add_argument("--regen_network", type=bool, default=True)
     parser.add_argument("--network_path", type=str, default="network.csv")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=1)
@@ -23,7 +23,7 @@ def parse_args():
     parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
-    parser.add_argument("--initFial_threshold", type=list, default=[0, 0.18])
+    parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
     parser.add_argument("--number_days", type=int, default=365)
     return parser.parse_args()
 
@@ -58,6 +58,9 @@ def main(args=None):
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
+
+    print(network, len(network))
+
     deg_distribution(network)
     media = init_media(mu, sigma, [Media(i) for i in range(Nm)])  # Nm media network with average opinion mu
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -68,6 +71,7 @@ def main(args=None):
     op_trend = pd.DataFrame()
 
     for days in range(Ndays):
+        print(days)
         network_update(network, media, Nv, w, t0, alpha)
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)

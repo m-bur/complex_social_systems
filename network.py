@@ -1,3 +1,4 @@
+import ast
 import random
 import numpy as np
 import pandas as pd
@@ -148,6 +149,23 @@ def update_df_conx(L, df_conx, connection_matrix):
                 connection_matrix_norm[q, p] = 0
 
     df_conx = df_conx[["x", "y", "num", "connection"]]
+    return df_conx
+
+
+def calc_pc_neighbor(df_conx, L_G):
+    df_conx['local_pct'] = 0
+    df_conx['connection'] = df_conx['connection'].apply(ast.literal_eval)
+    for i in range(len(df_conx)):
+        num_local = 0
+        x = df_conx.loc[i, 'x']
+        y = df_conx.loc[i, 'y']
+        conx_list = df_conx.loc[i, 'connection']
+        for conx in conx_list:
+            m = conx[0]
+            n = conx[1]
+            if np.abs(m-x) <= L_G and np.abs(n-y) <= L_G:
+                num_local += 1
+        df_conx.loc[i, 'local_pct'] = num_local / df_conx.loc[i, 'num']
     return df_conx
 
 
