@@ -72,6 +72,7 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -87,11 +88,11 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Voter.add_media_connection">add_media_connection() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.add_media_connection">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.add_media_connection">add_media_connection() (utils.nodes.Voter method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Voter.add_neighbor">add_neighbor() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.add_neighbor">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.add_neighbor">add_neighbor() (utils.nodes.Voter method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -99,6 +100,12 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.calc_first_conx_matrix">calc_first_conx_matrix() (in module utils.network)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.calc_second_conx_matrix">calc_second_conx_matrix() (in module utils.network)</a>
+</li>
       <li><a href="modules/utils.html#utils.measure.clustering">clustering() (in module utils.measure)</a>
 </li>
   </ul></td>
@@ -115,29 +122,41 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.generate_media_landscape">generate_media_landscape() (in module utils.utils)</a>, <a href="modules/utils.utils.html#utils.utils.generate_media_landscape">[1]</a>
+      <li><a href="modules/utils.html#utils.network.generate_media_landscape">generate_media_landscape() (in module utils.network)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Media.get_id">get_id() (utils.utils.Media method)</a>, <a href="modules/utils.utils.html#utils.utils.Media.get_id">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Media.get_id">get_id() (utils.nodes.Media method)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_media_connections">get_media_connections() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_media_connections">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_media_connections">get_media_connections() (utils.nodes.Voter method)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_neighbors">get_neighbors() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_neighbors">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_neighbors">get_neighbors() (utils.nodes.Voter method)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_number_of_neighbors">get_number_of_neighbors() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_number_of_neighbors">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_number_of_neighbors">get_number_of_neighbors() (utils.nodes.Voter method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Media.get_opinion">get_opinion() (utils.utils.Media method)</a>, <a href="modules/utils.utils.html#utils.utils.Media.get_opinion">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Media.get_opinion">get_opinion() (utils.nodes.Media method)</a>
 
       <ul>
-        <li><a href="modules/utils.html#utils.utils.Voter.get_opinion">(utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_opinion">[1]</a>
+        <li><a href="modules/utils.html#utils.nodes.Voter.get_opinion">(utils.nodes.Voter method)</a>
 </li>
       </ul></li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_opinion_of_media">get_opinion_of_media() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_opinion_of_media">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_opinion_of_media">get_opinion_of_media() (utils.nodes.Voter method)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_opinion_of_neighbours">get_opinion_of_neighbours() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_opinion_of_neighbours">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_opinion_of_neighbours">get_opinion_of_neighbours() (utils.nodes.Voter method)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.get_weighted_average_opinion_of_enviroment">get_weighted_average_opinion_of_enviroment() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.get_weighted_average_opinion_of_enviroment">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.get_weighted_average_opinion_of_enviroment">get_weighted_average_opinion_of_enviroment() (utils.nodes.Voter method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.init_df_conx">init_df_conx() (in module utils.network)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.init_network">init_network() (in module utils.network)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -148,14 +167,20 @@
       <li><a href="modules/utils.html#utils.measure.local_clustering">local_clustering() (in module utils.measure)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.local_field">local_field() (in module utils.network)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Media">Media (class in utils.utils)</a>, <a href="modules/utils.utils.html#utils.utils.Media">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Media">Media (class in utils.nodes)</a>
 </li>
-      <li><a href="modules/utils.html#utils.utils.Voter.media_feedback">media_feedback() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.media_feedback">[1]</a>
+      <li><a href="modules/utils.html#utils.network.media_conx">media_conx() (in module utils.network)</a>
+</li>
+      <li><a href="modules/utils.html#utils.nodes.Voter.media_feedback">media_feedback() (utils.nodes.Voter method)</a>
 </li>
       <li>
     module
@@ -165,7 +190,9 @@
 </li>
         <li><a href="modules/utils.html#module-utils.measure">utils.measure</a>
 </li>
-        <li><a href="modules/utils.html#module-utils.utils">utils.utils</a>, <a href="modules/utils.utils.html#module-utils.utils">[1]</a>
+        <li><a href="modules/utils.html#module-utils.network">utils.network</a>
+</li>
+        <li><a href="modules/utils.html#module-utils.nodes">utils.nodes</a>
 </li>
         <li><a href="modules/utils.html#module-utils.visualization">utils.visualization</a>
 </li>
@@ -178,9 +205,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/utils.html#utils.measure.neighbor_opinion">neighbor_opinion() (in module utils.measure)</a>
 </li>
+      <li><a href="modules/utils.html#utils.measure.neighbor_opinion_distribution">neighbor_opinion_distribution() (in module utils.measure)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.measure.neighbor_opinion_distribution">neighbor_opinion_distribution() (in module utils.measure)</a>
+      <li><a href="modules/utils.html#utils.network.network_update">network_update() (in module utils.network)</a>
 </li>
       <li><a href="modules/utils.html#utils.measure.number_media_distribution">number_media_distribution() (in module utils.measure)</a>
 </li>
@@ -208,13 +237,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/utils.html#utils.measure.power_law">power_law() (in module utils.measure)</a>
 </li>
+      <li><a href="modules/utils.html#utils.network.prob_first_connection">prob_first_connection() (in module utils.network)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Voter.remove_media_connection">remove_media_connection() (utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.remove_media_connection">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter.remove_media_connection">remove_media_connection() (utils.nodes.Voter method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -222,10 +253,10 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Media.set_opinion">set_opinion() (utils.utils.Media method)</a>, <a href="modules/utils.utils.html#utils.utils.Media.set_opinion">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Media.set_opinion">set_opinion() (utils.nodes.Media method)</a>
 
       <ul>
-        <li><a href="modules/utils.html#utils.utils.Voter.set_opinion">(utils.utils.Voter method)</a>, <a href="modules/utils.utils.html#utils.utils.Voter.set_opinion">[1]</a>
+        <li><a href="modules/utils.html#utils.nodes.Voter.set_opinion">(utils.nodes.Voter method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -242,6 +273,8 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#utils.network.update_df_conx">update_df_conx() (in module utils.network)</a>
+</li>
       <li>
     utils
 
@@ -259,10 +292,17 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    utils.utils
+    utils.network
 
       <ul>
-        <li><a href="modules/utils.html#module-utils.utils">module</a>, <a href="modules/utils.utils.html#module-utils.utils">[1]</a>
+        <li><a href="modules/utils.html#module-utils.network">module</a>
+</li>
+      </ul></li>
+      <li>
+    utils.nodes
+
+      <ul>
+        <li><a href="modules/utils.html#module-utils.nodes">module</a>
 </li>
       </ul></li>
       <li>
@@ -282,7 +322,9 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#utils.utils.Voter">Voter (class in utils.utils)</a>, <a href="modules/utils.utils.html#utils.utils.Voter">[1]</a>
+      <li><a href="modules/utils.html#utils.nodes.Voter">Voter (class in utils.nodes)</a>
+</li>
+      <li><a href="modules/utils.html#utils.network.voter_update">voter_update() (in module utils.network)</a>
 </li>
   </ul></td>
 </tr></table>

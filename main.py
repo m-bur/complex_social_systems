@@ -3,6 +3,8 @@ from utils.network import *
 from utils.measure import *
 from utils.nodes import *
 from ast import literal_eval
+import sys
+
 
 
 def parse_args():
@@ -72,6 +74,9 @@ def main(args=None):
         network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)
+        # Print progress on the same line
+        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.flush()
 
     opinion_trend(op_trend)
     neighbor_opinion_distribution(network, "neighbour_dist_1")
