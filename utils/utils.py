@@ -10,7 +10,7 @@ class Voter:
         opinion=0,
         media_weight=10,
         media_feedback_turned_on=False,
-        media_feedback_probability=0.5,
+        media_feedback_probability=1,
         meadia_feedback_threshold_replacement_neutral=0.1,
     ):
         """
@@ -165,7 +165,7 @@ class Voter:
         ]
         return res
 
-    def get_opinion_of_media(self, media_df):
+    def get_opinion_of_media(self, media):
         """
         This functions returns a list of all the opinions of nodes in the voter network
         with which the voter is connected.
@@ -183,12 +183,12 @@ class Voter:
         """
 
         res = [
-            media_df.loc[media_id, "node"].get_opinion()
+            media[media_id].get_opinion()
             for media_id in self.get_media_connections()
         ]
         return res
 
-    def get_weighted_average_opinion_of_enviroment(self, network, media_df):
+    def get_weighted_average_opinion_of_enviroment(self, network, media):
         """
         This function calculates the weighted average of the opinion of the connected voter and media nodes.
 
@@ -205,7 +205,7 @@ class Voter:
             the weighted average of the opinion of nodes that are connected to this voter.
         """
         neighbor_opinions = self.get_opinion_of_neighbours(network)
-        media_opinions = self.get_opinion_of_media(media_df)
+        media_opinions = self.get_opinion_of_media(media)
 
         weighted_average = (
             sum(neighbor_opinions) + self.media_weight * sum(media_opinions)
@@ -213,7 +213,7 @@ class Voter:
 
         return weighted_average
 
-    def media_feedback(self, media_df):
+    def media_feedback(self, media):
         """
         This is the algorithm for media feedback as defined in the paper.
 
@@ -228,82 +228,71 @@ class Voter:
                 p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
 
                 if (
-                    media_df.loc[media_id, "node"].get_opinion() > 0
+                    media[media_id].get_opinion() > 0
                     and p < self.media_feedback_probability
                 ):
 
                     # check if there are any media nodes left that are not yet connected to this voter
-                    if len(media_df) > len(self.media_connections):
+                    if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media_df = media_df.loc[
-                            ~media_df["media_id"].isin(self.media_connections)
-                        ]
+                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
+
 
                         # generate a random integer to pick a random node:
-                        i = np.random.randint(0, len(unconnected_media_df) - 1)
-
-                        new_media_id = unconnected_media_df["media_id"].iloc[i]
+                        i = np.random.randint(0, len(unconnected_media) - 1)
 
                         # if the randomly chosen new
-                        if media_df.loc[new_media_id, "node"].get_opinion() <= 0:
+                        if unconnected_media[i].get_opinion() <= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(new_media_id)
+                            self.add_media_connection(unconnected_media[i].get_id())
 
         elif self.get_opinion() == 1:
             for media_id in self.media_connections:
                 p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
 
                 if (
-                    media_df.loc[media_id, "node"].get_opinion() < 0
+                    media[media_id].get_opinion() < 0
                     and p < self.media_feedback_probability
                 ):
 
                     # check if there are any media nodes left that are not yet connected to this voter
-                    if len(media_df) > len(self.media_connections):
+                    if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media_df = media_df.loc[
-                            ~media_df["media_id"].isin(self.media_connections)
-                        ]
+                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
 
                         # generate a random integer to pick a random node:
-                        i = np.random.randint(0, len(unconnected_media_df) - 1)
-
-                        new_media_id = unconnected_media_df["media_id"].iloc[i]
+                        i = np.random.randint(0, len(unconnected_media) - 1)
 
                         # if the randomly chosen new
-                        if media_df.loc[new_media_id, "node"].get_opinion() >= 0:
+                        if unconnected_media[i].get_opinion() >= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(new_media_id)
+                            self.add_media_connection(unconnected_media[i].get_id())
 
         elif self.get_opinion() == 0:
             for media_id in self.media_connections:
                 p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
 
                 if (
-                    abs(media_df.loc[media_id, "node"].get_opinion())
+                    abs(media[media_id].get_opinion())
                     > self.meadia_feedback_threshold_replacement_neutral
                     and p < self.media_feedback_probability
                 ):
 
                     # check if there are any media nodes left that are not yet connected to this voter
-                    if len(media_df) > len(self.media_connections):
+                    if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media_df = media_df.loc[
-                            ~media_df["media_id"].isin(self.media_connections)
-                        ]
+                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
 
                         # generate a random integer to pick a random node:
-                        i = np.random.randint(0, len(unconnected_media_df) - 1)
-
-                        new_media_id = unconnected_media_df["media_id"].iloc[i]
+                        i = np.random.randint(0, len(unconnected_media) - 1)
 
                         # if the randomly chosen new
                         if (
-                            abs(media_df.loc[new_media_id, "node"].get_opinion())
+                            abs(unconnected_media[i].get_opinion())
                             <= self.meadia_feedback_threshold_replacement_neutral
                         ):
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(new_media_id)
+                            self.add_media_connection(unconnected_media[i].get_id())
 
     def get_neighbors(self):
         """

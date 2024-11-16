@@ -22,8 +22,9 @@ def parse_args():
     parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
-    parser.add_argument("--initFial_threshold", type=list, default=[0, 0.18])
+    parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
     parser.add_argument("--number_days", type=int, default=365)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     return parser.parse_args()
 
 
@@ -45,6 +46,7 @@ def main(args=None):
     Nv = args.updated_voters
     t0 = args.initial_threshold
     Ndays = args.number_days
+    mfeedback_on = args.media_feedback_turned_on
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -67,7 +69,7 @@ def main(args=None):
     op_trend = pd.DataFrame()
 
     for days in range(Ndays):
-        network_update(network, media, Nv, w, t0, alpha)
+        network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)
 

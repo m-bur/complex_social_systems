@@ -258,7 +258,7 @@ def local_field(voter, network, media, W):
     return h / (n + W * m)
 
 
-def network_update(network, media, Nv, W, t0, alpha):
+def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
     Update the network one timestep by randomly picking Nv voters and updating their opinion. Media authority W and initial thresholds t0 with parameter alpha.
     """
@@ -267,7 +267,17 @@ def network_update(network, media, Nv, W, t0, alpha):
         x = random.randint(0, n[0] - 1)  # random x voter value
         y = random.randint(0, n[1] - 1)  # random y voter value
         voter = network[x][y]
+        vmedia = voter.get_media_connections()
+        print(vmedia)
+        vmedia_op = [media[m].get_opinion() for m in vmedia]
+        print(vmedia_op)
         h = local_field(voter, network, media, W)
         s = polarization(network)
         voter_update(voter, h, s, alpha, t0)
+        if mfeedback :
+            voter.media_feedback(media)
+        vmedia = voter.get_media_connections()
+        vmedia_op = [media[m].get_opinion() for m in vmedia]
+        print(vmedia)
+        print(vmedia_op)
     return network
