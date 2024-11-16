@@ -1,9 +1,7 @@
-
 import argparse
-from network import *
+from utils.network import *
 from utils.measure import *
-from utils.utils import *
-from utils.visualization import *
+from utils.nodes import *
 from ast import literal_eval
 
 
@@ -16,16 +14,17 @@ def parse_args():
     parser.add_argument("--prob_first_conx", type=float, default=3.0)
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
     parser.add_argument("--regen_network", type=bool, default=False)
-    parser.add_argument("--network_path", type=str, default='network.csv')
+    parser.add_argument("--network_path", type=str, default="network.csv")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=1)
     parser.add_argument("--number_media", type=int, default=50)
     parser.add_argument("--number_media_connection", type=int, default=250)
     parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
-    parser.add_argument("--updated_voters", type=int, default=50)
+    parser.add_argument("--updated_voters", type=int, default=25)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
     parser.add_argument("--number_days", type=int, default=365)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     return parser.parse_args()
 
 
@@ -47,6 +46,7 @@ def main(args=None):
     Nv = args.updated_voters
     t0 = args.initial_threshold
     Ndays = args.number_days
+    mfeedback_on = args.media_feedback_turned_on
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -56,30 +56,26 @@ def main(args=None):
         df_conx = update_df_conx(L, df_conx, connection_matrix)
         df_conx.to_csv(network_path)
     else:
-        df_conx = pd.read_csv(network_path,converters={'connection': literal_eval})
+        df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    
-    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])    # LxL network of voters
+    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     deg_distribution(network)
-    media = init_media(mu,sigma, [Media(i) for i in range(Nm)])                             # Nm media network with average opinion mu
-    media_conx(network, media, Nc)                                                          # Nc random connections per media node
+    media = generate_media_landscape(Nm)  # Nm media network with average opinion mu
+    media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network)
 
     neighbor_opinion_distribution(network, "init_neighbour_dist")
 
-    visualize_network(network, "initial_network.png")
-
     op_trend = pd.DataFrame()
 
     for days in range(Ndays):
-        network_update(network, media, Nv, w, t0, alpha)
+        network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)
-    
+
     opinion_trend(op_trend)
-    visualize_network(network, "final_network")                                   
     neighbor_opinion_distribution(network, "neighbour_dist_1")
-   
+
 
 if __name__ == "__main__":
     _args = parse_args()

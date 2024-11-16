@@ -4,17 +4,25 @@ import os
 import datetime
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
+
 def visualize_matrix(matrix, output_folder, filename=None):
     """
     Visualizes a matrix with values -1 (blue), 0 (grey), 1 (red) and saves it as an image.
 
-    Parameters:
-    - matrix: 2D numpy array with values -1, 0, 1.
-    - output_folder: str, path to the folder where the image will be saved.
-    - filename: str, name of the output image file. If None, a unique filename is generated.
+    Parameters
+    ----------
+    matrix : numpy.ndarray
+        A 2D array of integers containing values -1, 0, or 1.
+    output_folder : str
+        Path to the folder where the output image file will be saved.
+    filename : str, optional
+        Name of the output image file. If None, a unique filename based on
+        the current timestamp is generated.
 
-    Returns:
-    - None
+    Returns
+    -------
+    None
+        The function saves the image file but does not return any value.
     """
 
     # Create a color map: red for -1, grey for 0, blue for 1
@@ -27,27 +35,39 @@ def visualize_matrix(matrix, output_folder, filename=None):
 
     # Generate a unique filename if not provided
     if filename is None:
-        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         filename = f"matrix_visualization_{timestamp}.png"
 
     # Create the figure and axis
     fig, ax = plt.subplots(figsize=(10, 10), dpi=100)
-    ax.imshow(matrix, cmap=cmap, norm=norm, interpolation='nearest')
-    ax.axis('off')  # Remove axes for a cleaner image
+    ax.imshow(matrix, cmap=cmap, norm=norm, interpolation="nearest")
+    ax.axis("off")  # Remove axes for a cleaner image
 
     # Save the image
     output_path = os.path.join(output_folder, filename)
-    fig.savefig(output_path, bbox_inches='tight', pad_inches=0)
+    fig.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
     plt.close(fig)
 
 
 def test_visualize_matrix():
     """
-    Test function for visualize_matrix.
-    Generates a sample matrix with structured regions, visualizes it, and checks if the image is saved.
-    Each run generates a different filename to prevent overwriting.
+    Test the `visualize_matrix` function by creating and visualizing a sample matrix.
+
+    This function generates a 1000x1000 matrix with specific structured regions:
+    a red background, a blue circle in the center, and a grey ring between the circle
+    and background. It then calls `visualize_matrix` to create and save the image with
+    a unique filename. The test checks if the image was saved correctly.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
     """
+
     # Create a 1000x1000 matrix with default grey (0)
     size = 1000
     matrix = np.zeros((size, size), dtype=int)
@@ -59,7 +79,7 @@ def test_visualize_matrix():
     center = size // 2
     radius = size // 3
     Y, X = np.ogrid[:size, :size]
-    dist_from_center = np.sqrt((X - center)**2 + (Y - center)**2)
+    dist_from_center = np.sqrt((X - center) ** 2 + (Y - center) ** 2)
     mask_circle = dist_from_center <= radius
     matrix[mask_circle] = 1  # Blue circle
 
@@ -70,11 +90,11 @@ def test_visualize_matrix():
     matrix[mask_ring] = 0  # Grey ring
 
     # Generate a unique filename
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     filename = f"matrix_visualization_{timestamp}.png"
 
     # Call the visualize_matrix function
-    output_folder = 'test_output'
+    output_folder = "test_output"
     visualize_matrix(matrix, output_folder, filename=filename)
 
     # Verify if the image file was created
