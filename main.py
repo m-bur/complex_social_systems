@@ -1,17 +1,18 @@
 
 import argparse
+from utils import utils
 from network import *
 import matplotlib.pyplot as plt
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--side_length", type=int, default=50)
-    parser.add_argument("--local_length", type=int, default=10)
+    parser.add_argument("--side_length", type=int, default=100)
+    parser.add_argument("--local_length", type=int, default=20)
     parser.add_argument("--min_neighbors", type=int, default=18)
     parser.add_argument("--max_neighbors", type=int, default=52)
     parser.add_argument("--prob_first_conx", type=float, default=3.0)
-    parser.add_argument("--prob_second_conx", type=float, default=0.2)
+    parser.add_argument("--prob_second_conx", type=float, default=0.1)
     parser.add_argument("--regen_network", type=bool, default=False)
     parser.add_argument("--network_path", type=str, default='network.csv')
     return parser.parse_args()
@@ -36,6 +37,10 @@ def main(args=None):
         df_conx.to_csv(network_path)
     else:
         df_conx = pd.read_csv(network_path)
+        dict_voter = {}
+        for i in range(len(df_conx)):
+            dict_voter[i] = utils.Voter(df_conx.loc[i, 'x'], df_conx.loc[i, 'y'])
+            dict_voter[i].set_neighbor(df_conx.loc[i, 'connection'])
 
     plt.hist(df_conx['num'])
     plt.show()

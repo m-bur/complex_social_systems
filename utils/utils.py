@@ -35,6 +35,17 @@ class Voter:
         """
         self.neighbors.append((neighbor_i, neighbor_j))
 
+    def set_neighbor(self, neighbor_list):
+        """
+        Set a list of neighbors directly to the voter.
+
+        Parameters
+        ----------
+        neighbor_list : tuple (int, int)
+            The row/column coordinate of the neighbor.
+        """
+        self.neighbors = neighbor_list
+
     def set_opinion(self, opinion):
         """
         Sets the voter's opinion.
