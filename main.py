@@ -3,6 +3,7 @@ import argparse
 from network import *
 from utils.measure import *
 from utils.utils import *
+from utils.visualization import *
 from ast import literal_eval
 
 
@@ -66,6 +67,8 @@ def main(args=None):
 
     neighbor_opinion_distribution(network, "init_neighbour_dist")
 
+    visualize_network(network, "initial_network.png")
+
     op_trend = pd.DataFrame()
 
     for days in range(Ndays):
@@ -73,7 +76,8 @@ def main(args=None):
         out = pd.DataFrame([opinion_share(network)])
         op_trend = pd.concat([op_trend, out], ignore_index=True)
     
-    opinion_trend(op_trend)                                   
+    opinion_trend(op_trend)
+    visualize_network(network, "final_network")                                   
     neighbor_opinion_distribution(network, "neighbour_dist_1")
    
 
