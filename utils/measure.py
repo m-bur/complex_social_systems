@@ -1,31 +1,44 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+
+def opinion_list(network):
+    """
+    Returns the list of all opinions
+    """
+    opinions = []
+    n = np.shape(network)
+    for i in range(n[0]):
+        for j in range(n[1]):
+            opinions.append(network[i][j].get_opinion())
+    return opinions
 
 def polarization(network):
     """
     Returns the average opinion of  the network.
     """
-    s = 0  # stores the sum of all opinions
+    return np.mean(opinion_list(network))
+
+def std_opinion(network):
+    """
+    Returns the standard deviation of opinion in the nework
+    """
     n = np.shape(network)
-    for i in range(n[0]):
-        for j in range(n[1]):
-            s += network[i][j].get_opinion()
-    return s / (n[0] * n[1])  # returns the average opinon for the network
+    return np.std(opinion_list(network)) / np.sqrt(n[0] * n[1])
 
 
 def opinion_share(network):
     """
     Returns the share of opinion of the entire network.
     """
-    s = {-1: 0, 0: 0, 1: 0}
-    n = np.shape(network)
-    for i in range(n[0]):
-        for j in range(n[1]):
-            voter = network[i][j]
-            s[voter.get_opinion()] += 1
-    return s
+    unique_elements, counts = np.unique(
+        opinion_list(network), return_counts=True
+    )
+    share = counts / np.sum(counts)
+    return  pd.DataFrame([share], columns=unique_elements)
+
 
 
 def local_clustering(voter, network):
@@ -163,11 +176,10 @@ def number_media_distribution(network):
     return avg, std
 
 
-def opinion_trend(df):
+def opinion_trend(op_trend):
     """
-    plots the opinion share in op_trend
+    plots the opinion share
     """
-    op_trend = df.div(df.sum(axis=1), axis=0)
     plt.figure()
     for column in op_trend.columns:
         plt.plot(op_trend.index, op_trend[column], label=f"Opinion {column}")
@@ -175,3 +187,37 @@ def opinion_trend(df):
     plt.ylabel("Opinion Share")
     plt.legend()
     plt.savefig("figures/opinion_share.pdf")
+
+
+def plot_polarizaiton(network_pol):
+    """
+    plots the network polarization
+    """
+    plt.figure()
+    plt.plot(network_pol, label="Network Polarization")
+    plt.xlabel("Days")
+    plt.ylabel("Polarization")
+    plt.legend()
+    plt.savefig("figures/network_polarization.pdf")
+
+def plot_std(network_std):
+    """
+    plots the standard deviation of the network polarizaiton
+    """
+    plt.figure()
+    plt.plot(network_std, label="Standard deviation of network polarization")
+    plt.xlabel("Days")
+    plt.ylabel("Std")
+    plt.legend()
+    plt.savefig("figures/network_std.pdf")
+
+def plot_prob_to_change(prob_to_change):
+    """
+    Plots the probability to change the opinions
+    """
+    plt.figure()
+    plt.plot(prob_to_change, label="Probability to change the opinon")
+    plt.xlabel("Years")
+    plt.ylabel("P")
+    plt.legend()
+    plt.savefig("figures/prob_to_change.pdf")
