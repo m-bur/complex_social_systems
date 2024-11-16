@@ -4,10 +4,10 @@ utils package
 Submodules
 ----------
 
-utils.utils module
+utils.nodes module
 ------------------
 
-.. automodule:: utils.utils
+.. automodule:: utils.nodes
    :members:
    :undoc-members:
    :show-inheritance:
@@ -48,6 +48,23 @@ Module contents
 ---------------
 
 .. automodule:: visualization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+utils.network module
+------------------
+
+.. automodule:: utils.network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: network
    :members:
    :undoc-members:
    :show-inheritance:
