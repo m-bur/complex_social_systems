@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import random
 from utils.measure import polarization
+from utils.nodes import *
 
 
 def init_df_conx(c_min, c_max, gamma, L):
@@ -165,13 +166,75 @@ def init_network(df_conx, network):
     return network
 
 
-def init_media(mu, sigma, media):
+def generate_media_landscape(
+    number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1
+):
     """
-    Initialize the media network. Opionion follows countinuous uniform probability distribution.
+    Generate a pandas DataFrame containing media nodes and their respective IDs, 
+    where the opinions of the media nodes are generated based on the specified mode.
+
+    Parameters
+    ----------
+    number_of_media : int
+        The number of media nodes to generate.
+    mode : str, optional
+        The distribution mode for generating opinions. Can be one of the following:
+        - 'standard': Uniform distribution between -1 and 1 (default).
+        - 'uniform': Uniform distribution between -lower_bound and upper_bound.
+        - 'gaussian': Gaussian (normal) distribution with mean `mu` and standard deviation `sigma`.
+    mu : float, optional
+        The mean of the Gaussian distribution (default is 0).
+    sigma : float, optional
+        The standard deviation of the Gaussian distribution (default is 0.25).
+    lower_bound : float, optional
+        The lower bound of the uniform distribution for 'uniform' mode (default is -1).
+    upper_bound : float, optional
+        The upper bound of the uniform distribution for 'uniform' mode (default is 1).
+
+    Returns
+    -------
+    pandas.DataFrame
+        A DataFrame with 'media_id' as the index and a column 'node' containing media nodes. 
+        Each node is represented by an ID and an associated opinion.
+
+    Notes
+    -----
+    - In 'standard' mode, opinions are uniformly distributed between -1 and 1.
+    - In 'uniform' mode, opinions are uniformly distributed between -lower_bound and upper_bound.
+    - In 'gaussian' mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].
+
     """
-    for m in media:
-        m.set_opinion(np.clip(random.gauss(mu, sigma), -1, 1))
-    return media
+
+    if mode == "standard":
+        opinions = np.random.uniform(low=-1, high=1, size=number_of_media)
+        IDs = np.arange(number_of_media) 
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        return media_nodes
+
+    elif mode == "uniform":
+        opinions = np.random.uniform(
+            low=-lower_bound, high=upper_bound, size=number_of_media
+        )
+        IDs = np.arange(number_of_media)
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        return media_nodes
+    
+    elif mode == "fixed":
+        opinions = np.linspace(
+            low=-lower_bound, high=upper_bound, size=number_of_media
+        )
+        IDs = np.arange(number_of_media)
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        return media_nodes
+
+    elif mode == "gaussian":
+        opinions = np.random.normal(loc=mu, scale=sigma, size=number_of_media)
+        # Set all values greater than 1 to 1 and all values smaller than -1 to -1
+        opinions = np.clip(opinions, -1, 1)
+        IDs = np.arange(number_of_media)
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        return media_nodes
+
 
 
 def media_conx(network, media, Nc):
@@ -267,17 +330,9 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
         x = random.randint(0, n[0] - 1)  # random x voter value
         y = random.randint(0, n[1] - 1)  # random y voter value
         voter = network[x][y]
-        vmedia = voter.get_media_connections()
-        print(vmedia)
-        vmedia_op = [media[m].get_opinion() for m in vmedia]
-        print(vmedia_op)
         h = local_field(voter, network, media, W)
         s = polarization(network)
         voter_update(voter, h, s, alpha, t0)
         if mfeedback :
             voter.media_feedback(media)
-        vmedia = voter.get_media_connections()
-        vmedia_op = [media[m].get_opinion() for m in vmedia]
-        print(vmedia)
-        print(vmedia_op)
     return network

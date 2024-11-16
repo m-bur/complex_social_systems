@@ -1,7 +1,7 @@
 import argparse
-from network import *
+from utils.network import *
 from utils.measure import *
-from utils.utils import *
+from utils.nodes import *
 from ast import literal_eval
 
 
@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument("--number_media_connection", type=int, default=250)
     parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
-    parser.add_argument("--updated_voters", type=int, default=50)
+    parser.add_argument("--updated_voters", type=int, default=25)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
     parser.add_argument("--number_days", type=int, default=365)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
@@ -60,7 +60,7 @@ def main(args=None):
 
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     deg_distribution(network)
-    media = init_media(mu, sigma, [Media(i) for i in range(Nm)])  # Nm media network with average opinion mu
+    media = generate_media_landscape(Nm)  # Nm media network with average opinion mu
     media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network)
 
