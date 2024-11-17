@@ -27,12 +27,12 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.14])
-    parser.add_argument("--number_years", type=int, default=20)
+    parser.add_argument("--number_years", type=int, default=5)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     return parser.parse_args()
 
 
-def main(args=None):
+def run_simulation(args):
     L = args.side_length
     L_G = args.local_length
     c_min = args.min_neighbors
@@ -63,15 +63,9 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    folder = make_foldername()
-    print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
-    deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
-    number_media_distribution(network, folder, "number_media_distribution.pdf")
-    neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
-    visualize_network(network, folder, "initial_network.pdf")
 
     op_trend = pd.DataFrame()
     prob_to_change = []
@@ -90,23 +84,45 @@ def main(args=None):
         sys.stdout.flush()
         if days % (4*365) == 0:
             prob_to_change.append([days, changed_voters / (4 * np.size(network))])
-        if days == 1000:
-            mfeedback_on = True
 
-    opinion_trend(op_trend, folder, "opinion_share.pdf")
-    op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
-    plot_polarizaiton(network_polarization, folder, "network_polarization.pdf")
-    print_measure(network_polarization, folder, "network_polarizaiton.txt")
-    plot_std(network_std, folder, "network_std.pdf")
-    print_measure(network_std, folder, "network_std.txt")
-    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
-    print_prob_to_change(prob_to_change, folder, "prob_to_change.txt")
-    plot_clustering(network_clustering, folder, "network_clustering.pdf")
-    print_measure(network_clustering, folder, "network_clustering.txt")    
-    neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
-    visualize_network(network, folder, "final_network.pdf")
+    return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1]
+
+def calibrate_parameters(args=None):
+    # Define ranges for calibration
+    param_ranges = {
+        "initial_threshold": [(0, 0.12), (0, 0.14), (0, 0.16), (0, 0.18), (0, 0.2), (0.05, 0.12), (0.05, 0.14), (0.05, 0.16), (0.05, 0.18), (0.05, 0.2), (0.1, 0.12), (0.1, 0.14), (0.1, 0.16), (0.1, 0.18), (0.1, 0.2), (0.15, 0.12), (0.15, 0.14), (0.15, 0.16), (0.15, 0.18), (0.15, 0.2), (0.2, 0.12), (0.2, 0.14), (0.2, 0.16), (0.2, 0.18), (0.2, 0.2)],  # Pairs of thresholds to test
+    }
+    results_folder = "initial_threshold_calibration_results"
+    os.makedirs(results_folder, exist_ok=True)
+    summary_log = os.path.join(results_folder, "calibration_log.txt")
+    logs = []
+
+    # Iterate over combinations of parameters
+    for initial_threshold in param_ranges["initial_threshold"]:
+        # Update arguments
+        args = parse_args()
+        args.initial_threshold = initial_threshold
+
+        final_NV, final_std, final_clustering = run_simulation(args)
+                        
+        logs.append({
+            "initial_threshold": initial_threshold,
+            "final_opinion": final_NV,
+            "final_std": final_std,
+            "final_clustering": final_clustering,
+        })
+
+    # Write results to a text file
+    with open(summary_log, "w") as f:
+        f.write("Calibration Results\n")
+        f.write("initial_threshold,final_opinion,final_std,final_clustering,status\n")
+        for log in logs:
+            f.write(
+                f"{log['initial_threshold']},{log['final_opinion']},{log['final_std']},"
+                f"{log['final_clustering']}\n"
+            )
 
 
 if __name__ == "__main__":
     _args = parse_args()
-    main(_args)
+    calibrate_parameters(_args)
