@@ -61,14 +61,15 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
+    folder = make_foldername()
+    print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
-    deg_distribution(network)
+    deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, "fixed")  # Nm media network with average opinion mu
     media_conx(network, media, Nc)  # Nc random connections per media node
-    number_media_distribution(network)
-
-    neighbor_opinion_distribution(network, "initial_neighbour_dist")
-    visualize_network(network, "initial_network.png")
+    number_media_distribution(network, folder, "number_media_distribution.pdf")
+    neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
+    visualize_network(network, folder, "initial_network.pdf")
 
     op_trend = pd.DataFrame()
     prob_to_change = []
@@ -83,15 +84,15 @@ def main(args=None):
         network_std.append(std_opinion(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
-        if days // 365 == 4:
-            prob_to_change.append(changed_voters / (4 * np.size(network)))
+        if days / 365 == 4:
+            prob_to_change.append([days, changed_voters / (4 * np.size(network))])
 
-    opinion_trend(op_trend)
-    plot_polarizaiton(network_polarization)
-    plot_std(network_std)
-    plot_prob_to_change(prob_to_change)
-    neighbor_opinion_distribution(network, "final_neighbour_dist")
-    visualize_network(network, "final_network.png")
+    opinion_trend(op_trend, folder, "opinion_share.pdf")
+    plot_polarizaiton(network_polarization, folder, "network_polarization.pdf")
+    plot_std(network_std, folder, "network_std.pdf")
+    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")    
+    neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
+    visualize_network(network, folder, "final_network.pdf")
 
 
 if __name__ == "__main__":

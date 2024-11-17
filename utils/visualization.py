@@ -107,11 +107,11 @@ def test_visualize_matrix():
 # Run the test function
 #test_visualize_matrix()
 
-def visualize_network(network, filename=None):
+def visualize_network(network, folder, filename):
     """visualize voter network"""
     n = np.shape(network)
     matrix = np.zeros((n[0], n[1]), dtype=int)
     for i in range(n[0]):
         for j in range(n[1]):
             matrix[i, j] = network[i][j].get_opinion()
-    visualize_matrix(matrix, "figures", filename)
+    visualize_matrix(matrix, folder, filename)
