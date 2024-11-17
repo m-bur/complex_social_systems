@@ -26,7 +26,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=25)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
-    parser.add_argument("--number_years", type=int, default=1)
+    parser.add_argument("--number_years", type=int, default=50)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     return parser.parse_args()
 
@@ -65,7 +65,7 @@ def main(args=None):
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
-    media = generate_media_landscape(Nm, "fixed")  # Nm media network with average opinion mu
+    media = generate_media_landscape(Nm, "standard")  # Nm media network with average opinion mu
     media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network, folder, "number_media_distribution.pdf")
     neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
@@ -88,6 +88,8 @@ def main(args=None):
         sys.stdout.flush()
         if days % (4*365) == 0:
             prob_to_change.append([days, changed_voters / (4 * np.size(network))])
+        if days == 1000:
+            mfeedback_on = True
 
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
