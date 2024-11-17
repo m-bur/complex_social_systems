@@ -279,7 +279,7 @@ def generate_media_landscape(
 
     elif mode == "uniform":
         opinions = np.random.uniform(
-            low=-lower_bound, high=upper_bound, size=number_of_media
+            low=lower_bound, high=upper_bound, size=number_of_media
         )
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
@@ -287,7 +287,7 @@ def generate_media_landscape(
     
     elif mode == "fixed":
         opinions = np.linspace(
-            low=-lower_bound, high=upper_bound, size=number_of_media
+            start=lower_bound, stop=upper_bound, num=number_of_media
         )
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
@@ -327,6 +327,7 @@ def voter_update(voter, h, S, alpha, t0):
     Update the opinion of the voters based on the local field h. The threshold to change the opinion depends on the initial threshold t0 and the total polarization S.
     It favors the party which has the minority.
     """
+    changed_opinon = 0
     opinion = voter.get_opinion()
     if S > 0:  # if red has the majority
         t_rn = t0[0]  # threshold to change from red to neutral (unchanged)
@@ -341,13 +342,17 @@ def voter_update(voter, h, S, alpha, t0):
         )  # threshold to change from neutral to blue (lower, more likely)
         if opinion == 1 and h < t_rn:
             voter.set_opinion(0)
+            changed_opinon = 1
         elif opinion == 0:
             if h > t_nr:
                 voter.set_opinion(1)
+                changed_opinon = 1
             elif h < -t_nb:
                 voter.set_opinion(-1)
+                changed_opinon = 1
         elif opinion == -1 and h > t_bn:
             voter.set_opinion(0)
+            changed_opinon = 1
     if S <= 0:  # if blue has the majority
         t_bn = t0[0]  # threshold to change from blue to neutral (unchanged)
         t_rn = max(
@@ -361,14 +366,18 @@ def voter_update(voter, h, S, alpha, t0):
         )  # threshold to change from neutral to blue (higher, less likely)
         if opinion == 1 and h < -t_rn:
             voter.set_opinion(0)
+            changed_opinon = 1
         elif opinion == 0:
             if h > t_nr:
                 voter.set_opinion(1)
+                changed_opinon = 1
             elif h < -t_nb:
                 voter.set_opinion(-1)
+                changed_opinon = 1
         elif opinion == -1 and h > t_bn:
             voter.set_opinion(0)
-    return voter
+            changed_opinon = 1
+    return changed_opinon
 
 
 def local_field(voter, network, media, W):
@@ -391,6 +400,7 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
     Update the network one timestep by randomly picking Nv voters and updating their opinion. Media authority W and initial thresholds t0 with parameter alpha.
     """
+    changed_voters = 0
     for _ in range(Nv):
         n = np.shape(network)
         x = random.randint(0, n[0] - 1)  # random x voter value
@@ -398,7 +408,7 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
         voter = network[x][y]
         h = local_field(voter, network, media, W)
         s = polarization(network)
-        voter_update(voter, h, s, alpha, t0)
+        changed_voters += voter_update(voter, h, s, alpha, t0)
         if mfeedback :
             voter.media_feedback(media)
-    return network
+    return changed_voters

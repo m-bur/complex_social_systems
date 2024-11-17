@@ -7,11 +7,7 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 
 def visualize_matrix(matrix, output_folder, filename=None):
     """
-    Visualize a 2D matrix and save it as an image file.
-
-    This function displays a 2D matrix with specific color mapping:
-    -1 as red, 0 as grey, and 1 as blue. The generated visualization
-    is saved as a .png image in the specified output folder.
+    Visualizes a matrix with values -1 (blue), 0 (grey), 1 (red) and saves it as an image.
 
     Parameters
     ----------
@@ -30,7 +26,7 @@ def visualize_matrix(matrix, output_folder, filename=None):
     """
 
     # Create a color map: red for -1, grey for 0, blue for 1
-    cmap = ListedColormap(["red", "grey", "blue"])
+    cmap = ListedColormap(['blue', 'grey', 'red'])
     bounds = [-1.5, -0.5, 0.5, 1.5]  # Boundaries for the values
     norm = BoundaryNorm(bounds, cmap.N)
 
@@ -107,3 +103,15 @@ def test_visualize_matrix():
         print(f"Test passed: Image successfully saved to {output_path}")
     else:
         print(f"Test failed: Image not found at {output_path}")
+
+# Run the test function
+#test_visualize_matrix()
+
+def visualize_network(network, filename=None):
+    """visualize voter network"""
+    n = np.shape(network)
+    matrix = np.zeros((n[0], n[1]), dtype=int)
+    for i in range(n[0]):
+        for j in range(n[1]):
+            matrix[i, j] = network[i][j].get_opinion()
+    visualize_matrix(matrix, "figures", filename)
