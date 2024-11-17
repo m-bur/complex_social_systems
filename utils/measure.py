@@ -278,6 +278,19 @@ def plot_prob_to_change(prob_to_change, output_folder, file_name):
         plt.legend()
         plt.savefig(output_path)
 
+def plot_clustering(clustering, output_folder, file_name):
+    """
+    Plots the clustering
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    plt.figure()
+    plt.plot(clustering, label="Network clustering", color='black')
+    plt.xlabel("$t [\mathrm{d}]$")
+    plt.ylabel("$C_v$")
+    plt.legend()
+    plt.savefig(output_path)
+
 def print_parameters(args, output_folder, file_name):
     """
     Saves all arguments from argparse to a text file.

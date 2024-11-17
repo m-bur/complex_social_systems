@@ -75,6 +75,7 @@ def main(args=None):
     prob_to_change = []
     network_polarization = []
     network_std = []
+    network_clustering = []
     changed_voters = 0
 
     for days in range(Ndays):
@@ -82,6 +83,7 @@ def main(args=None):
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
+        network_clustering.append(clustering(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
         if days / 365 == 4:
@@ -90,7 +92,8 @@ def main(args=None):
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     plot_polarizaiton(network_polarization, folder, "network_polarization.pdf")
     plot_std(network_std, folder, "network_std.pdf")
-    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")    
+    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
+    plot_clustering(network_clustering, folder, "network_clustering.pdf")    
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")
 
