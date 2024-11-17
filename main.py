@@ -4,6 +4,8 @@ from utils.measure import *
 from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
+import sys
+
 
 
 def parse_args():
@@ -79,6 +81,8 @@ def main(args=None):
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
+        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.flush()
         if days // 365 == 4:
             prob_to_change.append(changed_voters / (4 * np.size(network)))
 

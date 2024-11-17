@@ -7,14 +7,33 @@ from utils.nodes import *
 
 
 def init_df_conx(c_min, c_max, gamma, L):
-    """Initialize the connection dataframe, number of rows is L * L
-        columns = x; y; number of connections; numbers left (auxiliary); connection list
-    :param c_min: minimal number of connections
-    :param c_max: maximal number of connections
-    :param gamma: distribution parameter for the number of connections (higher gamma -> lower connections)
-    :param L: L: Side length, i.e., the total number of nodes N = L * L
-    :return: a dataframe of the connections
     """
+    Initialize the connection dataframe.
+
+    Creates a dataframe with `L * L` rows representing nodes. The dataframe has the following columns:
+    - `x`: x-coordinate of the node.
+    - `y`: y-coordinate of the node.
+    - `number of connections`: The total number of connections for the node.
+    - `numbers left (auxiliary)`: An auxiliary column for remaining connections.
+    - `connection list`: A list of connections for the node.
+
+    Parameters
+    ----------
+    c_min : int
+        Minimal number of connections.
+    c_max : int
+        Maximal number of connections.
+    gamma : float
+        Distribution parameter for the number of connections (higher gamma results in fewer connections).
+    L : int
+        Side length of the grid; total number of nodes is `N = L * L`.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A dataframe representing the connections.
+    """
+
     # Get the probability list between c_min and c_max
     prob_list = []
     for k in range(c_min, c_max + 1):
@@ -45,12 +64,24 @@ def init_df_conx(c_min, c_max, gamma, L):
 
 
 def prob_first_connection(dist, L, L_G):
-    """Probability function to determine whether the first level connection exists between two nodes
-    :param dist: cartesian distance between two nodes
-    :param L: Side length, i.e., the total number of nodes N = L * L
-    :param L_G: Side length of a local group
-    :return: Probability of a link (before normalization)
     """
+    Probability function to determine the existence of a first-level connection between two nodes.
+
+    Parameters
+    ----------
+    dist : float
+        Cartesian distance between two nodes.
+    L : int
+        Side length of the grid; total number of nodes is `N = L * L`.
+    L_G : int
+        Side length of a local group.
+
+    Returns
+    -------
+    float
+        Probability of a link (before normalization).
+    """
+
     a = L_G
     b = a / 4
     prob = 1 / (1 + np.exp((dist - a) / b)) + 0.001 * (L - dist) / L
@@ -60,11 +91,22 @@ def prob_first_connection(dist, L, L_G):
 
 
 def calc_first_conx_matrix(L, L_G):
-    """Generate the first level connection matrix
-    :param L: Side length, i.e., the total number of nodes N = L * L
-    :param L_G: Side length of a local group
-    :return: the probability matrix of the first level connection
     """
+    Generate the first-level connection matrix.
+
+    Parameters
+    ----------
+    L : int
+        Side length of the grid; total number of nodes is `N = L * L`.
+    L_G : int
+        Side length of a local group.
+
+    Returns
+    -------
+    numpy.ndarray
+        The probability matrix of the first-level connection.
+    """
+
     print("==== Generate first level connection")
     pop = L * L
     first_conx_matrix = np.zeros((pop, pop))
@@ -84,12 +126,24 @@ def calc_first_conx_matrix(L, L_G):
 
 
 def calc_second_conx_matrix(L, first_conx_matrix, p_c):
-    """Generate the second level connection matrix
-    :param L: Side length, i.e., the total number of nodes N = L * L
-    :param first_conx_matrix: the first level connection matrix
-    :param p_c: probability parameter for a second connection
-    :return: the probability matrix of the second level connection
     """
+    Generate the second-level connection matrix.
+
+    Parameters
+    ----------
+    L : int
+        Side length of the grid; total number of nodes is `N = L * L`.
+    first_conx_matrix : numpy.ndarray
+        The first-level connection matrix.
+    p_c : float
+        Probability parameter for establishing a second-level connection.
+
+    Returns
+    -------
+    numpy.ndarray
+        The probability matrix of the second-level connection.
+    """
+
     print("==== Generate second level connection")
     pop = L * L
     second_conx_matrix = np.zeros((pop, pop))
@@ -109,12 +163,24 @@ def calc_second_conx_matrix(L, first_conx_matrix, p_c):
 
 
 def update_df_conx(L, df_conx, connection_matrix):
-    """Generate the connection dataframe, i.e., network
-    :param L: Side length
-    :param df_conx: connection dataframe
-    :param connection_matrix: the sum of fist and second level connection matrix
-    :return:
     """
+    Generate the connection dataframe (i.e., the network).
+
+    Parameters
+    ----------
+    L : int
+        Side length of the grid.
+    df_conx : pandas.DataFrame
+        Connection dataframe.
+    connection_matrix : numpy.ndarray
+        The sum of the first- and second-level connection matrices.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Updated connection dataframe representing the network.
+    """
+
     print("==== Generate network")
     pop = L * L
     connection_matrix_norm = np.zeros((pop, pop))
@@ -193,15 +259,15 @@ def generate_media_landscape(
 
     Returns
     -------
-    pandas.DataFrame
-        A DataFrame with 'media_id' as the index and a column 'node' containing media nodes. 
-        Each node is represented by an ID and an associated opinion.
+    list
+        A list that contains all the media nodes which have an opinion distribution according
 
     Notes
     -----
     - In 'standard' mode, opinions are uniformly distributed between -1 and 1.
     - In 'uniform' mode, opinions are uniformly distributed between -lower_bound and upper_bound.
     - In 'gaussian' mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].
+    - In 'fixed' mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound from the input parameters
 
     """
 

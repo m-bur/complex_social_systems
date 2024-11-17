@@ -172,8 +172,8 @@ class Voter:
 
         Parameters
         ----------
-        media_df : pd.DataFrame
-            A DataFrame which contains all the media nodes and their media_ids
+        media: list
+            A list that contains all the media nodes
 
         Returns
         -------
@@ -196,8 +196,8 @@ class Voter:
         ----------
         network : 2d np.array
             The matrix on which all the voter nodes are placed.
-        media_df : pd.DataFrame
-            A DataFrame which contains all the media nodes and their media_ids
+        media: list
+            A list that contains all the media nodes
 
         Returns
         -------
@@ -219,8 +219,8 @@ class Voter:
 
         Parameters
         ----------
-        media_df : pd.DataFrame
-            A DataFrame which contains all the media nodes and their media_ids
+        media: list
+            A list that contains all the media nodes
         """
 
         if self.get_opinion() == -1:
@@ -236,7 +236,6 @@ class Voter:
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
                         unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
-
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
