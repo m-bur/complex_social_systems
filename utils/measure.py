@@ -304,3 +304,23 @@ def print_parameters(args, output_folder, file_name):
     with open(output_path, 'w') as file:
         for arg, value in vars(args).items():
             file.write(f"{arg}: {value}\n")
+
+def print_measure(measure, output_folder, file_name):
+    """
+    prints measure to file
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    with open(output_path, 'w') as file:
+        for m in measure:
+            file.write(f"{m} \n")
+
+def print_prob_to_change(prob_to_change, output_folder, file_name):
+    """
+    prints to file
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    with open(output_path, 'w') as file:
+        for m in prob_to_change:
+            file.write(f"{m[0]} \t {m[1]} \n")
