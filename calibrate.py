@@ -124,11 +124,34 @@ def calibrate_parameters(args=None):
 
 def plot_calibration():
     # Read the data from the file
-    file_path = 'initial_threshold_calibration/calibration_log.txt'
-    df = pd.read_csv(file_path)
+    file_path = 'initial_threshold_calibration_results/calibration_log.txt'
+    # Read the file line by line, skipping the header
+    data = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        header = lines[0].strip().split(',')  # Extract the header
+        for line in lines[1:]:
+            row = line.strip().split(',')
+            data.append(row)
+
+    # Create a DataFrame manually
+    df = pd.DataFrame(data, columns=['x', 'y', 'final_opinion','final_std','final_clustering'])
 
     # Parse the `initial_threshold` column into `x` and `y` coordinates
-    df[['x', 'y']] = df['initial_threshold'].str.strip('()').str.split(', ', expand=True).astype(float)
+    df['x'] = df['x'].str.strip('()').astype(float)
+    df['y'] = df['y'].str.strip('()').astype(float)
+
+    df['x'] = pd.to_numeric(df['x'], errors='coerce')
+    df['y'] = pd.to_numeric(df['y'], errors='coerce')
+    df['final_opinion'] = pd.to_numeric(df['final_opinion'], errors='coerce')
+    df['final_std'] = pd.to_numeric(df['final_std'], errors='coerce')
+    df['final_clustering'] = pd.to_numeric(df['final_clustering'], errors='coerce')
+
+    # Drop rows with NaN values
+    df = df.dropna()
+
+    x_ticks = sorted(df['x'].unique())
+    y_ticks = sorted(df['y'].unique())
 
     # Pivot data for imshow
     pivot_data_opinion = df.pivot(index='y', columns='x', values='final_opinion')
@@ -138,16 +161,20 @@ def plot_calibration():
     # Plot using imshow
     fig, axes = plt.subplots(1, 3, figsize=(18, 6), constrained_layout=True)
     plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering]
-    titles = ['Final Opinion', 'Final Std', 'Final Clustering']
+    titles = ['Non-Voters', 'Final Std', 'Final Clustering']
 
     for ax, data, title in zip(axes, plots, titles):
         cax = ax.imshow(data, cmap='viridis', origin='lower', aspect='auto')
         ax.set_title(title, fontsize=14)
-        ax.set_xlabel('Initial Threshold X', fontsize=12)
-        ax.set_ylabel('Initial Threshold Y', fontsize=12)
-        fig.colorbar(cax, ax=ax, orientation='vertical', label=title)
+        ax.set_xlabel('$T_{V\\rightarrow NV}$', fontsize=12)
+        ax.set_ylabel('$T_{NV\\rightarrow V}$', fontsize=12)
+        fig.colorbar(cax, ax=ax, orientation='vertical')
+        ax.set_xticks(range(len(x_ticks)))
+        ax.set_xticklabels([f"{val:.2f}" for val in x_ticks])
+        ax.set_yticks(range(len(y_ticks)))
+        ax.set_yticklabels([f"{val:.2f}" for val in y_ticks])
 
-    plt.show()
+    plt.savefig("initial_threshold_calibration_results/initial_threshold_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()
