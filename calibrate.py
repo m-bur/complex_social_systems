@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.14])
-    parser.add_argument("--number_years", type=int, default=5)
+    parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     return parser.parse_args()
 
@@ -122,7 +122,33 @@ def calibrate_parameters(args=None):
                 f"{log['final_clustering']}\n"
             )
 
+def plot_calibration():
+    # Read the data from the file
+    file_path = 'initial_threshold_calibration/calibration_log.txt'
+    df = pd.read_csv(file_path)
+
+    # Parse the `initial_threshold` column into `x` and `y` coordinates
+    df[['x', 'y']] = df['initial_threshold'].str.strip('()').str.split(', ', expand=True).astype(float)
+
+    # Pivot data for imshow
+    pivot_data_opinion = df.pivot(index='y', columns='x', values='final_opinion')
+    pivot_data_std = df.pivot(index='y', columns='x', values='final_std')
+    pivot_data_clustering = df.pivot(index='y', columns='x', values='final_clustering')
+
+    # Plot using imshow
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6), constrained_layout=True)
+    plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering]
+    titles = ['Final Opinion', 'Final Std', 'Final Clustering']
+
+    for ax, data, title in zip(axes, plots, titles):
+        cax = ax.imshow(data, cmap='viridis', origin='lower', aspect='auto')
+        ax.set_title(title, fontsize=14)
+        ax.set_xlabel('Initial Threshold X', fontsize=12)
+        ax.set_ylabel('Initial Threshold Y', fontsize=12)
+        fig.colorbar(cax, ax=ax, orientation='vertical', label=title)
+
+    plt.show()
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
+    plot_calibration()
