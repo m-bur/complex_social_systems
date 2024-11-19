@@ -1,4 +1,4 @@
-threshold_parameter,final_opinion,final_std,final_clustering
+threshold_parameter,final_opinion,final_std,final_clustering,final_pol
 0,0.4752,0.014488536710102922,0.3771378620123974,0.0024
 0.1,0.476,0.014468512570406124,0.3721179352633768,-0.0256
 0.2,0.4764,0.014469333087602896,0.3808088542526603,0.014

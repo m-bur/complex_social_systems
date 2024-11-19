@@ -5,7 +5,7 @@ from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
 import sys
-
+import glob
 
 
 def parse_args():
@@ -89,7 +89,7 @@ def run_simulation(args):
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1]
 
 def calibrate_parameters(args=None):
-    for i in range(3,7):
+    for i in range(7,8):
         # Define ranges for calibration
         param_ranges = {
             "threshold_parameter": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
@@ -117,14 +117,14 @@ def calibrate_parameters(args=None):
 
         # Write results to a text file
         with open(summary_log, "w") as f:
-            f.write("threshold_parameter,final_opinion,final_std,final_clustering\n")
+            f.write("threshold_parameter,final_opinion,final_std,final_clustering,final_pol\n")
             for log in logs:
                 f.write(
                     f"{log['threshold_parameter']},{log['final_opinion']},{log['final_std']},"
                     f"{log['final_clustering']},{log['final_polarization']}\n"
                 )
 
-def plot_calibration():
+def plot_calibration_heatmap():
     # Read the data from the file
     file_path = 'initial_threshold_calibration_results/calibration_log.txt'
     # Read the file line by line, skipping the header
@@ -179,6 +179,56 @@ def plot_calibration():
         ax.set_yticklabels([f"{val:.2f}" for val in y_ticks])
 
     plt.savefig("initial_threshold_calibration_results/initial_threshold_calibration.pdf")
+
+
+def plot_calibration():
+    # Define file paths and load data from all files
+    file_paths = glob.glob("alpha_calibration_results/calibration_log*.txt")
+    dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
+
+    # Combine all data into a single DataFrame
+    combined_data = pd.concat(dataframes, ignore_index=True)
+    print(combined_data.columns)
+
+    # Compute the average and standard deviation for each threshold parameter
+    aggregated_data = combined_data.groupby("threshold_parameter").agg(
+        final_opinion_mean=("final_opinion", "mean"),
+        final_opinion_std=("final_opinion", "std"),
+        final_std_mean=("final_std", "mean"),
+        final_std_std=("final_std", "std"),
+        final_clustering_mean=("final_clustering", "mean"),
+        final_clustering_std=("final_clustering", "std"),
+        final_pol_mean=("final_pol", "mean"),
+        final_pol_std=("final_pol", "std")
+    ).reset_index()
+    print(aggregated_data)
+
+    # Plot the results
+    fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+    parameters = [
+        ("final_opinion", "Final Opinion"),
+        ("final_std", "Final Std"),
+        ("final_clustering", "Final Clustering"),
+        ("final_pol", "Final Polarization"),
+    ]
+
+    for ax, (col_prefix, title) in zip(axs, parameters):
+        ax.errorbar(
+            aggregated_data["threshold_parameter"],
+            aggregated_data[f"{col_prefix}_mean"],
+            yerr=aggregated_data[f"{col_prefix}_std"],
+            fmt='-o',
+            capsize=5,
+            label=f"{title} Mean ± Std"
+        )
+        ax.set_title(title)
+        ax.set_ylabel(title)
+        ax.grid(True)
+        ax.legend()
+
+    axs[-1].set_xlabel("Threshold Parameter")
+    plt.tight_layout()
+    plt.savefig("alpha_calibration_results/alpha_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()
