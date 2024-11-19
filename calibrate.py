@@ -62,7 +62,8 @@ def run_simulation(args):
         df_conx.to_csv(network_path)
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
-
+    
+    print_parameters(args, "alpha_calibration_results", "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -85,42 +86,43 @@ def run_simulation(args):
         if days % (4*365) == 0:
             prob_to_change.append([days, changed_voters / (4 * np.size(network))])
 
-    return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1]
+    return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1]
 
 def calibrate_parameters(args=None):
-    # Define ranges for calibration
-    param_ranges = {
-        "initial_threshold": [(0, 0.12), (0, 0.14), (0, 0.16), (0, 0.18), (0, 0.2), (0.05, 0.12), (0.05, 0.14), (0.05, 0.16), (0.05, 0.18), (0.05, 0.2), (0.1, 0.12), (0.1, 0.14), (0.1, 0.16), (0.1, 0.18), (0.1, 0.2), (0.15, 0.12), (0.15, 0.14), (0.15, 0.16), (0.15, 0.18), (0.15, 0.2), (0.2, 0.12), (0.2, 0.14), (0.2, 0.16), (0.2, 0.18), (0.2, 0.2)],  # Pairs of thresholds to test
-    }
-    results_folder = "initial_threshold_calibration_results"
-    os.makedirs(results_folder, exist_ok=True)
-    summary_log = os.path.join(results_folder, "calibration_log.txt")
-    logs = []
+    for i in range(3,7):
+        # Define ranges for calibration
+        param_ranges = {
+            "threshold_parameter": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        }
+        results_folder = "alpha_calibration_results"
+        os.makedirs(results_folder, exist_ok=True)
+        summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
+        logs = []
 
-    # Iterate over combinations of parameters
-    for initial_threshold in param_ranges["initial_threshold"]:
-        # Update arguments
-        args = parse_args()
-        args.initial_threshold = initial_threshold
+        # Iterate over combinations of parameters
+        for threshold_parameter in param_ranges["threshold_parameter"]:
+            # Update arguments
+            args = parse_args()
+            args.threshold_parameter = threshold_parameter
 
-        final_NV, final_std, final_clustering = run_simulation(args)
-                        
-        logs.append({
-            "initial_threshold": initial_threshold,
-            "final_opinion": final_NV,
-            "final_std": final_std,
-            "final_clustering": final_clustering,
-        })
+            final_NV, final_std, final_clustering, final_pol = run_simulation(args)
+                            
+            logs.append({
+                "threshold_parameter": threshold_parameter,
+                "final_opinion": final_NV,
+                "final_std": final_std,
+                "final_clustering": final_clustering,
+                "final_polarization": final_pol
+            })
 
-    # Write results to a text file
-    with open(summary_log, "w") as f:
-        f.write("Calibration Results\n")
-        f.write("initial_threshold,final_opinion,final_std,final_clustering,status\n")
-        for log in logs:
-            f.write(
-                f"{log['initial_threshold']},{log['final_opinion']},{log['final_std']},"
-                f"{log['final_clustering']}\n"
-            )
+        # Write results to a text file
+        with open(summary_log, "w") as f:
+            f.write("threshold_parameter,final_opinion,final_std,final_clustering\n")
+            for log in logs:
+                f.write(
+                    f"{log['threshold_parameter']},{log['final_opinion']},{log['final_std']},"
+                    f"{log['final_clustering']},{log['final_polarization']}\n"
+                )
 
 def plot_calibration():
     # Read the data from the file
@@ -135,7 +137,7 @@ def plot_calibration():
             data.append(row)
 
     # Create a DataFrame manually
-    df = pd.DataFrame(data, columns=['x', 'y', 'final_opinion','final_std','final_clustering'])
+    df = pd.DataFrame(data, columns=['x', 'y', 'final_opinion','final_std','final_clustering', 'final_polarization'])
 
     # Parse the `initial_threshold` column into `x` and `y` coordinates
     df['x'] = df['x'].str.strip('()').astype(float)
@@ -146,6 +148,7 @@ def plot_calibration():
     df['final_opinion'] = pd.to_numeric(df['final_opinion'], errors='coerce')
     df['final_std'] = pd.to_numeric(df['final_std'], errors='coerce')
     df['final_clustering'] = pd.to_numeric(df['final_clustering'], errors='coerce')
+    df['final_polarization'] = pd.to_numeric(df['final_polarization'], errors='coerce')
 
     # Drop rows with NaN values
     df = df.dropna()
@@ -157,11 +160,12 @@ def plot_calibration():
     pivot_data_opinion = df.pivot(index='y', columns='x', values='final_opinion')
     pivot_data_std = df.pivot(index='y', columns='x', values='final_std')
     pivot_data_clustering = df.pivot(index='y', columns='x', values='final_clustering')
+    pivot_data_pol = df.pivot(index='y', columns='x', values='final_polarization')
 
     # Plot using imshow
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6), constrained_layout=True)
+    fig, axes = plt.subplots(1, 4, figsize=(18, 6), constrained_layout=True)
     plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering]
-    titles = ['Non-Voters', 'Final Std', 'Final Clustering']
+    titles = ['Non-Voters', 'Final Std', 'Final Clustering', 'Final Polarization']
 
     for ax, data, title in zip(axes, plots, titles):
         cax = ax.imshow(data, cmap='viridis', origin='lower', aspect='auto')
@@ -178,4 +182,4 @@ def plot_calibration():
 
 if __name__ == "__main__":
     _args = parse_args()
-    plot_calibration()
+    calibrate_parameters(_args)
