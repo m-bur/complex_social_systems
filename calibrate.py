@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument("--media_init_mode", type=str, default="fixed")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=0.25)
-    parser.add_argument("--number_media", type=int, default=100)
+    parser.add_argument("--number_media", type=int, default=10)
     parser.add_argument("--number_media_connection", type=int, default=350)
     parser.add_argument("--media_authority", type=int, default=10)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
@@ -63,7 +63,7 @@ def run_simulation(args):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
     
-    print_parameters(args, "alpha_calibration_results", "parameters.txt")
+    print_parameters(args, "alpha_calibration_results_1", "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -89,12 +89,12 @@ def run_simulation(args):
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1]
 
 def calibrate_parameters(args=None):
-    for i in range(7,8):
+    for i in range(0,12):
         # Define ranges for calibration
         param_ranges = {
             "threshold_parameter": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
         }
-        results_folder = "alpha_calibration_results"
+        results_folder = "alpha_calibration_results_1"
         os.makedirs(results_folder, exist_ok=True)
         summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
         logs = []
@@ -206,7 +206,7 @@ def plot_calibration():
     # Plot the results
     fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
     parameters = [
-        ("final_opinion", "Final Opinion"),
+        ("final_opinion", "Non-Voters"),
         ("final_std", "Final Std"),
         ("final_clustering", "Final Clustering"),
         ("final_pol", "Final Polarization"),
@@ -232,4 +232,5 @@ def plot_calibration():
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
+    #calibrate_parameters(_args)
+    plot_calibration()
