@@ -26,7 +26,7 @@ def parse_args():
     parser.add_argument("--media_authority", type=int, default=10)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
-    parser.add_argument("--initial_threshold", type=list, default=[0, 0.14])
+    parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     return parser.parse_args()
@@ -63,7 +63,7 @@ def run_simulation(args):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
     
-    print_parameters(args, "alpha_calibration_results_1", "parameters.txt")
+    print_parameters(args, "nmedia_calibration_results", "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -83,50 +83,51 @@ def run_simulation(args):
         network_clustering.append(clustering(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
-        if days % (4*365) == 0:
-            prob_to_change.append([days, changed_voters / (4 * np.size(network))])
+        if days % (365*0.2) == 0:
+            prob_to_change.append([days, changed_voters / (0.2*np.size(network))])
 
-    return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1]
+    return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
 def calibrate_parameters(args=None):
     for i in range(0,12):
         # Define ranges for calibration
         param_ranges = {
-            "threshold_parameter": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+            "number_media": [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
         }
-        results_folder = "alpha_calibration_results_1"
+        results_folder = "nmedia_calibration_results"
         os.makedirs(results_folder, exist_ok=True)
         summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
         logs = []
 
         # Iterate over combinations of parameters
-        for threshold_parameter in param_ranges["threshold_parameter"]:
+        for number_media in param_ranges["number_media"]:
             # Update arguments
             args = parse_args()
-            args.threshold_parameter = threshold_parameter
+            args.number_media = number_media
 
-            final_NV, final_std, final_clustering, final_pol = run_simulation(args)
+            final_NV, final_std, final_clustering, final_pol, prob_to_change = run_simulation(args)
                             
             logs.append({
-                "threshold_parameter": threshold_parameter,
+                "number_media": number_media,
                 "final_opinion": final_NV,
                 "final_std": final_std,
                 "final_clustering": final_clustering,
-                "final_polarization": final_pol
+                "final_polarization": final_pol,
+                "prob_to_change": prob_to_change
             })
 
         # Write results to a text file
         with open(summary_log, "w") as f:
-            f.write("threshold_parameter,final_opinion,final_std,final_clustering,final_pol\n")
+            f.write("number_media,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
             for log in logs:
                 f.write(
-                    f"{log['threshold_parameter']},{log['final_opinion']},{log['final_std']},"
-                    f"{log['final_clustering']},{log['final_polarization']}\n"
+                    f"{log['number_media']},{log['final_opinion']},{log['final_std']},"
+                    f"{log['final_clustering']},{log['final_polarization']},{log['prob_to_change']}\n"
                 )
 
 def plot_calibration_heatmap():
     # Read the data from the file
-    file_path = 'initial_threshold_calibration_results/calibration_log.txt'
+    file_path = 'nmedia_calibration_results/calibration_log.txt'
     # Read the file line by line, skipping the header
     data = []
     with open(file_path, 'r') as file:
@@ -183,7 +184,7 @@ def plot_calibration_heatmap():
 
 def plot_calibration():
     # Define file paths and load data from all files
-    file_paths = glob.glob("alpha_calibration_results/calibration_log*.txt")
+    file_paths = glob.glob("alpha_calibration_results_1/calibration_log*.txt")
     dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
 
     # Combine all data into a single DataFrame
@@ -228,9 +229,9 @@ def plot_calibration():
 
     axs[-1].set_xlabel("Threshold Parameter")
     plt.tight_layout()
-    plt.savefig("alpha_calibration_results/alpha_calibration.pdf")
+    plt.savefig("alpha_calibration_results_1/alpha_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()
-    #calibrate_parameters(_args)
-    plot_calibration()
+    calibrate_parameters(_args)
+    #plot_calibration()
