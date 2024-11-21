@@ -22,7 +22,7 @@ def parse_args():
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=0.25)
     parser.add_argument("--number_media", type=int, default=40)
-    parser.add_argument("--number_media_connection", type=int, default=500)
+    parser.add_argument("--number_media_connection", type=int, default=350)
     parser.add_argument("--media_authority", type=int, default=10)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)

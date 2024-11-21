@@ -90,7 +90,7 @@ def run_simulation(args):
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
 def calibrate_parameters(args=None):
-    for i in range(0,5):
+    for i in range(5,6):
         # Define ranges for calibration
         param_ranges = {
             "media_authority": [0.1, 0,5, 1, 2, 4, 6, 8, 10, 15, 20],
@@ -237,5 +237,5 @@ def plot_calibration():
 
 if __name__ == "__main__":
     _args = parse_args()
-    #calibrate_parameters(_args)
-    plot_calibration()
+    calibrate_parameters(_args)
+    #plot_calibration()
