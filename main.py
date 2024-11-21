@@ -29,6 +29,8 @@ def parse_args():
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--media_feedback_probability", type=float, default=0.1)
+    parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
     return parser.parse_args()
 
 
@@ -52,6 +54,9 @@ def main(args=None):
     t0 = args.initial_threshold
     Ndays = 365*args.number_years
     mfeedback_on = args.media_feedback_turned_on
+    mfeedback_prob = args.media_feedback_probability
+    mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
+
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -65,7 +70,7 @@ def main(args=None):
 
     folder = make_foldername()
     print_parameters(args, folder, "parameters.txt")
-    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
+    network = init_network(df_conx, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
