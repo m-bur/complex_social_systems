@@ -493,20 +493,42 @@ the current timestamp is generated.</p></li>
 <dl class="py function" id="module-utils.network">
 <dt class="sig sig-object py" id="utils.network.calc_first_conx_matrix">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">calc_first_conx_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_G</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.calc_first_conx_matrix" title="Link to this definition"></a></dt>
-<dd><p>Generate the first level connection matrix
-:param L: Side length, i.e., the total number of nodes N = L * L
-:param L_G: Side length of a local group
-:return: the probability matrix of the first level connection</p>
+<dd><p>Generate the first-level connection matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>int</em>) – Side length of the grid; total number of nodes is <cite>N = L * L</cite>.</p></li>
+<li><p><strong>L_G</strong> (<em>int</em>) – Side length of a local group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The probability matrix of the first-level connection.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.calc_second_conx_matrix">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">calc_second_conx_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_conx_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.calc_second_conx_matrix" title="Link to this definition"></a></dt>
-<dd><p>Generate the second level connection matrix
-:param L: Side length, i.e., the total number of nodes N = L * L
-:param first_conx_matrix: the first level connection matrix
-:param p_c: probability parameter for a second connection
-:return: the probability matrix of the second level connection</p>
+<dd><p>Generate the second-level connection matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>int</em>) – Side length of the grid; total number of nodes is <cite>N = L * L</cite>.</p></li>
+<li><p><strong>first_conx_matrix</strong> (<em>numpy.ndarray</em>) – The first-level connection matrix.</p></li>
+<li><p><strong>p_c</strong> (<em>float</em>) – Probability parameter for establishing a second-level connection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The probability matrix of the second-level connection.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -529,11 +551,10 @@ where the opinions of the media nodes are generated based on the specified mode.
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A DataFrame with ‘media_id’ as the index and a column ‘node’ containing media nodes.
-Each node is represented by an ID and an associated opinion.</p>
+<dd class="field-even"><p>A list that contains all the media nodes which have an opinion distribution according</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -541,27 +562,34 @@ Each node is represented by an ID and an associated opinion.</p>
 <li><p>In ‘standard’ mode, opinions are uniformly distributed between -1 and 1.</p></li>
 <li><p>In ‘uniform’ mode, opinions are uniformly distributed between -lower_bound and upper_bound.</p></li>
 <li><p>In ‘gaussian’ mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].</p></li>
+<li><p>In ‘fixed’ mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound from the input parameters</p></li>
 </ul>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.init_df_conx">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">init_df_conx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.init_df_conx" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Initialize the connection dataframe, number of rows is L * L</dt><dd><p>columns = x; y; number of connections; numbers left (auxiliary); connection list</p>
-</dd>
-</dl>
+<dd><p>Initialize the connection dataframe.</p>
+<p>Creates a dataframe with <cite>L * L</cite> rows representing nodes. The dataframe has the following columns:
+- <cite>x</cite>: x-coordinate of the node.
+- <cite>y</cite>: y-coordinate of the node.
+- <cite>number of connections</cite>: The total number of connections for the node.
+- <cite>numbers left (auxiliary)</cite>: An auxiliary column for remaining connections.
+- <cite>connection list</cite>: A list of connections for the node.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>c_min</strong> – minimal number of connections</p></li>
-<li><p><strong>c_max</strong> – maximal number of connections</p></li>
-<li><p><strong>gamma</strong> – distribution parameter for the number of connections (higher gamma -&gt; lower connections)</p></li>
-<li><p><strong>L</strong> – L: Side length, i.e., the total number of nodes N = L * L</p></li>
+<li><p><strong>c_min</strong> (<em>int</em>) – Minimal number of connections.</p></li>
+<li><p><strong>c_max</strong> (<em>int</em>) – Maximal number of connections.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – Distribution parameter for the number of connections (higher gamma results in fewer connections).</p></li>
+<li><p><strong>L</strong> (<em>int</em>) – Side length of the grid; total number of nodes is <cite>N = L * L</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a dataframe of the connections</p>
+<dd class="field-even"><p>A dataframe representing the connections.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -593,21 +621,43 @@ Each node is represented by an ID and an associated opinion.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.prob_first_connection">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">prob_first_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_G</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.prob_first_connection" title="Link to this definition"></a></dt>
-<dd><p>Probability function to determine whether the first level connection exists between two nodes
-:param dist: cartesian distance between two nodes
-:param L: Side length, i.e., the total number of nodes N = L * L
-:param L_G: Side length of a local group
-:return: Probability of a link (before normalization)</p>
+<dd><p>Probability function to determine the existence of a first-level connection between two nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>float</em>) – Cartesian distance between two nodes.</p></li>
+<li><p><strong>L</strong> (<em>int</em>) – Side length of the grid; total number of nodes is <cite>N = L * L</cite>.</p></li>
+<li><p><strong>L_G</strong> (<em>int</em>) – Side length of a local group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Probability of a link (before normalization).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.update_df_conx">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">update_df_conx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_conx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.update_df_conx" title="Link to this definition"></a></dt>
-<dd><p>Generate the connection dataframe, i.e., network
-:param L: Side length
-:param df_conx: connection dataframe
-:param connection_matrix: the sum of fist and second level connection matrix
-:return:</p>
+<dd><p>Generate the connection dataframe (i.e., the network).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>int</em>) – Side length of the grid.</p></li>
+<li><p><strong>df_conx</strong> (<em>pandas.DataFrame</em>) – Connection dataframe.</p></li>
+<li><p><strong>connection_matrix</strong> (<em>numpy.ndarray</em>) – The sum of the first- and second-level connection matrices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Updated connection dataframe representing the network.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
