@@ -2,6 +2,7 @@ import argparse
 from utils.network import *
 from utils.measure import *
 from utils.nodes import *
+from utils.visualization import *
 from ast import literal_eval
 import sys
 
@@ -17,16 +18,17 @@ def parse_args():
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
     parser.add_argument("--regen_network", type=bool, default=False)
     parser.add_argument("--network_path", type=str, default="network.csv")
+    parser.add_argument("--media_init_mode", type=str, default="fixed")
     parser.add_argument("--average_media_opinion", type=float, default=0)
-    parser.add_argument("--std_media_opinion", type=float, default=1)
-    parser.add_argument("--number_media", type=int, default=50)
-    parser.add_argument("--number_media_connection", type=int, default=250)
-    parser.add_argument("--media_authority", type=int, default=1)
+    parser.add_argument("--std_media_opinion", type=float, default=0.25)
+    parser.add_argument("--number_media", type=int, default=40)
+    parser.add_argument("--number_media_connection", type=int, default=500)
+    parser.add_argument("--media_authority", type=int, default=10)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
-    parser.add_argument("--updated_voters", type=int, default=25)
-    parser.add_argument("--initial_threshold", type=list, default=[0, 0.18])
-    parser.add_argument("--number_days", type=int, default=365)
-    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
+    parser.add_argument("--updated_voters", type=int, default=50)
+    parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
+    parser.add_argument("--number_years", type=int, default=2)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     return parser.parse_args()
 
 
@@ -41,13 +43,14 @@ def main(args=None):
     network_path = args.network_path
     mu = args.average_media_opinion
     sigma = args.std_media_opinion
+    media_mode =args.media_init_mode
     Nm = args.number_media
     Nc = args.number_media_connection
     w = args.media_authority
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = args.number_days
+    Ndays = 365*args.number_years
     mfeedback_on = args.media_feedback_turned_on
 
     if regen_network:
@@ -60,26 +63,48 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
+    folder = make_foldername()
+    print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
-    deg_distribution(network)
-    media = generate_media_landscape(Nm)  # Nm media network with average opinion mu
+    deg_distribution(network, folder, "deg_distribution.pdf")
+    media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
-    number_media_distribution(network)
-
-    neighbor_opinion_distribution(network, "init_neighbour_dist")
+    number_media_distribution(network, folder, "number_media_distribution.pdf")
+    neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
+    visualize_network(network, folder, "initial_network.pdf")
 
     op_trend = pd.DataFrame()
+    prob_to_change = []
+    network_polarization = []
+    network_std = []
+    network_clustering = []
+    changed_voters = 0
 
     for days in range(Ndays):
-        network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
-        out = pd.DataFrame([opinion_share(network)])
-        op_trend = pd.concat([op_trend, out], ignore_index=True)
-        # Print progress on the same line
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
+        op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
+        network_polarization.append(polarization(network))
+        network_std.append(std_opinion(network))
+        network_clustering.append(clustering(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
+        if days % (4*365) == 0:
+            prob_to_change.append([days, changed_voters / (4 * np.size(network))])
+        if days == 1000:
+            mfeedback_on = True
 
-    opinion_trend(op_trend)
-    neighbor_opinion_distribution(network, "neighbour_dist_1")
+    opinion_trend(op_trend, folder, "opinion_share.pdf")
+    op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
+    plot_polarizaiton(network_polarization, folder, "network_polarization.pdf")
+    print_measure(network_polarization, folder, "network_polarizaiton.txt")
+    plot_std(network_std, folder, "network_std.pdf")
+    print_measure(network_std, folder, "network_std.txt")
+    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
+    print_prob_to_change(prob_to_change, folder, "prob_to_change.txt")
+    plot_clustering(network_clustering, folder, "network_clustering.pdf")
+    print_measure(network_clustering, folder, "network_clustering.txt")    
+    neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
+    visualize_network(network, folder, "final_network.pdf")
 
 
 if __name__ == "__main__":

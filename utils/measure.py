@@ -1,31 +1,46 @@
 import numpy as np
+import pandas as pd
+import os
+import datetime
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+
+def opinion_list(network):
+    """
+    Returns the list of all opinions
+    """
+    opinions = []
+    n = np.shape(network)
+    for i in range(n[0]):
+        for j in range(n[1]):
+            opinions.append(network[i][j].get_opinion())
+    return opinions
 
 def polarization(network):
     """
     Returns the average opinion of  the network.
     """
-    s = 0  # stores the sum of all opinions
+    return np.mean(opinion_list(network))
+
+def std_opinion(network):
+    """
+    Returns the standard deviation of opinion in the nework
+    """
     n = np.shape(network)
-    for i in range(n[0]):
-        for j in range(n[1]):
-            s += network[i][j].get_opinion()
-    return s / (n[0] * n[1])  # returns the average opinon for the network
+    return np.std(opinion_list(network)) / np.sqrt(n[0] * n[1])
 
 
 def opinion_share(network):
     """
     Returns the share of opinion of the entire network.
     """
-    s = {-1: 0, 0: 0, 1: 0}
-    n = np.shape(network)
-    for i in range(n[0]):
-        for j in range(n[1]):
-            voter = network[i][j]
-            s[voter.get_opinion()] += 1
-    return s
+    unique_elements, counts = np.unique(
+        opinion_list(network), return_counts=True
+    )
+    share = counts / np.sum(counts)
+    return  pd.DataFrame([share], columns=unique_elements)
+
 
 
 def local_clustering(voter, network):
@@ -72,10 +87,37 @@ def neighbor_opinion(voter, network):
     return s / n
 
 
-def neighbor_opinion_distribution(network, name="neighbor_distribution"):
+def make_foldername(base_name="figures"):
+    """
+    Creates a folder name based on the current date (year, month, day).
+    Appends a sequential number if folders with the same base name already exist.
+
+    Parameters:
+    - base_name (str): The base name for the folder.
+
+    Returns:
+    - str: A unique folder name.
+    """
+    # Get current date in YYYYMMDD format
+    date_str = datetime.datetime.now().strftime("%Y%m%d")
+    base_foldername = f"{base_name}_{date_str}"
+
+    # Check for existing folders with the same base name
+    counter = 1
+    foldername = base_foldername
+    while os.path.exists(foldername):
+        foldername = f"{base_foldername}_{counter}"
+        counter += 1
+    
+    return foldername
+
+
+def neighbor_opinion_distribution(network, output_folder, file_name):
     """
     Displays the distribution of the average opinion of neighbors depending on the opinon of the voter. Returns the the mean and standard deviation for each catagory.
     """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
     n = np.shape(network)
     neigh_opinion_dist = {-1: [], 0: [], 1: []}
     neigh_opinion_values = {-1: [], 0: [], 1: []}
@@ -87,6 +129,12 @@ def neighbor_opinion_distribution(network, name="neighbor_distribution"):
             neigh_opinion_dist[opinion].append(neigh_opinion)
     plt.figure()
     for i in neigh_opinion_dist:
+        if i == -1:
+            c = 'blue'
+        elif i == 0:
+            c = 'grey'
+        else:
+            c = 'red'
         avg = np.average(neigh_opinion_dist[i])
         std = np.std(neigh_opinion_dist[i])
         neigh_opinion_values[i].append([avg, std])
@@ -94,11 +142,12 @@ def neighbor_opinion_distribution(network, name="neighbor_distribution"):
             neigh_opinion_dist[i],
             alpha=0.5,
             label=f"Opinion {i}: ave = {avg:.2f}, std = {std:.2f}",
+            color=c
         )
     plt.legend()
-    plt.xlabel("xi")
-    plt.ylabel("Frequency of xi")
-    plt.savefig("figures/" + name + ".pdf")
+    plt.xlabel("$x_i^N$")
+    plt.ylabel("$f(x_i^N)$")
+    plt.savefig(output_path)
     return neigh_opinion_values
 
 
@@ -109,10 +158,12 @@ def power_law(x, a, b):
     return a * np.power(x, b)
 
 
-def deg_distribution(network):
+def deg_distribution(network, output_folder, file_name):
     """
     Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.
     """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
     k = np.array([])  # list of the degrees of each node
     n = np.shape(network)
     for i in range(n[0]):
@@ -131,19 +182,21 @@ def deg_distribution(network):
     xvals = np.linspace(min(unique_elements), max(unique_elements), num=100)
     yvals = power_law(xvals, a, b)
     plt.figure()
-    plt.plot(xvals, yvals, "k--", label=f"exponent b = {b}")
+    plt.plot(xvals, yvals, "k--", label=f"exponent $b = {b}$")
     plt.plot(unique_elements, counts, "ko", label="degree distribution")
-    plt.xlabel("k")
-    plt.ylabel("P(k)")
+    plt.xlabel("$k$")
+    plt.ylabel("$P(k)$")
     plt.legend()
-    plt.savefig("figures/deg_distribution.pdf")
+    plt.savefig(output_path)
     return b
 
 
-def number_media_distribution(network):
+def number_media_distribution(network, output_folder, file_name):
     """
     Displays the distribution of media connections of each voter. Returns the average and standard deviation.
     """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
     n = np.shape(network)
     m_conx = []
     for i in range(n[0]):
@@ -157,21 +210,117 @@ def number_media_distribution(network):
         m_conx, alpha=0.5, label=f"Media connections: ave = {avg:.2f}, std = {std:.2f}"
     )
     plt.legend()
-    plt.xlabel("nm")
-    plt.ylabel("Frequency of nm")
-    plt.savefig("figures/number_media_distribution.pdf")
+    plt.xlabel("$n_m$")
+    plt.ylabel("$f(n_m)$")
+    plt.savefig(output_path)
     return avg, std
 
 
-def opinion_trend(df):
+def opinion_trend(op_trend, output_folder, file_name):
     """
-    plots the opinion share in op_trend
+    plots the opinion share
     """
-    op_trend = df.div(df.sum(axis=1), axis=0)
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
     plt.figure()
     for column in op_trend.columns:
-        plt.plot(op_trend.index, op_trend[column], label=f"Opinion {column}")
-    plt.xlabel("Days")
+        if column == -1:
+            c = 'blue'
+        elif column == 0:
+            c = 'grey'
+        else:
+            c = 'red'
+        plt.plot(op_trend.index, op_trend[column], label=f"Opinion {column}", color=c)
+    plt.xlabel("$t [\mathrm{d}]$")
     plt.ylabel("Opinion Share")
     plt.legend()
-    plt.savefig("figures/opinion_share.pdf")
+    plt.savefig(output_path)
+
+
+def plot_polarizaiton(network_pol, output_folder, file_name):
+    """
+    plots the network polarization
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    plt.figure()
+    plt.plot(network_pol, label="Network Polarization", color='black')
+    plt.xlabel("$t [\mathrm{d}]$")
+    plt.ylabel("$S$")
+    plt.legend()
+    plt.savefig(output_path)
+
+def plot_std(network_std, output_folder, file_name):
+    """
+    plots the standard deviation of the network polarizaiton
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    plt.figure()
+    plt.plot(network_std, label="Standard deviation of network polarization", color='black')
+    plt.xlabel("$t [\mathrm{d}]$")
+    plt.ylabel("$\sigma$")
+    plt.legend()
+    plt.savefig(output_path)
+
+def plot_prob_to_change(prob_to_change, output_folder, file_name):
+    """
+    Plots the probability to change the opinions
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    if len(prob_to_change) > 1:
+        plt.figure()
+        prob_to_change = np.array(prob_to_change)
+        plt.plot(prob_to_change[:,0], prob_to_change[:,1], label="Probability to change the opinon", color='black')
+        plt.xlabel("$t [\mathrm{d}]$")
+        plt.ylabel("$P$")
+        plt.legend()
+        plt.savefig(output_path)
+
+def plot_clustering(clustering, output_folder, file_name):
+    """
+    Plots the clustering
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    plt.figure()
+    plt.plot(clustering, label="Network clustering", color='black')
+    plt.xlabel("$t [\mathrm{d}]$")
+    plt.ylabel("$C_v$")
+    plt.legend()
+    plt.savefig(output_path)
+
+def print_parameters(args, output_folder, file_name):
+    """
+    Saves all arguments from argparse to a text file.
+
+    Parameters:
+    - args: Namespace object from argparse.parse_args().
+    - file_name: The name of the text file to save arguments.
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    with open(output_path, 'w') as file:
+        for arg, value in vars(args).items():
+            file.write(f"{arg}: {value}\n")
+
+def print_measure(measure, output_folder, file_name):
+    """
+    prints measure to file
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    with open(output_path, 'w') as file:
+        for m in measure:
+            file.write(f"{m} \n")
+
+def print_prob_to_change(prob_to_change, output_folder, file_name):
+    """
+    prints to file
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
+    with open(output_path, 'w') as file:
+        for m in prob_to_change:
+            file.write(f"{m[0]} \t {m[1]} \n")
