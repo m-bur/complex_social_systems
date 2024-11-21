@@ -10,7 +10,7 @@ class Voter:
         opinion=0,
         media_weight=10,
         media_feedback_turned_on=False,
-        media_feedback_probability=0.5,
+        media_feedback_probability=0.1,
         meadia_feedback_threshold_replacement_neutral=0.1,
     ):
         """

@@ -1,0 +1,18 @@
+side_length: 50
+local_length: 10
+min_neighbors: 18
+max_neighbors: 52
+prob_first_conx: 3.0
+prob_second_conx: 0.2
+regen_network: False
+network_path: network.csv
+average_media_opinion: 0
+std_media_opinion: 1
+number_media: 100
+number_media_connection: 350
+media_authority: 10
+threshold_parameter: 0.5
+updated_voters: 50
+initial_threshold: [0, 0.14]
+number_years: 20
+media_feedback_turned_on: False
