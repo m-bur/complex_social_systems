@@ -419,6 +419,11 @@ def get_election_winner(network):
 def get_number_of_consecutive_terms(election_results):
     """
     Takes a chronological list of the election results and returns the number of consecutive terms of the ruling party.
+    
+    Some example outputs: 
+
+    get_number_of_consecutive_terms([1,-1,1,1]) == 1
+    get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3
 
     Parameters
     ----------
@@ -439,7 +444,7 @@ def get_number_of_consecutive_terms(election_results):
             count += 1
         else:
             break
-        
+
     count -= 1 # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
     return count
 
