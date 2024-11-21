@@ -219,7 +219,7 @@ def update_df_conx(L, df_conx, connection_matrix):
     return df_conx
 
 
-def init_network(df_conx, media_feedback_probability, media_feedback_threshold_replacement_neutral):
+def init_network(df_conx, L, media_feedback_probability, media_feedback_threshold_replacement_neutral):
     """
     Initializes a voter network based on a given connections dataframe.
 
@@ -251,7 +251,6 @@ def init_network(df_conx, media_feedback_probability, media_feedback_threshold_r
         neighbors and initial opinion set.
     """
     # Get the size of the network from the number of rows in the DataFrame
-    L = df_conx.shape[0]
 
     # Create a 2D list of Voter objects, initialized with default opinions and media feedback settings
     network = [
@@ -264,7 +263,7 @@ def init_network(df_conx, media_feedback_probability, media_feedback_threshold_r
     ]
 
     # Iterate through the DataFrame to set voter properties and establish neighbor connections
-    for i in range(L):
+    for i in range(L**2):
         row = df_conx.iloc[i]  # Get the current row
         neighbors = row["connection"]  # List of neighboring coordinates
         # Reference the voter at the given (x, y) position

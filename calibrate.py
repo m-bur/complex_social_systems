@@ -27,8 +27,10 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=2)
+    parser.add_argument("--number_years", type=int, default=5)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--media_feedback_probability", type=float, default=0.1)
+    parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
     return parser.parse_args()
 
 
@@ -52,6 +54,8 @@ def run_simulation(args):
     t0 = args.initial_threshold
     Ndays = 365*args.number_years
     mfeedback_on = args.media_feedback_turned_on
+    mfeedback_prob = args.media_feedback_probability
+    mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -63,8 +67,8 @@ def run_simulation(args):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
     
-    print_parameters(args, "mauthority_calibration_results", "parameters.txt")
-    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
+    print_parameters(args, "mfeedback_calibration_results", "parameters.txt")
+    network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
 
@@ -86,30 +90,33 @@ def run_simulation(args):
         if days % (365) == 0:
             prob_to_change.append([days, changed_voters / (np.size(network))])
             changed_voters = 0
+        if days == 2*365:
+            mfeedback_on = True
 
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
+
 def calibrate_parameters(args=None):
-    for i in range(5,6):
+    for i in range(1,6):
         # Define ranges for calibration
         param_ranges = {
-            "media_authority": [0.1, 0,5, 1, 2, 4, 6, 8, 10, 15, 20],
+            "mfeedback_prob": [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3],
         }
-        results_folder = "mauthority_calibration_results"
+        results_folder = "mfeedback_calibration_results"
         os.makedirs(results_folder, exist_ok=True)
         summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
         logs = []
 
         # Iterate over combinations of parameters
-        for media_authority in param_ranges["media_authority"]:
+        for mfeedback_prob in param_ranges["mfeedback_prob"]:
             # Update arguments
             args = parse_args()
-            args.media_authority = media_authority
+            args.media_feedback_probability = mfeedback_prob
 
             final_NV, final_std, final_clustering, final_pol, prob_to_change = run_simulation(args)
                             
             logs.append({
-                "media_authority": media_authority,
+                "media_feedback_probability": mfeedback_prob,
                 "final_opinion": final_NV,
                 "final_std": final_std,
                 "final_clustering": final_clustering,
@@ -119,10 +126,10 @@ def calibrate_parameters(args=None):
 
         # Write results to a text file
         with open(summary_log, "w") as f:
-            f.write("media_authority,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
+            f.write("media_feedback_probability,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
             for log in logs:
                 f.write(
-                    f"{log['media_authority']},{log['final_opinion']},{log['final_std']},"
+                    f"{log['media_feedback_probability']},{log['final_opinion']},{log['final_std']},"
                     f"{log['final_clustering']},{log['final_polarization']},{log['prob_to_change']}\n"
                 )
 

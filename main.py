@@ -5,6 +5,7 @@ from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
 import sys
+import copy
 
 
 
@@ -23,11 +24,11 @@ def parse_args():
     parser.add_argument("--std_media_opinion", type=float, default=0.25)
     parser.add_argument("--number_media", type=int, default=40)
     parser.add_argument("--number_media_connection", type=int, default=350)
-    parser.add_argument("--media_authority", type=int, default=10)
+    parser.add_argument("--media_authority", type=int, default=1)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=2)
+    parser.add_argument("--number_years", type=int, default=4)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
@@ -70,7 +71,7 @@ def main(args=None):
 
     folder = make_foldername()
     print_parameters(args, folder, "parameters.txt")
-    network = init_network(df_conx, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
+    network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -83,6 +84,7 @@ def main(args=None):
     network_polarization = []
     network_std = []
     network_clustering = []
+    networks = []
     changed_voters = 0
 
     for days in range(Ndays):
@@ -93,11 +95,14 @@ def main(args=None):
         network_clustering.append(clustering(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
-        if days % (4*365) == 0:
-            prob_to_change.append([days, changed_voters / (4 * np.size(network))])
+        if days % (365) == 0:
+            prob_to_change.append([days, changed_voters / (np.size(network))])
+        if days % 5 == 0:
+            networks.append(copy.deepcopy(network))
         if days == 1000:
-            mfeedback_on = True
-
+            mfeedback_on = False
+            
+    visualize_network_evolution(networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
     plot_polarization(network_polarization, folder, "network_polarization.pdf")
