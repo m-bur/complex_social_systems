@@ -29,6 +29,7 @@ def parse_args():
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=5)
     return parser.parse_args()
 
 
@@ -52,6 +53,7 @@ def main(args=None):
     t0 = args.initial_threshold
     Ndays = 365*args.number_years
     mfeedback_on = args.media_feedback_turned_on
+    number_of_days_election_cycle = args.number_of_days_election_cycle
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -80,14 +82,23 @@ def main(args=None):
     network_clustering = []
     changed_voters = 0
 
+    election_results = []
     for days in range(Ndays):
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
+        
+        # have elections
+        if days % number_of_days_election_cycle == 0:
+            winner = get_election_winner(network)
+            election_results.append(winner)
+
+        # progress bar #####################
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
+        # progress bar #####################
         if days % (4*365) == 0:
             prob_to_change.append([days, changed_voters / (4 * np.size(network))])
         if days == 1000:

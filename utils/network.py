@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import random
 from utils.measure import polarization
+from utils.measure import opinion_share
+
 from utils.nodes import *
 
 
@@ -395,6 +397,22 @@ def local_field(voter, network, media, W):
         h += W * media[mid].get_opinion()
     return h / (n + W * m)
 
+def get_election_winner(network):
+    """
+    Returns the party which has relative the majority in the network
+
+    Returns
+    -------
+    int
+        the winning party (can either be 1 or -1)
+    """
+    opion_shared_df = opinion_share(network)
+    
+    # in case of a tie: 1 (red) wins
+    if opion_shared_df["-1"] > opion_shared_df["1"]:
+        return -1
+    else:
+        return 1
 
 def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
