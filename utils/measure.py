@@ -329,28 +329,28 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
             file.write(f"{m[0]} \t {m[1]} \n")
 
 
-def generate_consecutive_counts(data):
+def generate_consecutive_counts(election_results):
     """
     Generate a DataFrame with counts of consecutive occurrences of 1 and -1.
     
     Parameters:
-        data (list): A list containing 1s and -1s representing some binary states.
+        election_results (list): A list containing 1s and -1s representing the terms each party won.
     
     Returns:
         DataFrame: A DataFrame with 'Consecutive Elections' as the index (from 0 to the maximum run length found),
                    and columns for the counts of consecutive occurrences of 1 and -1.
     """
-    if not data:
+    if not election_results:
         # If no data, return an empty DataFrame with index starting from 0
         return pd.DataFrame(columns=[-1, 1], index=pd.RangeIndex(start=0, stop=1))
 
     # Initialize a list to store the counts of consecutive occurrences
     counts = []
-    current_value = data[0]
+    current_value = election_results[0]
     count = 1
 
     # Loop through the data to calculate streak lengths
-    for value in data[1:]:
+    for value in election_results[1:]:
         if value == current_value:
             count += 1
         else:
