@@ -406,13 +406,42 @@ def get_election_winner(network):
     int
         the winning party (can either be 1 or -1)
     """
-    opion_shared_df = opinion_share(network)
-    
+    opinion_share_df = opinion_share(network)
+
+    # opinion_shared_df[-1][0] gives access to the share of the -1 (blue party)
+    # opinion_shared_df[1][0] gives access to the share of the 1 (red party)
     # in case of a tie: 1 (red) wins
-    if opion_shared_df["-1"] > opion_shared_df["1"]:
+    if opinion_share_df[-1][0] > opinion_share_df[1][0]:
         return -1
     else:
         return 1
+    
+def get_number_of_consecutive_terms(election_results):
+    """
+    Takes a chronological list of the election results and returns the number of consecutive terms of the ruling party.
+
+    Parameters
+    ----------
+    election_results : list
+
+    Returns:
+    number_of_consecutive_terms : int
+    """
+
+    if not election_results:  # Handle empty list
+        return 0
+    
+    last_value = election_results[-1]
+
+    count = 0
+    for num in reversed(election_results):
+        if num == last_value:
+            count += 1
+        else:
+            break
+        
+    count -= 1 # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
+    return count
 
 def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
