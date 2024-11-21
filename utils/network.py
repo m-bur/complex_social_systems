@@ -248,6 +248,7 @@ def generate_media_landscape(
         - 'standard': Uniform distribution between -1 and 1 (default).
         - 'uniform': Uniform distribution between -lower_bound and upper_bound.
         - 'gaussian': Gaussian (normal) distribution with mean `mu` and standard deviation `sigma`.
+        - 'fixed': equally spaced media nodes.
     mu : float, optional
         The mean of the Gaussian distribution (default is 0).
     sigma : float, optional
