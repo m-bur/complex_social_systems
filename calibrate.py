@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument("--media_init_mode", type=str, default="fixed")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=0.25)
-    parser.add_argument("--number_media", type=int, default=10)
+    parser.add_argument("--number_media", type=int, default=40)
     parser.add_argument("--number_media_connection", type=int, default=350)
     parser.add_argument("--media_authority", type=int, default=10)
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
@@ -63,7 +63,7 @@ def run_simulation(args):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
     
-    print_parameters(args, "nmedia_calibration_results", "parameters.txt")
+    print_parameters(args, "mauthority_calibration_results", "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -83,32 +83,33 @@ def run_simulation(args):
         network_clustering.append(clustering(network))
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
-        if days % (365*0.2) == 0:
-            prob_to_change.append([days, changed_voters / (0.2*np.size(network))])
+        if days % (365) == 0:
+            prob_to_change.append([days, changed_voters / (np.size(network))])
+            changed_voters = 0
 
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
 def calibrate_parameters(args=None):
-    for i in range(0,12):
+    for i in range(0,5):
         # Define ranges for calibration
         param_ranges = {
-            "number_media": [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            "media_authority": [0.1, 0,5, 1, 2, 4, 6, 8, 10, 15, 20],
         }
-        results_folder = "nmedia_calibration_results"
+        results_folder = "mauthority_calibration_results"
         os.makedirs(results_folder, exist_ok=True)
         summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
         logs = []
 
         # Iterate over combinations of parameters
-        for number_media in param_ranges["number_media"]:
+        for media_authority in param_ranges["media_authority"]:
             # Update arguments
             args = parse_args()
-            args.number_media = number_media
+            args.media_authority = media_authority
 
             final_NV, final_std, final_clustering, final_pol, prob_to_change = run_simulation(args)
                             
             logs.append({
-                "number_media": number_media,
+                "media_authority": media_authority,
                 "final_opinion": final_NV,
                 "final_std": final_std,
                 "final_clustering": final_clustering,
@@ -118,10 +119,10 @@ def calibrate_parameters(args=None):
 
         # Write results to a text file
         with open(summary_log, "w") as f:
-            f.write("number_media,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
+            f.write("media_authority,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
             for log in logs:
                 f.write(
-                    f"{log['number_media']},{log['final_opinion']},{log['final_std']},"
+                    f"{log['media_authority']},{log['final_opinion']},{log['final_std']},"
                     f"{log['final_clustering']},{log['final_polarization']},{log['prob_to_change']}\n"
                 )
 
@@ -184,7 +185,7 @@ def plot_calibration_heatmap():
 
 def plot_calibration():
     # Define file paths and load data from all files
-    file_paths = glob.glob("alpha_calibration_results_1/calibration_log*.txt")
+    file_paths = glob.glob("mauthority_calibration_results/calibration_log*.txt")
     dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
 
     # Combine all data into a single DataFrame
@@ -192,7 +193,7 @@ def plot_calibration():
     print(combined_data.columns)
 
     # Compute the average and standard deviation for each threshold parameter
-    aggregated_data = combined_data.groupby("threshold_parameter").agg(
+    aggregated_data = combined_data.groupby("media_authority").agg(
         final_opinion_mean=("final_opinion", "mean"),
         final_opinion_std=("final_opinion", "std"),
         final_std_mean=("final_std", "mean"),
@@ -200,22 +201,25 @@ def plot_calibration():
         final_clustering_mean=("final_clustering", "mean"),
         final_clustering_std=("final_clustering", "std"),
         final_pol_mean=("final_pol", "mean"),
-        final_pol_std=("final_pol", "std")
+        final_pol_std=("final_pol", "std"),
+        prob_to_change_mean=("prob_to_change", "mean"),
+        prob_to_change_std=("prob_to_change", "std")
     ).reset_index()
     print(aggregated_data)
 
     # Plot the results
-    fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+    fig, axs = plt.subplots(5, 1, figsize=(10, 16), sharex=True)
     parameters = [
         ("final_opinion", "Non-Voters"),
         ("final_std", "Final Std"),
         ("final_clustering", "Final Clustering"),
         ("final_pol", "Final Polarization"),
+        ("prob_to_change", "Changes in Opinion per year")
     ]
 
     for ax, (col_prefix, title) in zip(axs, parameters):
         ax.errorbar(
-            aggregated_data["threshold_parameter"],
+            aggregated_data["media_authority"],
             aggregated_data[f"{col_prefix}_mean"],
             yerr=aggregated_data[f"{col_prefix}_std"],
             fmt='-o',
@@ -227,11 +231,11 @@ def plot_calibration():
         ax.grid(True)
         ax.legend()
 
-    axs[-1].set_xlabel("Threshold Parameter")
+    axs[-1].set_xlabel("Media Authority")
     plt.tight_layout()
-    plt.savefig("alpha_calibration_results_1/alpha_calibration.pdf")
+    plt.savefig("mauthority_calibration_results/mauthority_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
-    #plot_calibration()
+    #calibrate_parameters(_args)
+    plot_calibration()
