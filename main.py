@@ -100,7 +100,7 @@ def main(args=None):
 
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
-    plot_polarizaiton(network_polarization, folder, "network_polarization.pdf")
+    plot_polarization(network_polarization, folder, "network_polarization.pdf")
     print_measure(network_polarization, folder, "network_polarizaiton.txt")
     plot_std(network_std, folder, "network_std.pdf")
     print_measure(network_std, folder, "network_std.txt")

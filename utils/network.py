@@ -40,7 +40,8 @@ def init_df_conx(c_min, c_max, gamma, L):
         prob = k ** (-gamma)
         prob_list.append(prob)
     prob_sum = sum(prob_list)
-    prob_list_norm = [_ / prob_sum for _ in prob_list] + [1]  # normalized prob list
+    prob_list_norm = [_ / prob_sum for _ in prob_list] + \
+        [1]  # normalized prob list
     prob_list = [
         sum(prob_list_norm[:_]) for _ in range(len(prob_list_norm))
     ]  # accumulative prob list
@@ -218,7 +219,6 @@ def update_df_conx(L, df_conx, connection_matrix):
     return df_conx
 
 
-
 def init_network(df_conx, media_feedback_probability, media_feedback_threshold_replacement_neutral):
     """
     Initializes a voter network based on a given connections dataframe.
@@ -256,7 +256,8 @@ def init_network(df_conx, media_feedback_probability, media_feedback_threshold_r
     # Create a 2D list of Voter objects, initialized with default opinions and media feedback settings
     network = [
         [
-            Voter(i, j, 0, 10, False, media_feedback_probability, media_feedback_threshold_replacement_neutral)
+            Voter(i, j, 0, 10, False, media_feedback_probability,
+                  media_feedback_threshold_replacement_neutral)
             for i in range(L)
         ]
         for j in range(L)
@@ -266,18 +267,18 @@ def init_network(df_conx, media_feedback_probability, media_feedback_threshold_r
     for i in range(L):
         row = df_conx.iloc[i]  # Get the current row
         neighbors = row["connection"]  # List of neighboring coordinates
-        voter = network[row["x"]][row["y"]]  # Reference the voter at the given (x, y) position
-        
+        # Reference the voter at the given (x, y) position
+        voter = network[row["x"]][row["y"]]
+
         # Set an initial opinion for the voter, chosen randomly from [-1, 0, 1]
         voter.set_opinion(random.choice([-1, 0, 1]))
-        
+
         # Add each neighbor to the voter's list of neighbors
         for ncoordinates in neighbors:
             voter.add_neighbor(ncoordinates[0], ncoordinates[1])
-    
+
     # Return the fully initialized network
     return network
-
 
 
 def generate_media_landscape(
@@ -322,8 +323,9 @@ def generate_media_landscape(
 
     if mode == "standard":
         opinions = np.random.uniform(low=-1, high=1, size=number_of_media)
-        IDs = np.arange(number_of_media) 
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        IDs = np.arange(number_of_media)
+        media_nodes = [Media(ID, opinion=opinion)
+                       for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "uniform":
@@ -331,15 +333,17 @@ def generate_media_landscape(
             low=lower_bound, high=upper_bound, size=number_of_media
         )
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion)
+                       for ID, opinion in zip(IDs, opinions)]
         return media_nodes
-    
+
     elif mode == "fixed":
         opinions = np.linspace(
             start=lower_bound, stop=upper_bound, num=number_of_media
         )
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion)
+                       for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "gaussian":
@@ -347,9 +351,9 @@ def generate_media_landscape(
         # Set all values greater than 1 to 1 and all values smaller than -1 to -1
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion)
+                       for ID, opinion in zip(IDs, opinions)]
         return media_nodes
-
 
 
 def media_conx(network, media, Nc):
@@ -387,11 +391,11 @@ def media_conx(network, media, Nc):
 
             # Check if the media ID is not already connected to the voter
             if m.get_id() not in voter.get_media_connections():
-                voter.add_media_connection(m.get_id())  # Add the media connection
+                # Add the media connection
+                voter.add_media_connection(m.get_id())
                 i += 1  # Increment the count of connections made for this media node
 
     return network
-
 
 
 def voter_update(voter, h, S, alpha, t0):

@@ -77,10 +77,10 @@ def opinion_share(network):
     pd.DataFrame
         A DataFrame where columns are unique opinions and values represent their share.
     """
-    unique_elements, counts = np.unique(opinion_list(network), return_counts=True)
+    unique_elements, counts = np.unique(
+        opinion_list(network), return_counts=True)
     share = counts / np.sum(counts)
     return pd.DataFrame([share], columns=unique_elements)
-
 
 
 def local_clustering(voter, network):
@@ -180,7 +180,7 @@ def make_foldername(base_name="figures"):
     while os.path.exists(foldername):
         foldername = f"{base_foldername}_{counter}"
         counter += 1
-    
+
     return foldername
 
 
@@ -298,8 +298,10 @@ def deg_distribution(network, output_folder, file_name):
     xvals = np.linspace(min(unique_elements), max(unique_elements), num=100)
     yvals = power_law(xvals, a, b)
     plt.figure()
-    plt.plot(xvals, yvals, "k--", label=f"Exponent $b = {b:.2f}$")  # Fitted curve
-    plt.plot(unique_elements, counts, "ko", label="Degree distribution")  # Data points
+    # Fitted curve
+    plt.plot(xvals, yvals, "k--", label=f"Exponent $b = {b:.2f}$")
+    plt.plot(unique_elements, counts, "ko",
+             label="Degree distribution")  # Data points
     plt.xlabel("$k$")  # Degree of nodes
     plt.ylabel("$P(k)$")  # Probability of nodes with degree k
     plt.legend()
@@ -330,7 +332,8 @@ def number_media_distribution(network, output_folder, file_name):
     output_path = os.path.join(output_folder, file_name)
 
     # Collect the number of media connections for all voters in the network
-    m_conx = [len(voter.get_media_connections()) for row in network for voter in row]
+    m_conx = [len(voter.get_media_connections())
+              for row in network for voter in row]
 
     # Calculate average and standard deviation of media connections
     avg = np.mean(m_conx)
@@ -371,13 +374,13 @@ def opinion_trend(op_trend, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Create a new figure for the plot
     plt.figure()
-    
+
     # Iterate over the columns (opinions) in the DataFrame
     for column in op_trend.columns:
         # Assign colors based on the opinion value
@@ -387,19 +390,20 @@ def opinion_trend(op_trend, output_folder, file_name):
             color = 'grey'
         else:
             color = 'red'
-        
+
         # Plot the opinion share over time
-        plt.plot(op_trend.index, op_trend[column], label=f"Opinion {column}", color=color)
-    
+        plt.plot(op_trend.index, op_trend[column],
+                 label=f"Opinion {column}", color=color)
+
     # Label the x-axis (time)
     plt.xlabel("$t [\mathrm{d}]$")
-    
+
     # Label the y-axis (opinion share)
     plt.ylabel("Opinion Share")
-    
+
     # Display the legend
     plt.legend()
-    
+
     # Save the plot to the specified file
     plt.savefig(output_path)
 
@@ -423,25 +427,25 @@ def plot_polarization(network_pol, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Create a new figure for the plot
     plt.figure()
-    
+
     # Plot the network polarization
     plt.plot(network_pol, label="Network Polarization", color='black')
-    
+
     # Label the x-axis (time)
     plt.xlabel("$t [\mathrm{d}]$")
-    
+
     # Label the y-axis (polarization)
     plt.ylabel("$S$")
-    
+
     # Display the legend
     plt.legend()
-    
+
     # Save the plot to the specified file
     plt.savefig(output_path)
 
@@ -465,25 +469,26 @@ def plot_std(network_std, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Create a new figure for the plot
     plt.figure()
-    
+
     # Plot the standard deviation of network polarization
-    plt.plot(network_std, label="Standard deviation of network polarization", color='black')
-    
+    plt.plot(
+        network_std, label="Standard deviation of network polarization", color='black')
+
     # Label the x-axis (time)
     plt.xlabel("$t [\mathrm{d}]$")
-    
+
     # Label the y-axis (standard deviation)
     plt.ylabel("$\sigma$")
-    
+
     # Display the legend
     plt.legend()
-    
+
     # Save the plot to the specified file
     plt.savefig(output_path)
 
@@ -507,30 +512,31 @@ def plot_prob_to_change(prob_to_change, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Ensure there is more than one data point to plot
     if len(prob_to_change) > 1:
         # Create a new figure for the plot
         plt.figure()
-        
+
         # Convert the probability data into a numpy array for easier manipulation
         prob_to_change = np.array(prob_to_change)
-        
+
         # Plot the probability of opinion change over time
-        plt.plot(prob_to_change[:, 0], prob_to_change[:, 1], label="Probability to change the opinion", color='black')
-        
+        plt.plot(prob_to_change[:, 0], prob_to_change[:, 1],
+                 label="Probability to change the opinion", color='black')
+
         # Label the x-axis (time)
         plt.xlabel("$t [\mathrm{d}]$")
-        
+
         # Label the y-axis (probability)
         plt.ylabel("$P$")
-        
+
         # Display the legend
         plt.legend()
-        
+
         # Save the plot to the specified file
         plt.savefig(output_path)
 
@@ -554,25 +560,25 @@ def plot_clustering(clustering, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Create a new figure for the plot
     plt.figure()
-    
+
     # Plot the network clustering coefficient
     plt.plot(clustering, label="Network clustering", color='black')
-    
+
     # Label the x-axis (time)
     plt.xlabel("$t [\mathrm{d}]$")
-    
+
     # Label the y-axis (clustering coefficient)
     plt.ylabel("$C_v$")
-    
+
     # Display the legend
     plt.legend()
-    
+
     # Save the plot to the specified file
     plt.savefig(output_path)
 
@@ -596,10 +602,10 @@ def print_parameters(args, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Open the output file and write the arguments to it
     with open(output_path, 'w') as file:
         for arg, value in vars(args).items():
@@ -625,10 +631,10 @@ def print_measure(measure, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Open the output file and write the measures to it
     with open(output_path, 'w') as file:
         for m in measure:
@@ -654,10 +660,10 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
     """
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
-    
+
     # Construct the full output file path
     output_path = os.path.join(output_folder, file_name)
-    
+
     # Open the output file and write the data to it
     with open(output_path, 'w') as file:
         for m in prob_to_change:
