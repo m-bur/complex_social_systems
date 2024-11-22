@@ -1,3 +1,6 @@
+"""
+This module contains lots of usefule functions to gain information about the network.
+"""
 import numpy as np
 import pandas as pd
 import os
@@ -324,3 +327,91 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
     with open(output_path, 'w') as file:
         for m in prob_to_change:
             file.write(f"{m[0]} \t {m[1]} \n")
+
+
+def get_consecutive_terms_counts(election_results):
+    """
+    Generate a DataFrame with counts of consecutive occurrences of 1 and -1.
+    
+    Parameters:
+        election_results (list): A list containing 1s and -1s representing the terms each party won.
+    
+    Returns:
+        DataFrame: A DataFrame with 'Consecutive Elections' as the index (from 0 to the maximum run length found),
+                   and columns for the counts of consecutive occurrences of 1 and -1.
+    """
+    if not election_results:
+        # If no data, return an empty DataFrame with index starting from 0
+        return pd.DataFrame(columns=[-1, 1], index=pd.RangeIndex(start=0, stop=1))
+
+    # Initialize a list to store the counts of consecutive occurrences
+    counts = []
+    current_value = election_results[0]
+    count = 1
+
+    # Loop through the data to calculate streak lengths
+    for value in election_results[1:]:
+        if value == current_value:
+            count += 1
+        else:
+            counts.append((current_value, count))
+            current_value = value
+            count = 1
+    counts.append((current_value, count))  # Add the last streak
+
+    # Create a dictionary to store counts for consecutive occurrences
+    consecutive_dict = {-1: {}, 1: {}}
+    for value, count in counts:
+        if count not in consecutive_dict[value]:
+            consecutive_dict[value][count] = 0
+        consecutive_dict[value][count] += 1
+
+    # Find the maximum run length
+    max_run_length = max(
+        max(consecutive_dict[1].keys(), default=0), 
+        max(consecutive_dict[-1].keys(), default=0)
+    )
+
+    # Create a DataFrame with index from 0 to the maximum run length
+    df = pd.DataFrame(index=range(1,max_run_length + 1))
+    df.index.name = "Consecutive Elections"
+
+    # Fill the columns for 1 and -1 with counts or 0 if not present
+    df[1] = [consecutive_dict[1].get(i, 0) for i in df.index]
+    df[-1] = [consecutive_dict[-1].get(i, 0) for i in df.index]
+
+    return df
+
+
+def create_consecutive_terms_histogram(df):
+    """
+    Creates a histogram from a DataFrame.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A DataFrame with two columns, `1` and `-1`, and integer indices.
+        The index represents the bins.
+
+    Returns
+    -------
+    None
+        This function does not return any value. It displays a histogram
+        where each column is plotted in a different color (red for `1` and blue for `-1`).
+    """
+
+    if not {1, -1}.issubset(df.columns):
+        raise ValueError("The DataFrame must have columns named 1 and -1.")
+
+    # Plot the histogram
+    plt.figure(figsize=(10, 6))
+    plt.bar(df.index, df[1], width=0.4, color='red', label='1', align='center')
+    plt.bar(df.index - 0.4, df[-1], width=0.4, color='blue', label='-1', align='center')
+
+    # Add titles and labels
+    plt.title("Histogram of Consecutive Terms", fontsize=14)
+    plt.xlabel("Number of consecutive terms", fontsize=12)
+    plt.ylabel("Frequency", fontsize=12)
+    plt.legend(loc = 'best')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.show()

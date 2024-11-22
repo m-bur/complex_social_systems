@@ -73,7 +73,9 @@
 <li><a class="reference internal" href="#module-utils">Module contents</a></li>
 <li><a class="reference internal" href="#utils-measure-module">utils.measure module</a><ul>
 <li><a class="reference internal" href="#utils.measure.clustering"><code class="docutils literal notranslate"><span class="pre">clustering()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.create_consecutive_terms_histogram"><code class="docutils literal notranslate"><span class="pre">create_consecutive_terms_histogram()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.deg_distribution"><code class="docutils literal notranslate"><span class="pre">deg_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.get_consecutive_terms_counts"><code class="docutils literal notranslate"><span class="pre">get_consecutive_terms_counts()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.local_clustering"><code class="docutils literal notranslate"><span class="pre">local_clustering()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.make_foldername"><code class="docutils literal notranslate"><span class="pre">make_foldername()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.neighbor_opinion"><code class="docutils literal notranslate"><span class="pre">neighbor_opinion()</span></code></a></li>
@@ -390,16 +392,51 @@ with which the voter is connected.</p>
 </section>
 <section id="utils-measure-module">
 <h2>utils.measure module<a class="headerlink" href="#utils-measure-module" title="Link to this heading"></a></h2>
-<dl class="py function" id="module-utils.measure">
+<p id="module-utils.measure">This module contains lots of usefule functions to gain information about the network.</p>
+<dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.clustering">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.clustering" title="Link to this definition"></a></dt>
 <dd><p>Return the clustering (degree of agreement between neighbours)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.create_consecutive_terms_histogram">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">create_consecutive_terms_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.create_consecutive_terms_histogram" title="Link to this definition"></a></dt>
+<dd><p>Creates a histogram from a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – A DataFrame with two columns, <cite>1</cite> and <cite>-1</cite>, and integer indices.
+The index represents the bins.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function does not return any value. It displays a histogram
+where each column is plotted in a different color (red for <cite>1</cite> and blue for <cite>-1</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.deg_distribution">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">deg_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.deg_distribution" title="Link to this definition"></a></dt>
 <dd><p>Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.get_consecutive_terms_counts">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">get_consecutive_terms_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">election_results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.get_consecutive_terms_counts" title="Link to this definition"></a></dt>
+<dd><p>Generate a DataFrame with counts of consecutive occurrences of 1 and -1.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>election_results (list): A list containing 1s and -1s representing the terms each party won.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>DataFrame: A DataFrame with ‘Consecutive Elections’ as the index (from 0 to the maximum run length found),</dt><dd><p>and columns for the counts of consecutive occurrences of 1 and -1.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

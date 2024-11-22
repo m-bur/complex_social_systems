@@ -65,7 +65,7 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    folder = make_foldername()
+    folder = make_foldername(base_name="Figure_collection/figures")
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
