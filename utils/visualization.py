@@ -51,62 +51,6 @@ def visualize_matrix(matrix, output_folder, filename=None):
     plt.close(fig)
 
 
-def test_visualize_matrix():
-    """
-    Test the `visualize_matrix` function by creating and visualizing a sample matrix.
-
-    This function generates a 1000x1000 matrix with specific structured regions:
-    a red background, a blue circle in the center, and a grey ring between the circle
-    and background. It then calls `visualize_matrix` to create and save the image with
-    a unique filename. The test checks if the image was saved correctly.
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    None
-    """
-
-    # Create a 1000x1000 matrix with default grey (0)
-    size = 1000
-    matrix = np.zeros((size, size), dtype=int)
-
-    # Create a red background (-1)
-    matrix[:, :] = -1
-
-    # Create a blue circle (1) in the center
-    center = size // 2
-    radius = size // 3
-    Y, X = np.ogrid[:size, :size]
-    dist_from_center = np.sqrt((X - center) ** 2 + (Y - center) ** 2)
-    mask_circle = dist_from_center <= radius
-    matrix[mask_circle] = 1  # Blue circle
-
-    # Create a grey ring (0) between blue circle and red background
-    inner_radius = size // 3
-    outer_radius = size // 2
-    mask_ring = (dist_from_center >= inner_radius) & (
-        dist_from_center <= outer_radius)
-    matrix[mask_ring] = 0  # Grey ring
-
-    # Generate a unique filename
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    filename = f"matrix_visualization_{timestamp}.png"
-
-    # Call the visualize_matrix function
-    output_folder = "test_output"
-    visualize_matrix(matrix, output_folder, filename=filename)
-
-    # Verify if the image file was created
-    output_path = os.path.join(output_folder, filename)
-    if os.path.isfile(output_path):
-        print(f"Test passed: Image successfully saved to {output_path}")
-    else:
-        print(f"Test failed: Image not found at {output_path}")
-
-
 def visualize_network(network, folder, filename):
     """
     Visualize the voter network by plotting the opinion distribution across the nodes.
@@ -204,4 +148,123 @@ def visualize_network_evolution(networks, output_folder, gif_filename="network_e
 
     # Save the frames as a GIF
     gif_path = os.path.join(output_folder, gif_filename)
-    imageio.mimsave(gif_path, frames, duration=0.75)  # 0.5 seconds per frame
+    imageio.mimsave(gif_path, frames, duration=0.75)  # 0.75 seconds per frame
+    
+    
+def opinion_trend_single_frame(op_trend, time_step):
+    """
+    Generate a single frame for the opinion trend plot at a given time step.
+
+    Parameters
+    ----------
+    op_trend : pandas.DataFrame
+        DataFrame where columns represent different opinions and the index is time.
+    time_step : int
+        The current time step to plot.
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        The figure containing the plot.
+    """
+    fig, ax = plt.subplots()
+    for column in op_trend.columns:
+        color = 'blue' if column == -1 else 'grey' if column == 0 else 'red'
+        ax.plot(op_trend.index[:time_step], op_trend[column][:time_step], 
+                label=f"Opinion {column}", color=color)
+        # Highlight the current point with a large open circle
+        ax.scatter(op_trend.index[time_step - 1], 
+                   op_trend[column][time_step - 1], 
+                   color=color, edgecolor='black', s=100, zorder=5)
+
+        # Draw a dashed line to the x-axis
+        ax.axvline(op_trend.index[time_step - 1], color=color, linestyle="--", alpha=0.6)
+    # Configure the plot labels and limits
+    ax.set_xlabel("$t [\\mathrm{d}]$")
+    ax.set_ylabel("Opinion Share")
+    ax.set_xlim([0, op_trend.index.max()])  # x-axis range based on time
+    ax.set_ylim([0, 1.0])  # Assuming opinion share ranges from 0 to 1
+    ax.legend(loc="upper right")
+    return fig
+
+def network_evolution_single_frame(network, cmap):
+    """
+    Generate a single frame for the network visualization at a given time step.
+
+    Parameters
+    ----------
+    network : list of list of Voter
+        The network at the current time step.
+    cmap : matplotlib.colors.ListedColormap
+        The color map for the visualization.
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        The figure containing the plot.
+    """
+    fig, ax = plt.subplots(figsize=(5, 5))
+    matrix = np.array([[voter.get_opinion() for voter in row] for row in network])
+    ax.imshow(matrix, cmap=cmap, interpolation="nearest")
+    ax.axis("off")
+    return fig
+
+def combined_visualization(op_trend, networks, output_folder, gif_filename="combined_evolution.gif"):
+    """
+    Combines the opinion trend plot and network evolution visualization into a single GIF.
+
+    Parameters
+    ----------
+    op_trend : pandas.DataFrame
+        Opinion trend data.
+    networks : list of list of Voter
+        Network data over time.
+    output_folder : str
+        Folder to save the GIF.
+    gif_filename : str
+        Name of the output GIF file.
+
+    Returns
+    -------
+    None
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    cmap = ListedColormap(['blue', 'grey', 'red'])
+    frames = []
+
+    for t, network in enumerate(networks):
+        # Generate the two plots
+        trend_fig = opinion_trend_single_frame(op_trend, t+1)
+        network_fig = network_evolution_single_frame(network, cmap)
+
+        # Combine the two plots into one figure
+        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+        trend_canvas = trend_fig.canvas
+        network_canvas = network_fig.canvas
+
+        # Render the trend figure onto the combined canvas
+        trend_canvas.draw()
+        trend_image = np.array(trend_canvas.renderer.buffer_rgba())
+        axes[0].imshow(trend_image)
+        axes[0].axis("off")
+
+        # Render the network figure onto the combined canvas
+        network_canvas.draw()
+        network_image = np.array(network_canvas.renderer.buffer_rgba())
+        axes[1].imshow(network_image)
+        axes[1].axis("off")
+
+        # Save combined figure as a frame
+        frame_path = os.path.join(output_folder, f"combined_frame_{t}.png")
+        combined_fig.savefig(frame_path, bbox_inches="tight")
+        frames.append(imageio.imread(frame_path))
+
+        # Close figures to free memory
+        plt.close(trend_fig)
+        plt.close(network_fig)
+        plt.close(combined_fig)
+        os.remove(frame_path)
+
+    # Save all frames as a GIF
+    gif_path = os.path.join(output_folder, gif_filename)
+    imageio.mimsave(gif_path, frames, duration=0.1)

@@ -88,8 +88,8 @@ def main(args=None):
     network_clustering = []
     networks = []
     changed_voters = 0
-
     election_results = []
+    
     for days in range(Ndays):
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
@@ -105,14 +105,19 @@ def main(args=None):
         # progress bar #####################
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
+        
+        # update the changed voters once per year
         if days % (365) == 0:
             prob_to_change.append([days, changed_voters / (np.size(network))])
-        if days % 5 == 0:
-            networks.append(copy.deepcopy(network))
+        
+        # create one image for the gif
+        networks.append(copy.deepcopy(network))
+        
+        #turn media feedback on
         if days == 1000:
             mfeedback_on = False
             
-    visualize_network_evolution(networks, folder)
+    combined_visualization(op_trend, networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
     plot_polarization(network_polarization, folder, "network_polarization.pdf")
