@@ -32,6 +32,7 @@ def parse_args():
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=5)
     return parser.parse_args()
 
 
@@ -55,6 +56,7 @@ def main(args=None):
     t0 = args.initial_threshold
     Ndays = 365*args.number_years
     mfeedback_on = args.media_feedback_turned_on
+    number_of_days_election_cycle = args.number_of_days_election_cycle
     mfeedback_prob = args.media_feedback_probability
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
 
@@ -69,7 +71,7 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    folder = make_foldername()
+    folder = make_foldername(base_name="Figure_collection/figures")
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
@@ -87,12 +89,20 @@ def main(args=None):
     networks = []
     changed_voters = 0
 
+    election_results = []
     for days in range(Ndays):
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
+        
+        # have elections
+        if days % number_of_days_election_cycle == 0:
+            winner = get_election_winner(network)
+            election_results.append(winner)
+
+        # progress bar #####################
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
         sys.stdout.flush()
         if days % (365) == 0:
