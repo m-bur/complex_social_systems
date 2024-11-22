@@ -192,7 +192,7 @@ def plot_calibration_heatmap():
 
 def plot_calibration():
     # Define file paths and load data from all files
-    file_paths = glob.glob("mauthority_calibration_results/calibration_log*.txt")
+    file_paths = glob.glob("mfeedback_calibration_results/calibration_log*.txt")
     dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
 
     # Combine all data into a single DataFrame
@@ -200,7 +200,7 @@ def plot_calibration():
     print(combined_data.columns)
 
     # Compute the average and standard deviation for each threshold parameter
-    aggregated_data = combined_data.groupby("media_authority").agg(
+    aggregated_data = combined_data.groupby("media_feedback_probability").agg(
         final_opinion_mean=("final_opinion", "mean"),
         final_opinion_std=("final_opinion", "std"),
         final_std_mean=("final_std", "mean"),
@@ -226,7 +226,7 @@ def plot_calibration():
 
     for ax, (col_prefix, title) in zip(axs, parameters):
         ax.errorbar(
-            aggregated_data["media_authority"],
+            aggregated_data["media_feedback_probability"],
             aggregated_data[f"{col_prefix}_mean"],
             yerr=aggregated_data[f"{col_prefix}_std"],
             fmt='-o',
@@ -238,11 +238,11 @@ def plot_calibration():
         ax.grid(True)
         ax.legend()
 
-    axs[-1].set_xlabel("Media Authority")
+    axs[-1].set_xlabel("Media Feedback")
     plt.tight_layout()
-    plt.savefig("mauthority_calibration_results/mauthority_calibration.pdf")
+    plt.savefig("mfeedback_calibration_results/mfeedback_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
-    #plot_calibration()
+    #calibrate_parameters(_args)
+    plot_calibration()
