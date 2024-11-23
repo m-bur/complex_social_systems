@@ -170,22 +170,30 @@ def opinion_trend_single_frame(op_trend, time_step):
     fig, ax = plt.subplots()
     for column in op_trend.columns:
         color = 'blue' if column == -1 else 'grey' if column == 0 else 'red'
-        ax.plot(op_trend.index[:time_step], op_trend[column][:time_step], 
+        xs = op_trend.index[:time_step].to_numpy()
+        ys = op_trend[column][:time_step]
+        ax.plot(xs, ys, 
                 label=f"Opinion {column}", color=color)
         # Highlight the current point with a large open circle
-        ax.scatter(op_trend.index[time_step - 1], 
-                   op_trend[column][time_step - 1], 
+        ax.scatter(xs[-1], 
+                   ys.iloc[-1], 
                    color=color, edgecolor='black', s=100, zorder=5)
 
         # Draw a dashed line to the x-axis
-        ax.axvline(op_trend.index[time_step - 1], color=color, linestyle="--", alpha=0.6)
+        ax.axvline(xs[-1], color='k', linestyle="--", alpha=0.6)
     # Configure the plot labels and limits
-    ax.set_xlabel("$t [\\mathrm{d}]$")
-    ax.set_ylabel("Opinion Share")
+    ax.set_xlabel("$t [\\mathrm{d}]$", fontsize=16)
+    ax.set_ylabel("Opinion Share", fontsize=16)
     ax.set_xlim([0, op_trend.index.max()])  # x-axis range based on time
-    ax.set_ylim([0, 1.0])  # Assuming opinion share ranges from 0 to 1
-    ax.legend(loc="upper right")
+    y_max = 1.3 * op_trend.max().max()  # Global maximum of op_trend
+    ax.set_ylim([0, y_max])  # Set y-axis limits dynamically based on the maximum value
+    # Turn on the grid
+    ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.legend(loc="upper right", fontsize=16)
+    ax.tick_params(axis='both', which='major', labelsize=14)  # Increase major tick label size
+    fig.subplots_adjust(left=0.075, right=1, top=1, bottom=0.125)
     return fig
+
 
 def network_evolution_single_frame(network, cmap):
     """
@@ -207,6 +215,7 @@ def network_evolution_single_frame(network, cmap):
     matrix = np.array([[voter.get_opinion() for voter in row] for row in network])
     ax.imshow(matrix, cmap=cmap, interpolation="nearest")
     ax.axis("off")
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
     return fig
 
 def combined_visualization(op_trend, networks, output_folder, gif_filename="combined_evolution.gif"):
@@ -238,7 +247,7 @@ def combined_visualization(op_trend, networks, output_folder, gif_filename="comb
         network_fig = network_evolution_single_frame(network, cmap)
 
         # Combine the two plots into one figure
-        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={'wspace': 0})  # Reduce spacing
         trend_canvas = trend_fig.canvas
         network_canvas = network_fig.canvas
 
@@ -267,4 +276,4 @@ def combined_visualization(op_trend, networks, output_folder, gif_filename="comb
 
     # Save all frames as a GIF
     gif_path = os.path.join(output_folder, gif_filename)
-    imageio.mimsave(gif_path, frames, duration=0.1)
+    imageio.mimsave(gif_path, frames, duration=0.0005)

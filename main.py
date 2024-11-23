@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=4)
+    parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
@@ -92,11 +92,11 @@ def main(args=None):
     
     for days in range(Ndays):
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
-        op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)
+ 
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
-        
+
         # have elections
         if days % number_of_days_election_cycle == 0:
             winner = get_election_winner(network)
@@ -109,10 +109,12 @@ def main(args=None):
         # update the changed voters once per year
         if days % (365) == 0:
             prob_to_change.append([days, changed_voters / (np.size(network))])
-        
-        # create one image for the gif
-        networks.append(copy.deepcopy(network))
-        
+        if days % 5 == 0:
+            networks.append(copy.deepcopy(network))
+            new_row = opinion_share(network)
+            new_row.index = [days]
+            op_trend = pd.concat([op_trend, new_row])
+
         #turn media feedback on
         if days == 1000:
             mfeedback_on = False
