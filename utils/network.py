@@ -238,7 +238,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
     if days % media_update_cycle == 1:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
         for i,_ in enumerate(media):
             media_change = random.uniform(-0.22, 0.22) / 10+initial_media_opinion
-            if abs(media[i].get_opinion()+media_change)<1:
+            if abs(media[i].get_opinion()+media_change)<0.5:
                 media[i].set_opinion(media[i].get_opinion()+media_change)
             else:
                 print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
@@ -248,19 +248,18 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
         dur=0
         if get_number_of_consecutive_terms(election_results) >= 2:
             dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
-        media_change = dur * 0.376 * election_results[-1] * (-1) / 10 / 10#eigentlich 10
+        media_change = dur * 0.376 * election_results[-1] * (-1) / 10 #eigentlich 10
 
         if media_change * election_results[-1] > 0:#als assert schrieben?
             print(f"alarm, media_change supports election winner: media_change:{media_change}, election winner: {election_results[-1]}")
         for i,_ in enumerate(media):
-            if abs(media[i].get_opinion()+media_change)<1:
+            if abs(media[i].get_opinion()+media_change)<0.5:
                 media[i].set_opinion(media[i].get_opinion()+media_change)
             else:
                 print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
 
         print(f"election winner: {election_results[-1]}")
         print(f"media change: {media_change}")
-
     return media
 
 def generate_media_landscape(

@@ -53,10 +53,10 @@ def main(args=None):
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = 1000#int((365*1.5)//1) #args.number_years
+    Ndays = 500#int((365*1.5)//1) #args.number_years
     initial_media_opinion=0#media value to start with
     mfeedback_on = True#args.media_feedback_turned_on
-    number_of_days_election_cycle = 3#args.number_of_days_election_cycle
+    number_of_days_election_cycle = 10#args.number_of_days_election_cycle
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -89,8 +89,8 @@ def main(args=None):
 
     for days in range(Ndays):
         #was mues im loop sie: media.set
-
-        media=update_media(days,media,election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=4 )
+        #active this to update media opinion:
+        #media=update_media(days,media,election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=4 )
         initial_media_opinion=0#media change only at start != zero
 
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
