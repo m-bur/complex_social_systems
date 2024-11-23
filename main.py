@@ -33,6 +33,8 @@ def parse_args():
     return parser.parse_args()
 
 
+
+
 def main(args=None):
     L = args.side_length
     L_G = args.local_length
@@ -51,10 +53,10 @@ def main(args=None):
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = 15#int((365*1.5)//1) #args.number_years
-    media_change=0#media value to start with
+    Ndays = 1000#int((365*1.5)//1) #args.number_years
+    initial_media_opinion=0#media value to start with
     mfeedback_on = True#args.media_feedback_turned_on
-    number_of_days_election_cycle = 1#args.number_of_days_election_cycle
+    number_of_days_election_cycle = 3#args.number_of_days_election_cycle
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -86,27 +88,10 @@ def main(args=None):
     election_results = []
 
     for days in range(Ndays):
+        #was mues im loop sie: media.set
 
-        if days%7==1:  # Sk ← Sk + E. (I was here, but thats wrong)
-            for i,_ in enumerate(media):
-
-                media_change += (random.uniform(-0.22, 0.22))/10  # *I still nees to be implemented
-                dur=0
-                if (days-1)%number_of_days_election_cycle<=7:  # Sk ← Sk + 0.376 × DUR*I (I=who is in power)
-                    if get_number_of_consecutive_terms(election_results) >= 2:
-                        dur = 0.1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25
-                    media_change += dur * 0.376 * election_results[-1] *(-1) /10
-                    if media_change*election_results[-1]>0:
-                        print(f"alarm, media change: {media_change}")
-                    print(f"election winner: {election_results[-1]}")
-                    print(f"media change: {media_change}")
-                # change media
-                if abs(media[i].get_opinion()+media_change)<1:
-                    media[i].set_opinion(media[i].get_opinion() + media_change)
-                else:
-                    print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
-                media_change=0
-
+        media=update_media(days,media,election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=4 )
+        initial_media_opinion=0#media change only at start != zero
 
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
         op_trend = pd.concat([op_trend, opinion_share(network)], ignore_index=True)

@@ -233,6 +233,35 @@ def init_network(df_conx, network):
             voter.add_neighbor(ncoordinates[0], ncoordinates[1])
     return network
 
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle):
+    #should all voters get updated?
+    if days % media_update_cycle == 1:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
+        for i,_ in enumerate(media):
+            media_change = random.uniform(-0.22, 0.22) / 10+initial_media_opinion
+            if abs(media[i].get_opinion()+media_change)<1:
+                media[i].set_opinion(media[i].get_opinion()+media_change)
+            else:
+                print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
+
+
+    if days%number_of_days_election_cycle==1:# Sk ← Sk + 0.376 × DUR*I (I=who is in power)
+        dur=0
+        if get_number_of_consecutive_terms(election_results) >= 2:
+            dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
+        media_change = dur * 0.376 * election_results[-1] * (-1) / 10 / 10#eigentlich 10
+
+        if media_change * election_results[-1] > 0:#als assert schrieben?
+            print(f"alarm, media_change supports election winner: media_change:{media_change}, election winner: {election_results[-1]}")
+        for i,_ in enumerate(media):
+            if abs(media[i].get_opinion()+media_change)<1:
+                media[i].set_opinion(media[i].get_opinion()+media_change)
+            else:
+                print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
+
+        print(f"election winner: {election_results[-1]}")
+        print(f"media change: {media_change}")
+
+    return media
 
 def generate_media_landscape(
     number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1
@@ -302,6 +331,8 @@ def generate_media_landscape(
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
+
+
 
 
 
@@ -448,10 +479,33 @@ def get_number_of_consecutive_terms(election_results):
     count -= 1 # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
     return count
 
+def delta_media_value(media):
+    #todo change media
+
+    #todo implement formula
+    #update every week
+
+    if consecutive_results>=2:
+        dur=1+(consecuive_results-2)*0.25
+    else:
+        dur=0
+    if "red"==in_power():
+        I=-1
+    else:
+        I=1
+    opinion=opinion+random.uniform(-0.22,0.22)*I
+    opinion=opinion+dur*0.376
+    pass
+
+def in_power():
+    return 1
+
 def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
     Update the network one timestep by randomly picking Nv voters and updating their opinion. Media authority W and initial thresholds t0 with parameter alpha.
     """
+
+
     changed_voters = 0
     for _ in range(Nv):
         n = np.shape(network)
