@@ -36,6 +36,8 @@ def parse_args():
     return parser.parse_args()
 
 
+
+
 def main(args=None):
     L = args.side_length
     L_G = args.local_length
@@ -75,7 +77,7 @@ def main(args=None):
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
-    media = generate_media_landscape(Nm, media_mode) 
+    media = generate_media_landscape(Nm, media_mode)
     media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network, folder, "number_media_distribution.pdf")
     neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
@@ -91,11 +93,17 @@ def main(args=None):
     election_results = []
     
     for days in range(Ndays):
+        #was mues im loop sie: media.set
+        #active this to update media opinion:
+        #media=update_media(days,media,election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=4 )
+        initial_media_opinion=0#media change only at start != zero
+
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
  
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
+
 
         # have elections
         if days % number_of_days_election_cycle == 0:
@@ -103,7 +111,7 @@ def main(args=None):
             election_results.append(winner)
 
         # progress bar #####################
-        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed\n")
         sys.stdout.flush()
         
         # update the changed voters once per year
@@ -129,7 +137,7 @@ def main(args=None):
     plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
     print_prob_to_change(prob_to_change, folder, "prob_to_change.txt")
     plot_clustering(network_clustering, folder, "network_clustering.pdf")
-    print_measure(network_clustering, folder, "network_clustering.txt")    
+    print_measure(network_clustering, folder, "network_clustering.txt")
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")
 
