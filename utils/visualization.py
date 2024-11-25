@@ -114,6 +114,8 @@ def media_voter_histogramms(network, media):
     )
     result_blue = dict(zip(unique_blue, counts_blue))
 
+    y_lim = max([max(counts_blue), max(counts_neutral), max(counts_red)])+10
+
     # Data for plotting
     dicts = [result_blue, result_neutral, result_red]
     titles = ["Blue Voters", "Neutral Voters", "Red Voters"]
@@ -124,10 +126,10 @@ def media_voter_histogramms(network, media):
     for i, (ax, data, title) in enumerate(zip(axes, dicts, titles)):
         ax.bar(data.keys(), data.values(), color=['blue', 'gray', 'red'])
         ax.set_title(title)
-        ax.set_xlabel('Categories')
+        ax.set_xlabel('Media Type')
         if i == 0:  # Add y-label only to the first subplot for clarity
-            ax.set_ylabel('Values')
-        ax.set_ylim(0, 100)  # Assuming a consistent scale for comparison
+            ax.set_ylabel('# Connections')
+        ax.set_ylim(0, y_lim)  # Assuming a consistent scale for comparison
 
     plt.tight_layout()
     plt.show()
