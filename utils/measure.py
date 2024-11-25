@@ -80,10 +80,22 @@ def opinion_share(network):
     pd.DataFrame
         A DataFrame where columns are unique opinions and values represent their share.
     """
-    unique_elements, counts = np.unique(
-        opinion_list(network), return_counts=True)
+    expected_columns = [-1, 0, 1]  # Replace with your expected unique elements
+    unique_elements, counts = np.unique(opinion_list(network), return_counts=True)
     share = counts / np.sum(counts)
-    return pd.DataFrame([share], columns=unique_elements)
+
+    # Create a DataFrame with the calculated shares
+    df = pd.DataFrame([share], columns=unique_elements)
+
+    # Ensure all expected columns are present, filling missing ones with 0
+    for col in expected_columns:
+        if col not in df.columns:
+            df[col] = 0
+
+    # Reorder the columns to match the expected order
+    df = df[expected_columns]
+
+    return df
 
 
 def local_clustering(voter, network):
