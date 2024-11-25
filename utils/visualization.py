@@ -84,7 +84,7 @@ def media_voter_histogramms(network, media):
 
     media_dict = dict(zip(media_ids, media))
 
-    neutral_voters_connections = []
+    neutral_voter_connections = []
     blue_voter_connections = []
     red_voter_connections = []
 
@@ -93,19 +93,46 @@ def media_voter_histogramms(network, media):
             media_connections = network[i, j].get_media_connections()
             opinion = network[i, j].get_opinion()
             if opinion == -1:
-                blue_voter_connections.append([media_dict[connection].get_category() for connection in media_connections])
+                blue_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
             elif opinion == 0:
-                neutral_voters_connections.append([media_dict[connection].get_category() for connection in media_connections])
+                neutral_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
             elif opinion == 1:
-                red_voter_connections.append([media_dict[connection].get_category() for connection in media_connections])
-
+                red_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
 
     unique_neutral, counts_neutral = np.unique(
-        neutral_voters_connections, return_counts=True
+        neutral_voter_connections, return_counts=True
     )
     result_neutral = dict(zip(unique_neutral, counts_neutral))
 
-    return result_neutral
+    unique_red, counts_red = np.unique(
+        red_voter_connections, return_counts=True
+    )
+    result_red = dict(zip(unique_red, counts_red))
+
+    unique_blue, counts_blue = np.unique(
+        blue_voter_connections, return_counts=True
+    )
+    result_blue = dict(zip(unique_blue, counts_blue))
+
+    # Data for plotting
+    dicts = [result_blue, result_neutral, result_red]
+    titles = ["Blue Voters", "Neutral Voters", "Red Voters"]
+
+    # Create subplots
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
+
+    for i, (ax, data, title) in enumerate(zip(axes, dicts, titles)):
+        ax.bar(data.keys(), data.values(), color=['blue', 'gray', 'red'])
+        ax.set_title(title)
+        ax.set_xlabel('Categories')
+        if i == 0:  # Add y-label only to the first subplot for clarity
+            ax.set_ylabel('Values')
+        ax.set_ylim(0, 100)  # Assuming a consistent scale for comparison
+
+    plt.tight_layout()
+    plt.show()
+
+    return
 
 
 def visualize_matrix(matrix, output_folder, filename=None):

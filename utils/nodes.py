@@ -374,11 +374,12 @@ class Media:
         """
         self.category_threshold = category_threshold
         self.media_id = media_id
+        self.opinion = opinion
         self.set_opinion(opinion)  # Ensures opinion is within the valid range
-        self.category = self.update_category()
 
     def update_category(self):
-        
+        """updates the category of the media opinion"""
+
         if self.opinion > self.category_threshold:
             self.category = "red"
         elif self.opinion < -self.category_threshold:
@@ -395,7 +396,7 @@ class Media:
         string
             The opinion category of the medium. This can be "blue", "neutral" or "red".
         """
-        return self.opinion
+        return self.category
 
     def set_opinion(self, opinion):
         """
@@ -413,10 +414,11 @@ class Media:
         """
         if -1.0 <= opinion <= 1.0:
             self.opinion = opinion
+            # do not forget to update the category, needs to be changed with opinion
+            self.update_category()
         else:
             raise ValueError("Opinion must be between -1 and 1 (inclusive).")
         
-        self.update_category()
 
     def get_opinion(self):
         """
