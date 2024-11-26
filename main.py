@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=2)
+    parser.add_argument("--number_years", type=float, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--number_of_days_election_cycle", type=int, default=5)
     return parser.parse_args()
@@ -51,7 +51,7 @@ def main(args=None):
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = 365*args.number_years
+    Ndays = int(365*args.number_years)
     mfeedback_on = args.media_feedback_turned_on
     number_of_days_election_cycle = args.number_of_days_election_cycle
 
@@ -81,6 +81,7 @@ def main(args=None):
     network_std = []
     network_clustering = []
     changed_voters = 0
+    media_stats = pd.DataFrame()
 
     election_results = []
     for days in range(Ndays):
@@ -89,6 +90,7 @@ def main(args=None):
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
+        media_stats = pd.concat([media_stats, media_statistics(media=media)], ignore_index=True)
         
         # have elections
         if days % number_of_days_election_cycle == 0:
@@ -116,6 +118,8 @@ def main(args=None):
     print_measure(network_clustering, folder, "network_clustering.txt")    
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")
+    print_media_statistics(df_stats=media_stats, output_folder=folder)
+    plot_media_statistics(df_stats=media_stats, output_folder=folder)
 
 
 if __name__ == "__main__":

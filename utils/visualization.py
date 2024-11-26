@@ -12,7 +12,7 @@ def visualize_media(media):
 
     Parameters
     ----------
-    media : list of media objects
+    media : list of Media objects
     """
 
     opinions = sorted([media_node.get_opinion() for media_node in media])
