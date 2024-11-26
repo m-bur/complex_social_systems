@@ -74,7 +74,7 @@ def media_statistics(media):
     )
 
 
-def plot_media_statistics(df_stats, output_folder, file_name_shares="media_statistics_shares.pdf", file_name_mean="media_statistics_mean.pdf"):
+def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistics_shares.pdf"):
     """
     Plots a summary DataFrame over time (index as x-axis) with 'mean', 'std', and shares for 'blue', 'neutral', and 'red'.
     Uses lines for shares and a shaded region for 'mean ± std'.
@@ -85,8 +85,6 @@ def plot_media_statistics(df_stats, output_folder, file_name_shares="media_stati
 
     os.makedirs(output_folder, exist_ok=True)
     output_path_shares = os.path.join(output_folder, file_name_shares)
-    output_path_mean = os.path.join(output_folder, file_name_mean)
-
 
     x_values = df_stats.index  # Days from DataFrame index
 
@@ -102,19 +100,34 @@ def plot_media_statistics(df_stats, output_folder, file_name_shares="media_stati
     ax.set_ylim(0, max(df_stats[["blue", "neutral", "red"]].max()) * 1.1)
     plt.tight_layout()
     plt.savefig(output_path_shares)
-    plt.show()
+
+
+
+def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
+    """
+    Plots a summary DataFrame over time (index as x-axis) with 'mean', 'std', and shares for 'blue', 'neutral', and 'red'.
+    Uses lines for shares and a shaded region for 'mean ± std'.
+    
+    Parameters:
+        df (pd.DataFrame): A DataFrame indexed by time (or days) with 'mean', 'std', 'blue', 'neutral', and 'red'.
+    """
+
+    os.makedirs(output_folder, exist_ok=True)
+    output_path_mean = os.path.join(output_folder, file_name_mean)
+
+    x_values = df_stats.index  # Days from DataFrame index
 
     # Plot 2: Mean ± Std
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
-    # ax.fill_between(
-    #     x_values,
-    #     df_stats["mean"] - df_stats["std"],
-    #     df_stats["mean"] + df_stats["std"],
-    #     color="lightgreen",
-    #     alpha=0.2,
-    #     label="Mean ± Std"
-    # )
+    ax.fill_between(
+        x_values,
+        df_stats["mean"] - df_stats["std"],
+        df_stats["mean"] + df_stats["std"],
+        color="lightgreen",
+        alpha=0.2,
+        label="Mean ± Std"
+    )
     ax.set_title("Mean ± Std Over Time")
     ax.set_xlabel("Days")
     ax.set_ylabel("Values")
@@ -122,8 +135,10 @@ def plot_media_statistics(df_stats, output_folder, file_name_shares="media_stati
     # ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
     plt.tight_layout()
     plt.savefig(output_path_mean)
-    plt.show()
-    
+
+
+
+
 def print_media_statistics(df_stats, output_folder):
     """Exports the media statistics"""
     os.makedirs(output_folder, exist_ok=True)
@@ -480,7 +495,7 @@ def get_consecutive_terms_counts(election_results):
     return df
 
 
-def create_consecutive_terms_histogram(df):
+def plot_consecutive_terms_histogram(df, output_folder, file_name):
     """
     Creates a histogram from a DataFrame.
 
@@ -496,6 +511,8 @@ def create_consecutive_terms_histogram(df):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
 
     if not {1, -1}.issubset(df.columns):
         raise ValueError("The DataFrame must have columns named 1 and -1.")
@@ -511,4 +528,6 @@ def create_consecutive_terms_histogram(df):
     plt.ylabel("Frequency", fontsize=12)
     plt.legend(loc="best")
     plt.grid(axis="y", linestyle="--", alpha=0.7)
+    plt.savefig(output_path)
+
     plt.show()
