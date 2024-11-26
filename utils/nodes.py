@@ -353,7 +353,7 @@ class Voter:
 
 
 class Media:
-    def __init__(self, media_id, opinion=0.0):
+    def __init__(self, media_id, opinion=0.0, category_threshold=1/3):
         """
         Initialize a Media object.
 
@@ -363,14 +363,40 @@ class Media:
             A unique identifier for the media node.
         opinion : float, optional
             The opinion of the media, which should be a value between -1 and 1. Default is 0.0.
+        category_threshold : float
+            Opinion values inside the interval [t,-t] are categorized as "neutral". Values bigger than 
+            the value "red", otherwise "blue". 
 
         Raises
         ------
         ValueError
             If the opinion is not within the range [-1, 1].
         """
+        self.category_threshold = category_threshold
         self.media_id = media_id
+        self.opinion = opinion
         self.set_opinion(opinion)  # Ensures opinion is within the valid range
+
+    def update_category(self):
+        """updates the category of the media opinion"""
+
+        if self.opinion > self.category_threshold:
+            self.category = "red"
+        elif self.opinion < -self.category_threshold:
+            self.category = "blue"
+        else:
+            self.category = "neutral"
+
+    def get_category(self):
+        """
+        Returns the opinion category of the medium.
+
+        Returns
+        -------
+        string
+            The opinion category of the medium. This can be "blue", "neutral" or "red".
+        """
+        return self.category
 
     def set_opinion(self, opinion):
         """
@@ -388,8 +414,11 @@ class Media:
         """
         if -1.0 <= opinion <= 1.0:
             self.opinion = opinion
+            # do not forget to update the category, needs to be changed with opinion
+            self.update_category()
         else:
             raise ValueError("Opinion must be between -1 and 1 (inclusive).")
+        
 
     def get_opinion(self):
         """
@@ -422,4 +451,4 @@ class Media:
         str
             A string representation of the Media object.
         """
-        return f"Media(id={self.media_id}, opinion={self.opinion})"
+        return f"Media(id={self.media_id}, opinion={self.opinion}, category={self.category})"
