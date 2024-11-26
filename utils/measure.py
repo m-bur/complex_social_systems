@@ -62,7 +62,7 @@ def media_statistics(media):
         which contain the mean, the standard deviation, and the share of "blue", "neutral" and "red" media nodes.
     """
     mean_opinion = np.mean([m.get_opinion() for m in media])
-    std_opinion = np.std([m.get_opinion() for m in media])
+    std_opinion = np.std([m.get_opinion() for m in media])/np.sqrt(len(media))
     unique_elements, counts = np.unique(
         [m.get_category() for m in media], return_counts=True
     )
@@ -107,14 +107,14 @@ def plot_media_statistics(df_stats, output_folder, file_name_shares="media_stati
     # Plot 2: Mean ± Std
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
-    ax.fill_between(
-        x_values,
-        df_stats["mean"] - df_stats["std"],
-        df_stats["mean"] + df_stats["std"],
-        color="lightgreen",
-        alpha=0.2,
-        label="Mean ± Std"
-    )
+    # ax.fill_between(
+    #     x_values,
+    #     df_stats["mean"] - df_stats["std"],
+    #     df_stats["mean"] + df_stats["std"],
+    #     color="lightgreen",
+    #     alpha=0.2,
+    #     label="Mean ± Std"
+    # )
     ax.set_title("Mean ± Std Over Time")
     ax.set_xlabel("Days")
     ax.set_ylabel("Values")
