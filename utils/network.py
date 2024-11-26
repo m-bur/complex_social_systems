@@ -319,7 +319,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
         dur=0
         if get_number_of_consecutive_terms(election_results) >= 2:
             dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
-            dur = min(dur, 2)
+            dur = min(dur, 3)
         if election_results:  # Check if the list is not empty
             i = (-1)*election_results[-1] if election_results[-1] is not None else 0
         else:
