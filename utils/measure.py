@@ -119,7 +119,7 @@ def plot_media_statistics(df_stats, output_folder, file_name_shares="media_stati
     ax.set_xlabel("Days")
     ax.set_ylabel("Values")
     ax.legend()
-    ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
+    # ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
     plt.tight_layout()
     plt.savefig(output_path_mean)
     plt.show()
@@ -324,7 +324,7 @@ def opinion_trend(op_trend, output_folder, file_name):
     plt.savefig(output_path)
 
 
-def plot_polarizaiton(network_pol, output_folder, file_name):
+def plot_polarization(network_pol, output_folder, file_name):
     """
     plots the network polarization
     """
