@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=4)
+    parser.add_argument("--number_years", type=float, default=4)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
@@ -140,7 +140,10 @@ def main(args=None):
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")
     print_media_statistics(df_stats=media_stats, output_folder=folder)
-    plot_media_statistics(df_stats=media_stats, output_folder=folder)
+    plot_media_stats(df_stats=media_stats, output_folder=folder)
+    plot_media_shares(df_stats=media_stats, output_folder=folder)
+    df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
+    plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
 
 
 if __name__ == "__main__":
