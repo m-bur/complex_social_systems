@@ -32,8 +32,8 @@ def parse_args():
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
-    parser.add_argument("--number_of_days_election_cycle", type=int, default=50*7)
-    parser.add_argument("--mupdate_parameter_1", type=float, default=2.75*7)
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
+    parser.add_argument("--mupdate_parameter_1", type=float, default=2.75)
     parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     return parser.parse_args()
 

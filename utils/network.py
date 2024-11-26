@@ -299,7 +299,7 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     # Return the fully initialized network
     return network
 
-def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, media_update_cycle=7):
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, media_update_cycle=1):
     #should all voters get updated?
     if days % media_update_cycle == 0:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
         media_change = np.random.normal(0, 0.00022*x)  + initial_media_opinion
