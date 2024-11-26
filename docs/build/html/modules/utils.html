@@ -48,9 +48,11 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-utils.nodes">utils.nodes module</a><ul>
 <li><a class="reference internal" href="#utils.nodes.Media"><code class="docutils literal notranslate"><span class="pre">Media</span></code></a><ul>
+<li><a class="reference internal" href="#utils.nodes.Media.get_category"><code class="docutils literal notranslate"><span class="pre">Media.get_category()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_id"><code class="docutils literal notranslate"><span class="pre">Media.get_id()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_opinion"><code class="docutils literal notranslate"><span class="pre">Media.get_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.set_opinion"><code class="docutils literal notranslate"><span class="pre">Media.set_opinion()</span></code></a></li>
+<li><a class="reference internal" href="#utils.nodes.Media.update_category"><code class="docutils literal notranslate"><span class="pre">Media.update_category()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#utils.nodes.Voter"><code class="docutils literal notranslate"><span class="pre">Voter</span></code></a><ul>
@@ -73,11 +75,11 @@
 <li><a class="reference internal" href="#module-utils">Module contents</a></li>
 <li><a class="reference internal" href="#utils-measure-module">utils.measure module</a><ul>
 <li><a class="reference internal" href="#utils.measure.clustering"><code class="docutils literal notranslate"><span class="pre">clustering()</span></code></a></li>
-<li><a class="reference internal" href="#utils.measure.create_consecutive_terms_histogram"><code class="docutils literal notranslate"><span class="pre">create_consecutive_terms_histogram()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.deg_distribution"><code class="docutils literal notranslate"><span class="pre">deg_distribution()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.get_consecutive_terms_counts"><code class="docutils literal notranslate"><span class="pre">get_consecutive_terms_counts()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.local_clustering"><code class="docutils literal notranslate"><span class="pre">local_clustering()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.make_foldername"><code class="docutils literal notranslate"><span class="pre">make_foldername()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.media_statistics"><code class="docutils literal notranslate"><span class="pre">media_statistics()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.neighbor_opinion"><code class="docutils literal notranslate"><span class="pre">neighbor_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.neighbor_opinion_distribution"><code class="docutils literal notranslate"><span class="pre">neighbor_opinion_distribution()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.number_media_distribution"><code class="docutils literal notranslate"><span class="pre">number_media_distribution()</span></code></a></li>
@@ -85,12 +87,16 @@
 <li><a class="reference internal" href="#utils.measure.opinion_share"><code class="docutils literal notranslate"><span class="pre">opinion_share()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.opinion_trend"><code class="docutils literal notranslate"><span class="pre">opinion_trend()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.plot_clustering"><code class="docutils literal notranslate"><span class="pre">plot_clustering()</span></code></a></li>
-<li><a class="reference internal" href="#utils.measure.plot_polarizaiton"><code class="docutils literal notranslate"><span class="pre">plot_polarizaiton()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.plot_consecutive_terms_histogram"><code class="docutils literal notranslate"><span class="pre">plot_consecutive_terms_histogram()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.plot_media_shares"><code class="docutils literal notranslate"><span class="pre">plot_media_shares()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.plot_media_stats"><code class="docutils literal notranslate"><span class="pre">plot_media_stats()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.plot_polarization"><code class="docutils literal notranslate"><span class="pre">plot_polarization()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.plot_prob_to_change"><code class="docutils literal notranslate"><span class="pre">plot_prob_to_change()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.plot_std"><code class="docutils literal notranslate"><span class="pre">plot_std()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.polarization"><code class="docutils literal notranslate"><span class="pre">polarization()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.power_law"><code class="docutils literal notranslate"><span class="pre">power_law()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_measure"><code class="docutils literal notranslate"><span class="pre">print_measure()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.print_media_statistics"><code class="docutils literal notranslate"><span class="pre">print_media_statistics()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_parameters"><code class="docutils literal notranslate"><span class="pre">print_parameters()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_prob_to_change"><code class="docutils literal notranslate"><span class="pre">print_prob_to_change()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.std_opinion"><code class="docutils literal notranslate"><span class="pre">std_opinion()</span></code></a></li>
@@ -98,8 +104,11 @@
 </li>
 <li><a class="reference internal" href="#id1">Module contents</a></li>
 <li><a class="reference internal" href="#utils-visualization-module">utils.visualization module</a><ul>
+<li><a class="reference internal" href="#utils.visualization.media_boxplot"><code class="docutils literal notranslate"><span class="pre">media_boxplot()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.media_voter_histogramms"><code class="docutils literal notranslate"><span class="pre">media_voter_histogramms()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.test_visualize_matrix"><code class="docutils literal notranslate"><span class="pre">test_visualize_matrix()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.visualize_matrix"><code class="docutils literal notranslate"><span class="pre">visualize_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.visualize_media"><code class="docutils literal notranslate"><span class="pre">visualize_media()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.visualize_network"><code class="docutils literal notranslate"><span class="pre">visualize_network()</span></code></a></li>
 </ul>
 </li>
@@ -117,6 +126,7 @@
 <li><a class="reference internal" href="#utils.network.network_update"><code class="docutils literal notranslate"><span class="pre">network_update()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.prob_first_connection"><code class="docutils literal notranslate"><span class="pre">prob_first_connection()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.update_df_conx"><code class="docutils literal notranslate"><span class="pre">update_df_conx()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.update_media"><code class="docutils literal notranslate"><span class="pre">update_media()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.voter_update"><code class="docutils literal notranslate"><span class="pre">voter_update()</span></code></a></li>
 </ul>
 </li>
@@ -158,8 +168,22 @@
 <span id="utils-nodes-module"></span><h2>utils.nodes module<a class="headerlink" href="#module-utils.nodes" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="utils.nodes.Media">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.get_category">
+<span class="sig-name descname"><span class="pre">get_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_category" title="Link to this definition"></a></dt>
+<dd><p>Returns the opinion category of the medium.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The opinion category of the medium. This can be “blue”, “neutral” or “red”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.get_id">
 <span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_id" title="Link to this definition"></a></dt>
@@ -200,6 +224,12 @@
 <dd class="field-even"><p><strong>ValueError</strong> – If the opinion is not within the range [-1, 1].</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.update_category">
+<span class="sig-name descname"><span class="pre">update_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.update_category" title="Link to this definition"></a></dt>
+<dd><p>updates the category of the media opinion</p>
 </dd></dl>
 
 </dd></dl>
@@ -400,25 +430,6 @@ with which the voter is connected.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="utils.measure.create_consecutive_terms_histogram">
-<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">create_consecutive_terms_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.create_consecutive_terms_histogram" title="Link to this definition"></a></dt>
-<dd><p>Creates a histogram from a DataFrame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – A DataFrame with two columns, <cite>1</cite> and <cite>-1</cite>, and integer indices.
-The index represents the bins.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>This function does not return any value. It displays a histogram
-where each column is plotted in a different color (red for <cite>1</cite> and blue for <cite>-1</cite>).</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.deg_distribution">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">deg_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.deg_distribution" title="Link to this definition"></a></dt>
 <dd><p>Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.</p>
@@ -454,6 +465,28 @@ Appends a sequential number if folders with the same base name already exist.</p
 - base_name (str): The base name for the folder.</p>
 <p>Returns:
 - str: A unique folder name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.media_statistics">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">media_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.media_statistics" title="Link to this definition"></a></dt>
+<dd><p>Returns a dataframe with the statistics of the current media landscape</p>
+<section id="parameter">
+<h3>Parameter<a class="headerlink" href="#parameter" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>media: list</dt><dd><p>A list of Media objects</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>With columns [“mean”, “std”, “blue”, “red”, “neutral”]
+which contain the mean, the standard deviation, and the share of “blue”, “neutral” and “red” media nodes.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -499,8 +532,84 @@ Appends a sequential number if folders with the same base name already exist.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="utils.measure.plot_polarizaiton">
-<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_polarizaiton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_pol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_polarizaiton" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="utils.measure.plot_consecutive_terms_histogram">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_consecutive_terms_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_consecutive_terms_histogram" title="Link to this definition"></a></dt>
+<dd><p>Creates a histogram from a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – A DataFrame with two columns, <cite>1</cite> and <cite>-1</cite>, and integer indices.
+The index represents the bins.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function does not return any value. It displays a histogram
+where each column is plotted in a different color (red for <cite>1</cite> and blue for <cite>-1</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.plot_media_shares">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_media_shares</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name_shares</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'media_statistics_shares.pdf'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_media_shares" title="Link to this definition"></a></dt>
+<dd><p>Plot the time series of media shares for ‘blue’, ‘neutral’, and ‘red’.</p>
+<p>This function generates a line plot of the shares over time for the three categories
+(‘blue’, ‘neutral’, ‘red’) and saves the resulting figure as a PDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_stats</strong> (<em>pandas.DataFrame</em>) – A DataFrame indexed by time (or days) containing the columns:
+- ‘blue’: Share values for the “Blue” category.
+- ‘neutral’: Share values for the “Neutral” category.
+- ‘red’: Share values for the “Red” category.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the directory where the output PDF file will be saved.</p></li>
+<li><p><strong>file_name_shares</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the PDF file to save the plot, by default “media_statistics_shares.pdf”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saves the plot as a PDF file in the specified folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.plot_media_stats">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_media_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'media_statistics_mean.pdf'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_media_stats" title="Link to this definition"></a></dt>
+<dd><p>Plot the time series of the mean and standard deviation for media statistics.</p>
+<p>This function generates a line plot for the mean of the data over time and overlays
+a shaded region representing the mean ± standard deviation. The resulting figure
+is saved as a PDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_stats</strong> (<em>pandas.DataFrame</em>) – A DataFrame indexed by time (or days) containing the columns:
+- ‘mean’: Mean values of the media statistics.
+- ‘std’: Standard deviation of the media statistics.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the directory where the output PDF file will be saved.</p></li>
+<li><p><strong>file_name_mean</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the PDF file to save the plot, by default “media_statistics_mean.pdf”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saves the plot as a PDF file in the specified folder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The shaded region represents the range of <cite>mean ± std</cite>.</p></li>
+<li><p>The x-axis corresponds to the index of <cite>df_stats</cite>, which is expected to represent time (e.g., days).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.plot_polarization">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_polarization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_pol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_polarization" title="Link to this definition"></a></dt>
 <dd><p>plots the network polarization</p>
 </dd></dl>
 
@@ -535,6 +644,12 @@ Appends a sequential number if folders with the same base name already exist.</p
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.print_media_statistics">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_media_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_media_statistics" title="Link to this definition"></a></dt>
+<dd><p>Exports the media statistics</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.print_parameters">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_parameters" title="Link to this definition"></a></dt>
 <dd><p>Saves all arguments from argparse to a text file.</p>
@@ -562,6 +677,16 @@ Appends a sequential number if folders with the same base name already exist.</p
 <section id="utils-visualization-module">
 <h2>utils.visualization module<a class="headerlink" href="#utils-visualization-module" title="Link to this heading"></a></h2>
 <dl class="py function" id="module-utils.visualization">
+<dt class="sig sig-object py" id="utils.visualization.media_boxplot">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">media_boxplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.media_boxplot" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization.media_voter_histogramms">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">media_voter_histogramms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.media_voter_histogramms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="utils.visualization.test_visualize_matrix">
 <span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">test_visualize_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.test_visualize_matrix" title="Link to this definition"></a></dt>
 <dd><p>Test the <cite>visualize_matrix</cite> function by creating and visualizing a sample matrix.</p>
@@ -597,6 +722,17 @@ the current timestamp is generated.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization.visualize_media">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.visualize_media" title="Link to this definition"></a></dt>
+<dd><p>Visualizes the complete opinion spectrum of the media landscape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>media</strong> (<em>list</em><em> of </em><em>Media objects</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -814,6 +950,11 @@ get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.update_media">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">update_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">election_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_media_opinion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_days_election_cycle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_update_cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.update_media" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.voter_update">

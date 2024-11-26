@@ -76,19 +76,34 @@ def media_statistics(media):
 
 def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistics_shares.pdf"):
     """
-    Plots a summary DataFrame over time (index as x-axis) with 'mean', 'std', and shares for 'blue', 'neutral', and 'red'.
-    Uses lines for shares and a shaded region for 'mean ± std'.
-    
-    Parameters:
-        df (pd.DataFrame): A DataFrame indexed by time (or days) with 'mean', 'std', 'blue', 'neutral', and 'red'.
-    """
+    Plot the time series of media shares for 'blue', 'neutral', and 'red'.
 
+    This function generates a line plot of the shares over time for the three categories 
+    ('blue', 'neutral', 'red') and saves the resulting figure as a PDF file.
+
+    Parameters
+    ----------
+    df_stats : pandas.DataFrame
+        A DataFrame indexed by time (or days) containing the columns:
+        - 'blue': Share values for the "Blue" category.
+        - 'neutral': Share values for the "Neutral" category.
+        - 'red': Share values for the "Red" category.
+    output_folder : str
+        Path to the directory where the output PDF file will be saved.
+    file_name_shares : str, optional
+        Name of the PDF file to save the plot, by default "media_statistics_shares.pdf".
+
+    Returns
+    -------
+    None
+        Saves the plot as a PDF file in the specified folder.
+    """
+   
     os.makedirs(output_folder, exist_ok=True)
     output_path_shares = os.path.join(output_folder, file_name_shares)
 
     x_values = df_stats.index  # Days from DataFrame index
 
-    # Plot 1: Shares
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha = 0.8)
     ax.plot(x_values, df_stats["neutral"], label="Neutral", color="gray", alpha = 0.8)
@@ -105,19 +120,39 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
 
 def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
     """
-    Plots a summary DataFrame over time (index as x-axis) with 'mean', 'std', and shares for 'blue', 'neutral', and 'red'.
-    Uses lines for shares and a shaded region for 'mean ± std'.
-    
-    Parameters:
-        df (pd.DataFrame): A DataFrame indexed by time (or days) with 'mean', 'std', 'blue', 'neutral', and 'red'.
-    """
+    Plot the time series of the mean and standard deviation for media statistics.
 
+    This function generates a line plot for the mean of the data over time and overlays 
+    a shaded region representing the mean ± standard deviation. The resulting figure 
+    is saved as a PDF file.
+
+    Parameters
+    ----------
+    df_stats : pandas.DataFrame
+        A DataFrame indexed by time (or days) containing the columns:
+        - 'mean': Mean values of the media statistics.
+        - 'std': Standard deviation of the media statistics.
+    output_folder : str
+        Path to the directory where the output PDF file will be saved.
+    file_name_mean : str, optional
+        Name of the PDF file to save the plot, by default "media_statistics_mean.pdf".
+
+    Returns
+    -------
+    None
+        Saves the plot as a PDF file in the specified folder.
+
+    Notes
+    -----
+    - The shaded region represents the range of `mean ± std`.
+    - The x-axis corresponds to the index of `df_stats`, which is expected to represent time (e.g., days).
+    """
+   
     os.makedirs(output_folder, exist_ok=True)
     output_path_mean = os.path.join(output_folder, file_name_mean)
 
     x_values = df_stats.index  # Days from DataFrame index
 
-    # Plot 2: Mean ± Std
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
     ax.fill_between(
@@ -135,8 +170,6 @@ def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_m
     # ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
     plt.tight_layout()
     plt.savefig(output_path_mean)
-
-
 
 
 def print_media_statistics(df_stats, output_folder):
