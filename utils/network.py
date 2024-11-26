@@ -263,7 +263,25 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
         ]
         for j in range(L)
     ]
-
+    
+    num_elements = L ** 2
+    ones = [1] * (num_elements // 3)
+    zeros = [0] * (num_elements // 3)
+    minus_ones = [-1] * (num_elements // 3)
+    
+    # If L^2 is not perfectly divisible by 3, adjust by adding the remainder
+    remainder = num_elements % 3
+    if remainder == 1:
+        ones.append(1)
+    elif remainder == 2:
+        ones.append(1)
+        zeros.append(0)
+    
+    # Combine the three lists
+    opinion_list = ones + zeros + minus_ones
+    
+    # Shuffle the list to randomize it
+    random.shuffle(opinion_list)
     # Iterate through the DataFrame to set voter properties and establish neighbor connections
     for i in range(L**2):
         row = df_conx.iloc[i]  # Get the current row
@@ -272,7 +290,7 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
         voter = network[row["x"]][row["y"]]
 
         # Set an initial opinion for the voter, chosen randomly from [-1, 0, 1]
-        voter.set_opinion(random.choice([-1, 0, 1]))
+        voter.set_opinion(opinion_list[i])
 
         # Add each neighbor to the voter's list of neighbors
         for ncoordinates in neighbors:
@@ -281,10 +299,10 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     # Return the fully initialized network
     return network
 
-def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=1):
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, media_update_cycle=7):
     #should all voters get updated?
-    if days % media_update_cycle == 1:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
-        media_change = random.normal(0, 0.5)  + initial_media_opinion
+    if days % media_update_cycle == 0:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
+        media_change = np.random.normal(0, 0.00022*x)  + initial_media_opinion
         for i,_ in enumerate(media):
             new_opinion = media[i].get_opinion() + media_change
             if abs(new_opinion) < 1: #why here 0.5?
@@ -297,16 +315,16 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
                 #print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
 
 
-    if days % number_of_days_election_cycle == 1:# Sk ← Sk + 0.376 × DUR*I (I=who is in power)
+    if days % number_of_days_election_cycle == 0:# Sk ← Sk + 0.376 × DUR*I (I=who is in power)
         dur=0
         if get_number_of_consecutive_terms(election_results) >= 2:
             dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
-            dur = min(dur, 1.5)
+            dur = min(dur, 2)
         if election_results:  # Check if the list is not empty
             i = (-1)*election_results[-1] if election_results[-1] is not None else 0
         else:
             i = 0  # Default value if the list is empty
-        media_change = dur * 0.00376 * i
+        media_change = dur * 0.000376 *x* y*i
 
         #if media_change * election_results[-1] > 0:#als assert schrieben?
             #print(f"alarm, media_change supports election winner: media_change:{media_change}, election winner: {election_results[-1]}")

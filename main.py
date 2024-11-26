@@ -28,11 +28,13 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=4)
+    parser.add_argument("--number_years", type=int, default=10)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
-    parser.add_argument("--number_of_days_election_cycle", type=int, default=25)
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=50*7)
+    parser.add_argument("--mupdate_parameter_1", type=float, default=2.75*7)
+    parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     return parser.parse_args()
 
 
@@ -61,7 +63,8 @@ def main(args=None):
     number_of_days_election_cycle = args.number_of_days_election_cycle
     mfeedback_prob = args.media_feedback_probability
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
-
+    x = args.mupdate_parameter_1
+    y = args.mupdate_parameter_2
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -100,15 +103,13 @@ def main(args=None):
             if days % number_of_days_election_cycle == 0:
                 winner = get_election_winner(network)
                 election_results.append(winner)
-            media=update_media(days, media,election_results, mu, number_of_days_election_cycle)
+            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
 
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
  
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
-
-
 
 
         # progress bar #####################
