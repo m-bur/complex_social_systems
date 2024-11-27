@@ -300,44 +300,90 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     return network
 
 def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, media_update_cycle=1):
-    #should all voters get updated?
-    if days % media_update_cycle == 0:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
-        media_change = np.random.normal(0, 0.00022*x)  + initial_media_opinion
-        for i,_ in enumerate(media):
+    """
+    Updates the opinions of media entities based on daily cycles and election results.
+
+    Parameters
+    ----------
+    days : int
+        The current day in the simulation.
+    media : list
+        A list of media objects.
+    election_results : list
+        A list of election outcomes, where the most recent result is the last element. 
+        Positive values represent red party; negative values represent the blue.
+    initial_media_opinion : float
+        The baseline opinion of the media.
+    number_of_days_election_cycle : int
+        The number of days in an election cycle.
+    x : float
+        A scaling factor for media change.
+    y : float
+        Another scaling factor for election-related media updates.
+    media_update_cycle : int, optional
+        The interval (in days) at which media opinions are updated. Defaults to 1.
+
+    Returns
+    -------
+    list
+        The updated list of media objects.
+
+    Notes
+    -----
+    - Media opinion is bounded between -1 and 1.
+    - Media opinions are updated daily based on a normal distribution scaled by `x`.
+    - During election cycles, media opinions are further influenced by the duration
+      of the ruling party's power (`DUR`) and a scaling factor (`y`).
+    """
+    # random (ecconomy) term
+    if days % media_update_cycle == 0:
+        # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
+        media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
+        
+        # Update opinions for each media entity.
+        for i, _ in enumerate(media):
+            # Calculate the new opinion by adding the change to the current opinion.
             new_opinion = media[i].get_opinion() + media_change
-            if abs(new_opinion) < 1: #why here 0.5?
+            
+            # Ensure the opinion stays within bounds (-1 to 1).
+            if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)
             elif new_opinion < 0:
                 media[i].set_opinion(-1)
-                #print(f"media opinion is too low: {media[i].get_opinion()+media_change}")
             elif new_opinion > 0:
                 media[i].set_opinion(1)
-                #print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
 
+    # duration term
+    if days % number_of_days_election_cycle == 0:
+        dur = 0  # Duration multiplier for ruling party influence.
 
-    if days % number_of_days_election_cycle == 0:# Sk ← Sk + 0.376 × DUR*I (I=who is in power)
-        dur=0
+        # Determine the duration of the ruling party's power.
         if get_number_of_consecutive_terms(election_results) >= 2:
-            dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
-            dur = min(dur, 3)
-        if election_results:  # Check if the list is not empty
-            i = (-1)*election_results[-1] if election_results[-1] is not None else 0
+            # Increase duration based on consecutive terms, with diminishing returns after the second term.
+            dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25
+            dur = min(dur, 3)  # Cap the duration multiplier at 3.
+        
+        # Determine the direction of influence based on the ruling party.
+        if election_results:
+            i = (-1) * election_results[-1] if election_results[-1] is not None else 0
         else:
-            i = 0  # Default value if the list is empty
-        media_change = dur * 0.000376 *x* y*i
+            i = 0
 
-        #if media_change * election_results[-1] > 0:#als assert schrieben?
-            #print(f"alarm, media_change supports election winner: media_change:{media_change}, election winner: {election_results[-1]}")
-        for i,_ in enumerate(media):
-            new_opinion = media[i].get_opinion()+media_change
-            if abs(new_opinion)<1: # why here 0.5?
+        # Calculate the opinion change during the election cycle.
+        media_change = dur * 0.000376 * x * y * i
+
+        # Update opinions for each media entity based on election influence.
+        for i, _ in enumerate(media):
+            new_opinion = media[i].get_opinion() + media_change
+            
+            # Ensure the opinion stays within bounds (-1 to 1).
+            if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)
             elif new_opinion < 0:
                 media[i].set_opinion(-1)
-                #print(f"media opinion is too low: {media[i].get_opinion()+media_change}")
             elif new_opinion > 0:
                 media[i].set_opinion(1)
-                #print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
+
     return media
 
 def generate_media_landscape(

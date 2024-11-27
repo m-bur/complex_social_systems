@@ -111,14 +111,14 @@ def run_simulation(args, i):
             prob_to_change.append([days, changed_voters / (np.size(network))])
             changed_voters = 0
             
-    opinion_trend(op_trend, folder, f"opinion_share3_{i}.pdf")
-    op_trend.to_csv(folder + f"/opinion_trend3_{i}.txt", sep="\t", index=False)
+    opinion_trend(op_trend, folder, f"opinion_share4_{i}.pdf")
+    op_trend.to_csv(folder + f"/opinion_trend4_{i}.txt", sep="\t", index=False)
 
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
 
 def calibrate_parameters(args=None):
-    for i in range(3,4):
+    for i in range(4,5):
         # Define ranges for calibration
         param_ranges = {
             "mfeedback": [0, 0.05, 0.1, 0.15, 0.2, 0.3],
@@ -233,7 +233,7 @@ def plot_calibration():
         prob_to_change_mean=("prob_to_change", "mean"),
         prob_to_change_std=("prob_to_change", "std")
     ).reset_index()
-    print(aggregated_data)
+
 
     # Plot the results
     fig, axs = plt.subplots(5, 1, figsize=(10, 16), sharex=True)
@@ -265,5 +265,5 @@ def plot_calibration():
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
-    #plot_calibration()
+    #calibrate_parameters(_args)
+    plot_calibration()
