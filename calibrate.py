@@ -27,12 +27,12 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=10)
-    parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--number_years", type=int, default=20)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
     parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
-    parser.add_argument("--mupdate_parameter_1", type=float, default=1.05)
+    parser.add_argument("--mupdate_parameter_1", type=float, default=2.5)
     parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     return parser.parse_args()
 
@@ -62,6 +62,7 @@ def run_simulation(args, i):
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
+    mfeedback = False
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -73,7 +74,7 @@ def run_simulation(args, i):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
     
-    folder = "mupdate_1_calibration_results"
+    folder = "mfeedback1_calibration_results"
     print_parameters(args, folder, f"parameters_{i}.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     media = generate_media_landscape(Nm, media_mode) 
@@ -95,9 +96,9 @@ def run_simulation(args, i):
                 election_results.append(winner)
             media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
         #turn media feedback on
-        if days == 365:
-            mfeedback_on = mfeedback_on
-        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
+        if days == 4*365:
+            mfeedback = mfeedback_on
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
@@ -110,33 +111,33 @@ def run_simulation(args, i):
             prob_to_change.append([days, changed_voters / (np.size(network))])
             changed_voters = 0
             
-    opinion_trend(op_trend, folder, f"opinion_share_{i}.pdf")
-    op_trend.to_csv(folder + f"/opinion_trend_{i}.txt", sep="\t", index=False)
+    opinion_trend(op_trend, folder, f"opinion_share3_{i}.pdf")
+    op_trend.to_csv(folder + f"/opinion_trend3_{i}.txt", sep="\t", index=False)
 
     return op_trend.iloc[-1,1], network_std[-1], network_clustering[-1], network_polarization[-1], prob_to_change[-1][1]
 
 
 def calibrate_parameters(args=None):
-    for i in range(1,2):
+    for i in range(3,4):
         # Define ranges for calibration
         param_ranges = {
-            "mupdate_parameter_1": [1, 1.5, 1.75, 2, 2.25, 2.75, 3, 3.5, 4],
+            "mfeedback": [0, 0.05, 0.1, 0.15, 0.2, 0.3],
         }
-        results_folder = "mupdate_1_calibration_results"
+        results_folder = "mfeedback1_calibration_results"
         os.makedirs(results_folder, exist_ok=True)
         summary_log = os.path.join(results_folder, f"calibration_log_{i}.txt")
         logs = []
 
         # Iterate over combinations of parameters
-        for i,mupdate_param1 in enumerate(param_ranges["mupdate_parameter_1"]):
+        for j,mfeedback in enumerate(param_ranges["mfeedback"]):
             # Update arguments
             args = parse_args()
-            args.mupdate_parameter_1 = mupdate_param1
+            args.media_feedback_probability = mfeedback
 
-            final_NV, final_std, final_clustering, final_pol, prob_to_change = run_simulation(args, i)
+            final_NV, final_std, final_clustering, final_pol, prob_to_change = run_simulation(args, j)
                             
             logs.append({
-                "mupdate_parameter_1": mupdate_param1,
+                "mfeedback": mfeedback,
                 "final_opinion": final_NV,
                 "final_std": final_std,
                 "final_clustering": final_clustering,
@@ -146,10 +147,10 @@ def calibrate_parameters(args=None):
 
         # Write results to a text file
         with open(summary_log, "w") as f:
-            f.write("mupdate_parameter_1,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
+            f.write("media_feedback_probability,final_opinion,final_std,final_clustering,final_pol,prob_to_change\n")
             for log in logs:
                 f.write(
-                    f"{log['mupdate_parameter_1']},{log['final_opinion']},{log['final_std']},"
+                    f"{log['mfeedback']},{log['final_opinion']},{log['final_std']},"
                     f"{log['final_clustering']},{log['final_polarization']},{log['prob_to_change']}\n"
                 )
 
@@ -212,7 +213,7 @@ def plot_calibration_heatmap():
 
 def plot_calibration():
     # Define file paths and load data from all files
-    file_paths = glob.glob("mfeedback_calibration_results/calibration_log*.txt")
+    file_paths = glob.glob("mfeedback1_calibration_results/calibration_log*.txt")
     dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
 
     # Combine all data into a single DataFrame
@@ -260,7 +261,7 @@ def plot_calibration():
 
     axs[-1].set_xlabel("Media Feedback")
     plt.tight_layout()
-    plt.savefig("mfeedback_calibration_results/mfeedback_calibration.pdf")
+    plt.savefig("mfeedback1_calibration_results/mfeedback_calibration.pdf")
 
 if __name__ == "__main__":
     _args = parse_args()

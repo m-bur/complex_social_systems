@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=20)
-    parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
     parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
@@ -128,7 +128,7 @@ def main(args=None):
             op_trend = pd.concat([op_trend, new_row])
 
         #turn media feedback on
-        if days == 365:
+        if days == 4*365:
             mfeedback_on = mfeedback_on
             
     #combined_visualization(op_trend, networks, folder)
