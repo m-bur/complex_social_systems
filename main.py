@@ -58,7 +58,7 @@ def main(args=None):
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = 365*args.number_years
+    Ndays = int(365*args.number_years)
     mfeedback_on = args.media_feedback_turned_on
     number_of_days_election_cycle = args.number_of_days_election_cycle
     mfeedback_prob = args.media_feedback_probability
@@ -93,8 +93,11 @@ def main(args=None):
     network_clustering = []
     networks = []
     changed_voters = 0
+    media_stats = pd.DataFrame()
+
     election_results = []
-    
+   
+
     for days in range(Ndays):
         #was mues im loop sie: media.set
         #active this to update media opinion:
@@ -110,7 +113,7 @@ def main(args=None):
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
-
+        media_stats = pd.concat([media_stats, media_statistics(media=media)], ignore_index=True)
 
         # progress bar #####################
         sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
@@ -144,6 +147,11 @@ def main(args=None):
     print_measure(network_clustering, folder, "network_clustering.txt")
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")
+    print_media_statistics(df_stats=media_stats, output_folder=folder)
+    plot_media_stats(df_stats=media_stats, output_folder=folder)
+    plot_media_shares(df_stats=media_stats, output_folder=folder)
+    df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
+    plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
 
 
 if __name__ == "__main__":

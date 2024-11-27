@@ -1,6 +1,7 @@
 """
 This module contains lots of usefule functions to gain information about the network.
 """
+
 import numpy as np
 import pandas as pd
 import os
@@ -96,6 +97,137 @@ def opinion_share(network):
     df = df[expected_columns]
 
     return df
+
+def media_statistics(media):
+    """
+    Returns a dataframe with the statistics of the current media landscape
+
+    Parameter
+    ---------
+    media: list
+        A list of Media objects
+
+    Returns
+    -------
+    pd.DataFrame
+        With columns ["mean", "std", "blue", "red", "neutral"]
+        which contain the mean, the standard deviation, and the share of "blue", "neutral" and "red" media nodes.
+    """
+    mean_opinion = np.mean([m.get_opinion() for m in media])
+    std_opinion = np.std([m.get_opinion() for m in media])/np.sqrt(len(media))
+    unique_elements, counts = np.unique(
+        [m.get_category() for m in media], return_counts=True
+    )
+    shares = dict(zip(unique_elements, counts / np.sum(counts)))
+
+
+    return pd.DataFrame(
+        {"mean":[mean_opinion],"std": [std_opinion],"blue": [shares["blue"]],"neutral": [shares["neutral"]],"red": [shares["red"]]}
+    )
+
+
+def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistics_shares.pdf"):
+    """
+    Plot the time series of media shares for 'blue', 'neutral', and 'red'.
+
+    This function generates a line plot of the shares over time for the three categories 
+    ('blue', 'neutral', 'red') and saves the resulting figure as a PDF file.
+
+    Parameters
+    ----------
+    df_stats : pandas.DataFrame
+        A DataFrame indexed by time (or days) containing the columns:
+        - 'blue': Share values for the "Blue" category.
+        - 'neutral': Share values for the "Neutral" category.
+        - 'red': Share values for the "Red" category.
+    output_folder : str
+        Path to the directory where the output PDF file will be saved.
+    file_name_shares : str, optional
+        Name of the PDF file to save the plot, by default "media_statistics_shares.pdf".
+
+    Returns
+    -------
+    None
+        Saves the plot as a PDF file in the specified folder.
+    """
+   
+    os.makedirs(output_folder, exist_ok=True)
+    output_path_shares = os.path.join(output_folder, file_name_shares)
+
+    x_values = df_stats.index  # Days from DataFrame index
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha = 0.8)
+    ax.plot(x_values, df_stats["neutral"], label="Neutral", color="gray", alpha = 0.8)
+    ax.plot(x_values, df_stats["red"], label="Red", color="red", alpha = 0.8)
+    ax.set_title("Shares Over Time")
+    ax.set_xlabel("Days")
+    ax.set_ylabel("Shares")
+    ax.legend()
+    ax.set_ylim(0, max(df_stats[["blue", "neutral", "red"]].max()) * 1.1)
+    plt.tight_layout()
+    plt.savefig(output_path_shares)
+
+
+
+def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
+    """
+    Plot the time series of the mean and standard deviation for media statistics.
+
+    This function generates a line plot for the mean of the data over time and overlays 
+    a shaded region representing the mean ± standard deviation. The resulting figure 
+    is saved as a PDF file.
+
+    Parameters
+    ----------
+    df_stats : pandas.DataFrame
+        A DataFrame indexed by time (or days) containing the columns:
+        - 'mean': Mean values of the media statistics.
+        - 'std': Standard deviation of the media statistics.
+    output_folder : str
+        Path to the directory where the output PDF file will be saved.
+    file_name_mean : str, optional
+        Name of the PDF file to save the plot, by default "media_statistics_mean.pdf".
+
+    Returns
+    -------
+    None
+        Saves the plot as a PDF file in the specified folder.
+
+    Notes
+    -----
+    - The shaded region represents the range of `mean ± std`.
+    - The x-axis corresponds to the index of `df_stats`, which is expected to represent time (e.g., days).
+    """
+   
+    os.makedirs(output_folder, exist_ok=True)
+    output_path_mean = os.path.join(output_folder, file_name_mean)
+
+    x_values = df_stats.index  # Days from DataFrame index
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
+    ax.fill_between(
+        x_values,
+        df_stats["mean"] - df_stats["std"],
+        df_stats["mean"] + df_stats["std"],
+        color="lightgreen",
+        alpha=0.2,
+        label="Mean ± Std"
+    )
+    ax.set_title("Mean ± Std Over Time")
+    ax.set_xlabel("Days")
+    ax.set_ylabel("Values")
+    ax.legend()
+    # ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
+    plt.tight_layout()
+    plt.savefig(output_path_mean)
+
+
+def print_media_statistics(df_stats, output_folder):
+    """Exports the media statistics"""
+    os.makedirs(output_folder, exist_ok=True)
+    df_stats.to_csv(output_folder + "/media_statistics.csv", index=False)
 
 
 def local_clustering(voter, network):
@@ -233,7 +365,12 @@ def neighbor_opinion_distribution(network, output_folder, file_name):
 
     plt.figure()
     for i in neigh_opinion_dist:
-        c = 'blue' if i == -1 else 'grey' if i == 0 else 'red'
+        if i == -1:
+            c = "blue"
+        elif i == 0:
+            c = "grey"
+        else:
+            c = "red"
         avg = np.average(neigh_opinion_dist[i])
         std = np.std(neigh_opinion_dist[i])
         neigh_opinion_values[i].append([avg, std])
@@ -242,7 +379,7 @@ def neighbor_opinion_distribution(network, output_folder, file_name):
             neigh_opinion_dist[i],
             alpha=0.5,
             label=f"Opinion {i}: ave = {avg:.2f}, std = {std:.2f}",
-            color=c
+            color=c,
         )
     plt.legend()
     plt.xlabel("$x_i^N$")
@@ -538,12 +675,12 @@ def plot_prob_to_change(prob_to_change, output_folder, file_name):
 
         # Convert the probability data into a numpy array for easier manipulation
         prob_to_change = np.array(prob_to_change)
-
-        # Plot the probability of opinion change over time
-        plt.plot(prob_to_change[:, 0], prob_to_change[:, 1],
-                 label="Probability to change the opinion", color='black')
-
-        # Label the x-axis (time)
+        plt.plot(
+            prob_to_change[:, 0],
+            prob_to_change[:, 1],
+            label="Probability to change the opinon",
+            color="black",
+        )
         plt.xlabel("$t [\mathrm{d}]$")
 
         # Label the y-axis (probability)
@@ -688,10 +825,10 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
 def get_consecutive_terms_counts(election_results):
     """
     Generate a DataFrame with counts of consecutive occurrences of 1 and -1.
-    
+
     Parameters:
         election_results (list): A list containing 1s and -1s representing the terms each party won.
-    
+
     Returns:
         DataFrame: A DataFrame with 'Consecutive Elections' as the index (from 0 to the maximum run length found),
                    and columns for the counts of consecutive occurrences of 1 and -1.
@@ -724,12 +861,12 @@ def get_consecutive_terms_counts(election_results):
 
     # Find the maximum run length
     max_run_length = max(
-        max(consecutive_dict[1].keys(), default=0), 
-        max(consecutive_dict[-1].keys(), default=0)
+        max(consecutive_dict[1].keys(), default=0),
+        max(consecutive_dict[-1].keys(), default=0),
     )
 
     # Create a DataFrame with index from 0 to the maximum run length
-    df = pd.DataFrame(index=range(1,max_run_length + 1))
+    df = pd.DataFrame(index=range(1, max_run_length + 1))
     df.index.name = "Consecutive Elections"
 
     # Fill the columns for 1 and -1 with counts or 0 if not present
@@ -739,7 +876,7 @@ def get_consecutive_terms_counts(election_results):
     return df
 
 
-def create_consecutive_terms_histogram(df):
+def plot_consecutive_terms_histogram(df, output_folder, file_name):
     """
     Creates a histogram from a DataFrame.
 
@@ -755,19 +892,23 @@ def create_consecutive_terms_histogram(df):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, file_name)
 
     if not {1, -1}.issubset(df.columns):
         raise ValueError("The DataFrame must have columns named 1 and -1.")
 
     # Plot the histogram
     plt.figure(figsize=(10, 6))
-    plt.bar(df.index, df[1], width=0.4, color='red', label='1', align='center')
-    plt.bar(df.index - 0.4, df[-1], width=0.4, color='blue', label='-1', align='center')
+    plt.bar(df.index, df[1], width=0.4, color="red", label="1", align="center")
+    plt.bar(df.index - 0.4, df[-1], width=0.4, color="blue", label="-1", align="center")
 
     # Add titles and labels
     plt.title("Histogram of Consecutive Terms", fontsize=14)
     plt.xlabel("Number of consecutive terms", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
-    plt.legend(loc = 'best')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.legend(loc="best")
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+    plt.savefig(output_path)
+
     plt.show()

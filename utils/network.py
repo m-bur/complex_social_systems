@@ -754,3 +754,47 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
             voter.media_feedback(media)
 
     return changed_voters
+
+
+
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, media_update_cycle=1):
+    #should all voters get updated?
+    if days % media_update_cycle == 1:  # Sk ← Sk + E. (I was here, but thats wrong)#maybe check if it is checked every day,
+        media_change = random.normal(0, 0.5)  + initial_media_opinion
+        for i,_ in enumerate(media):
+            new_opinion = media[i].get_opinion() + media_change
+            if abs(new_opinion) < 1: #why here 0.5?
+                media[i].set_opinion(new_opinion)
+            elif new_opinion < 0:
+                media[i].set_opinion(-1)
+                #print(f"media opinion is too low: {media[i].get_opinion()+media_change}")
+            elif new_opinion > 0:
+                media[i].set_opinion(1)
+                #print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
+
+
+    if days % number_of_days_election_cycle == 1:# Sk ← Sk + 0.376 × DUR*I (I=who is in power)
+        dur=0
+        if get_number_of_consecutive_terms(election_results) >= 2:
+            dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25  # is it 0.1 or
+            dur = min(dur, 1.5)
+        if election_results:  # Check if the list is not empty
+            i = (-1)*election_results[-1] if election_results[-1] is not None else 0
+        else:
+            i = 0  # Default value if the list is empty
+        media_change = dur * 0.00376 * i
+
+        #if media_change * election_results[-1] > 0:#als assert schrieben?
+            #print(f"alarm, media_change supports election winner: media_change:{media_change}, election winner: {election_results[-1]}")
+        for i,_ in enumerate(media):
+            new_opinion = media[i].get_opinion()+media_change
+            if abs(new_opinion)<1: # why here 0.5?
+                media[i].set_opinion(new_opinion)
+            elif new_opinion < 0:
+                media[i].set_opinion(-1)
+                #print(f"media opinion is too low: {media[i].get_opinion()+media_change}")
+            elif new_opinion > 0:
+                media[i].set_opinion(1)
+                #print(f"media opinion is too high: {media[i].get_opinion()+media_change}")
+    return media
+

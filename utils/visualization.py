@@ -3,7 +3,139 @@ import matplotlib.pyplot as plt
 import os
 import datetime
 from matplotlib.colors import ListedColormap, BoundaryNorm
+import matplotlib.colors as mcolors
 import imageio
+
+
+def visualize_media(media):
+    """
+    Visualizes the complete opinion spectrum of the media landscape.
+
+    Parameters
+    ----------
+    media : list of Media objects
+    """
+
+    opinions = sorted([media_node.get_opinion() for media_node in media])
+
+    # Normalize the values
+    norm = mcolors.Normalize(vmin=-1, vmax=1)
+
+    # Choose a colormap
+    cmap = plt.cm.coolwarm
+
+    # Map the values to colors
+    colors = cmap(norm(opinions))
+
+    # Create a figure
+    fig, ax = plt.subplots(figsize=(8, 1))
+    fig.subplots_adjust(bottom=0.5)
+
+    # Create a horizontal bar where each section represents a value
+    ax.imshow([colors], aspect="auto", extent=[-1, 1, 0, 5])
+
+    # Add a colorbar
+    cbar = plt.colorbar(
+        plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax, orientation="vertical"
+    )
+
+    # Add tick labels corresponding to your values
+    ax.set_xticks([])  # Adjust tick labels if necessary
+    ax.set_yticks([])  # Hide y-axis
+
+    plt.title("Media Opinion")
+
+    plt.show()
+
+
+def media_boxplot(media):
+
+    opinions = sorted([media_node.get_opinion() for media_node in media])
+
+    # Create a figure
+    fig, ax = plt.subplots(figsize=(6, 4))
+
+    # Create the boxplot
+    ax.boxplot(
+        opinions,
+        vert=False,
+        patch_artist=True,
+        boxprops=dict(facecolor="lightblue", color="blue"),
+    )
+
+    # Highlight the median value
+    median_value = np.median(opinions)
+    ax.axvline(
+        median_value, color="red", linestyle="--", label=f"Median: {median_value:.2f}"
+    )
+
+    # Add labels and title
+    ax.set_title("Boxplot of Values")
+    ax.set_xlabel("Values")
+    ax.set_yticks([])
+    ax.legend()
+
+    # Show the plot
+    plt.show()
+
+
+def media_voter_histogramms(network, media):
+
+    media_ids = [media_node.get_id() for media_node in media]
+
+    media_dict = dict(zip(media_ids, media))
+
+    neutral_voter_connections = []
+    blue_voter_connections = []
+    red_voter_connections = []
+
+    for i in range(len(network)):
+        for j in range(len(network[0])):
+            media_connections = network[i, j].get_media_connections()
+            opinion = network[i, j].get_opinion()
+            if opinion == -1:
+                blue_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+            elif opinion == 0:
+                neutral_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+            elif opinion == 1:
+                red_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+
+    unique_neutral, counts_neutral = np.unique(
+        neutral_voter_connections, return_counts=True
+    )
+    result_neutral = dict(zip(unique_neutral, counts_neutral))
+
+    unique_red, counts_red = np.unique(
+        red_voter_connections, return_counts=True
+    )
+    result_red = dict(zip(unique_red, counts_red))
+
+    unique_blue, counts_blue = np.unique(
+        blue_voter_connections, return_counts=True
+    )
+    result_blue = dict(zip(unique_blue, counts_blue))
+
+    y_lim = max([max(counts_blue), max(counts_neutral), max(counts_red)])+10
+
+    # Data for plotting
+    dicts = [result_blue, result_neutral, result_red]
+    titles = ["Blue Voters", "Neutral Voters", "Red Voters"]
+
+    # Create subplots
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
+
+    for i, (ax, data, title) in enumerate(zip(axes, dicts, titles)):
+        ax.bar(data.keys(), data.values(), color=['blue', 'gray', 'red'])
+        ax.set_title(title)
+        ax.set_xlabel('Media Type')
+        if i == 0:  # Add y-label only to the first subplot for clarity
+            ax.set_ylabel('# Connections')
+        ax.set_ylim(0, y_lim)  # Assuming a consistent scale for comparison
+
+    plt.tight_layout()
+    plt.show()
+
+    return
 
 
 def visualize_matrix(matrix, output_folder, filename=None):
@@ -27,7 +159,7 @@ def visualize_matrix(matrix, output_folder, filename=None):
     """
 
     # Create a color map: red for -1, grey for 0, blue for 1
-    cmap = ListedColormap(['blue', 'grey', 'red'])
+    cmap = ListedColormap(["blue", "grey", "red"])
     bounds = [-1.5, -0.5, 0.5, 1.5]  # Boundaries for the values
     norm = BoundaryNorm(bounds, cmap.N)
 
