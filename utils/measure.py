@@ -910,5 +910,3 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
     plt.legend(loc="best")
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     plt.savefig(output_path)
-
-    plt.show()
