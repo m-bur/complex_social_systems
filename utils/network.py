@@ -756,7 +756,6 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     return changed_voters
 
 
-
 def update_media(
     days, 
     media, 
@@ -802,15 +801,11 @@ def update_media(
     - During election cycles, media opinions are further influenced by the duration
       of the ruling party's power (`DUR`) and a scaling factor (`y`).
 
-    Raises
-    ------
-    ValueError
-        If `media` does not contain valid objects with `get_opinion` and `set_opinion` methods.
     """
     # Check if it's time to update media opinions based on the update cycle.
     if days % media_update_cycle == 0:
         # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
-        media_change = np.random.normal(0, 0.00022 * x) + initial_media_opinion
+        media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
         
         # Update opinions for each media entity.
         for i, _ in enumerate(media):

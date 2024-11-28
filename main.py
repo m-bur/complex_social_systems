@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=40)
+    parser.add_argument("--number_years", type=int, default=100)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
@@ -65,6 +65,8 @@ def main(args=None):
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
+    
+    mfeedback=False
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -99,8 +101,8 @@ def main(args=None):
    
 
     for days in range(Ndays):
-        #was mues im loop sie: media.set
-        #active this to update media opinion:
+        
+        # start with elections after the first year
         if days >= 365:        
             # have elections
             if days % number_of_days_election_cycle == 0:
@@ -108,8 +110,9 @@ def main(args=None):
                 election_results.append(winner)
             media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
 
-        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
- 
+        changed_voters += network_update(network, media, Nv, w, t0, alpha,mfeedback)
+
+        # measure the network characteristics
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
@@ -122,6 +125,7 @@ def main(args=None):
         # update the changed voters once per year
         if days % (365) == 0:
             prob_to_change.append([days, changed_voters / (np.size(network))])
+            changed_voters = 0
         
         #every 5th day, for gif visualization
         if days % 5 == 0:
@@ -132,7 +136,9 @@ def main(args=None):
 
         #turn media feedback on
         if days == 10*365:
-            mfeedback_on = mfeedback_on
+            mfeedback = mfeedback_on
+     
+    # plot and save the network charactersitics 
             
     #combined_visualization(op_trend, networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
