@@ -358,15 +358,11 @@ class Voter:
         str
             A string representation of the Voter object.
         """
-        return (
-            f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, "
-            f"neighbors={self.neighbors}, media_connections={
-                self.media_connections})"
-        )
+        return (f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors}, media_connections={self.media_connections})")
 
 
 class Media:
-    def __init__(self, media_id, opinion=0.0, category_threshold=1/3):
+    def __init__(self, media_id, opinion=0.0, category_threshold=1/3, manipulation_turned_on = False, bias=0.0):
         """
         Initialize a Media object.
 
@@ -389,6 +385,22 @@ class Media:
         self.media_id = media_id
         self.opinion = opinion
         self.set_opinion(opinion)  # Ensures opinion is within the valid range
+        self.manipulation_turned_on = manipulation_turned_on
+        self.bias = bias
+
+    def is_manipulated(self):
+        
+        return self.manipulation_turned_on
+    
+    def set_manipulation(self, manipulation_bool):
+
+        self.manipulation_turned_on = manipulation_bool
+    
+    def set_bias(self, bias):
+        self.bias = bias
+
+    def get_bias(self):
+        return self.bias
 
     def update_category(self):
         """updates the category of the media opinion"""
@@ -464,4 +476,4 @@ class Media:
         str
             A string representation of the Media object.
         """
-        return f"Media(id={self.media_id}, opinion={self.opinion}, category={self.category})"
+        return f"Media(id={self.media_id}, opinion={self.opinion}, category={self.category}, manipulated={self.manipulation_turned_on})"

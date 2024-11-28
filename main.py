@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=100)
+    parser.add_argument("--number_years", type=float, default=100)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
@@ -108,9 +108,9 @@ def main(args=None):
             if days % number_of_days_election_cycle == 0:
                 winner = get_election_winner(network)
                 election_results.append(winner)
-            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
+            media=update_media(days, media, election_results, mu, number_of_days_election_cycle, x, y, manipulation_shift= 0.2)
 
-        changed_voters += network_update(network, media, Nv, w, t0, alpha,mfeedback)
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
 
         # measure the network characteristics
         network_polarization.append(polarization(network))
@@ -127,17 +127,20 @@ def main(args=None):
             prob_to_change.append([days, changed_voters / (np.size(network))])
             changed_voters = 0
         
-        #every 5th day, for gif visualization
+        # every 5th day, for gif visualization
         if days % 5 == 0:
-            #networks.append(copy.deepcopy(network))
+            # networks.append(copy.deepcopy(network))
             new_row = opinion_share(network)
             new_row.index = [days]
             op_trend = pd.concat([op_trend, new_row])
 
-        #turn media feedback on
+        # turn media feedback on
         if days == 10*365:
             mfeedback = mfeedback_on
-     
+
+        # turn on media_manipulation
+        if days == 700:
+            turn_on_media_manipulation_by_opinion_distance(media=media, N=4, target_opinion=-1)
     # plot and save the network charactersitics 
             
     #combined_visualization(op_trend, networks, folder)
@@ -158,6 +161,7 @@ def main(args=None):
     plot_media_shares(df_stats=media_stats, output_folder=folder)
     df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
     plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
+    print_election_results(election_results, folder=folder, filename="election_results.txt")
 
 
 if __name__ == "__main__":
