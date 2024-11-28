@@ -118,11 +118,16 @@ def media_statistics(media):
     unique_elements, counts = np.unique(
         [m.get_category() for m in media], return_counts=True
     )
+    
     shares = dict(zip(unique_elements, counts / np.sum(counts)))
 
+    # Ensure 'blue', 'neutral', 'red' are in the dictionary with a default value of 0 if not found
+    blue_share = shares.get("blue", 0)
+    neutral_share = shares.get("neutral", 0)
+    red_share = shares.get("red", 0)
 
     return pd.DataFrame(
-        {"mean":[mean_opinion],"std": [std_opinion],"blue": [shares["blue"]],"neutral": [shares["neutral"]],"red": [shares["red"]]}
+        {"mean":[mean_opinion],"std": [std_opinion],"blue": [blue_share],"neutral": [neutral_share],"red": [red_share]}
     )
 
 
