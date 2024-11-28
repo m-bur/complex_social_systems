@@ -103,12 +103,12 @@ def main(args=None):
     for days in range(Ndays):
         
         # start with elections after the first year
-        if days >= 365:        
+        if days >= 365 or True:        
             # have elections
             if days % number_of_days_election_cycle == 0:
                 winner = get_election_winner(network)
                 election_results.append(winner)
-            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y, manipulation_shift = 0.5)
+            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)#, manipulation_shift= 0.5)
 
         changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
 

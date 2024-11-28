@@ -309,23 +309,96 @@ def init_network(
 
 
 def turn_on_media_manipulation_by_id(media, IDs):
+    """
+    Activates manipulation for specific media nodes identified by their IDs.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the `get_id()` and 
+        `set_manipulation()` methods. The `get_id()` method returns a unique identifier for
+        the media node, and `set_manipulation()` accepts a boolean to enable or disable manipulation.
+    IDs : list
+        A list of unique identifiers (IDs) for the media nodes whose manipulation should be turned on.
+
+    Returns
+    -------
+    None
+        The function enables manipulation for the media nodes whose IDs are in the `IDs` list.
+    """
     for i in range(len(media)):
         if media[i].get_id() in IDs:
             media[i].set_manipulation(True)
 
 
 def turn_off_media_manipulation_by_id(media, IDs):
+    """
+    Deactivates manipulation for specific media nodes identified by their IDs.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the `get_id()` and 
+        `set_manipulation()` methods. The `get_id()` method returns a unique identifier for
+        the media node, and `set_manipulation()` accepts a boolean to enable or disable manipulation.
+    IDs : list
+        A list of unique identifiers (IDs) for the media nodes whose manipulation should be turned off.
+
+    Returns
+    -------
+    None
+        The function disables manipulation for the media nodes whose IDs are in the `IDs` list.
+    """
     for i in range(len(media)):
         if media[i].get_id() in IDs:
             media[i].set_manipulation(False)
 
 
 def turn_off_all_media_manipulation(media):
+    """
+    Deactivates manipulation for all media nodes in the given list.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the `set_manipulation()` 
+        method, which accepts a boolean value to enable or disable manipulation.
+
+    Returns
+    -------
+    None
+        The function sets the manipulation status of all media nodes to `False`.
+
+    Notes
+    -----
+    - This function iterates over the entire list of media nodes and disables manipulation
+      for each one by calling their `set_manipulation(False)` method.
+    """
     for i in range(len(media)):
         media[i].set_manipulation(False)
 
 
 def turn_on_media_manipulation_by_category(media, N, category):
+    """
+    Activates media manipulation for a random selection of N media nodes within a specific category.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the methods `get_category()` 
+        and `get_id()` to retrieve the category and unique identifier, respectively.
+    N : int
+        The number of media nodes to activate manipulation for. If `N` exceeds the number
+        of nodes in the specified category, all such nodes are considered.
+    category : str
+        The category used to filter media nodes.
+
+    Returns
+    -------
+    None
+        The function activates media manipulation for the selected media nodes by calling
+        `turn_on_media_manipulation_by_id`.
+    """
     IDs = [m.get_id() for m in media if m.get_category() == category]
 
     if N > len(IDs):
@@ -339,6 +412,35 @@ def turn_on_media_manipulation_by_category(media, N, category):
 
 
 def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bound):
+    """
+    Activates media manipulation for a random selection of N media nodes within a specific opinion range.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the methods `get_opinion()` 
+        and `get_id()` to retrieve the opinion value and unique identifier, respectively.
+    N : int
+        The number of media nodes to activate manipulation for. If `N` exceeds the number
+        of nodes within the specified range, all such nodes are considered.
+    lower_bound : float
+        The lower bound of the opinion range (exclusive).
+    upper_bound : float
+        The upper bound of the opinion range (exclusive).
+
+    Returns
+    -------
+    None
+        The function activates media manipulation for the selected media nodes by calling
+        `turn_on_media_manipulation_by_id`.
+
+    Notes
+    -----
+    - Filters the media nodes whose opinions fall within the range `(lower_bound, upper_bound)`.
+    - If `N` exceeds the number of nodes within the range, all such nodes are selected, and a 
+      message is printed to notify the user.
+    - A random subset of nodes is selected from the eligible nodes for manipulation.
+    """
     IDs = [
         m.get_id()
         for m in media
@@ -356,6 +458,27 @@ def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bou
 
 
 def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
+    """
+    Activates media manipulation for the top N media nodes closest to the target opinion.
+
+    Parameters
+    ----------
+    media : list
+        A list of media node objects. Each object must implement the methods `get_opinion()` 
+        and `get_id()` to retrieve the opinion value and unique identifier, respectively.
+    N : int
+        The number of media nodes to activate manipulation for. If `N` exceeds the number
+        of media nodes, all nodes are considered.
+    target_opinion : float
+        The opinion value to which media nodes are compared. Nodes are sorted by their 
+        absolute opinion distance from this target value.
+
+    Returns
+    -------
+    None
+        The function activates media manipulation for the selected media nodes by calling
+        `turn_on_media_manipulation_by_id`.
+    """
     sorted_media = sorted(media, key=lambda x: abs(x.get_opinion() - target_opinion))
 
     if N > len(media):
@@ -363,21 +486,10 @@ def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
         N = len(media)
 
     sorted_media_ids = [sorted_media[i].get_id() for i in range(N)]
-    print(sorted_media_ids)
     turn_on_media_manipulation_by_id(media=media, IDs=sorted_media_ids)
 
 
-def update_media(
-    days,
-    media,
-    election_results,
-    initial_media_opinion,
-    number_of_days_election_cycle,
-    x,
-    y,
-    manipulation_shift=0.,
-    media_update_cycle=1,
-):
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, manipulation_shift=0., media_update_cycle=1):
     """
     Updates the opinions of media entities based on daily cycles and election results.
 
@@ -837,101 +949,3 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
             voter.media_feedback(media)
 
     return changed_voters
-
-
-def update_media(
-    days,
-    media,
-    election_results,
-    initial_media_opinion,
-    number_of_days_election_cycle,
-    x,
-    y,
-    media_update_cycle=1,
-):
-    """
-    Updates the opinions of media entities based on daily cycles and election results.
-
-    Parameters
-    ----------
-    days : int
-        The current day in the simulation.
-    media : list
-        A list of media objects. Each object should have `get_opinion` and `set_opinion` methods.
-    election_results : list
-        A list of election outcomes, where the most recent result is the last element.
-        Positive values represent one party; negative values represent the other.
-    initial_media_opinion : float
-        The baseline opinion of the media.
-    number_of_days_election_cycle : int
-        The number of days in an election cycle.
-    x : float
-        A scaling factor for media change.
-    y : float
-        Another scaling factor for election-related media updates.
-    media_update_cycle : int, optional
-        The interval (in days) at which media opinions are updated. Defaults to 1.
-
-    Returns
-    -------
-    list
-        The updated list of media objects.
-
-    Notes
-    -----
-    - Media opinion is bounded between -1 and 1.
-    - Media opinions are updated daily based on a normal distribution scaled by `x`.
-    - During election cycles, media opinions are further influenced by the duration
-      of the ruling party's power (`DUR`) and a scaling factor (`y`).
-
-    """
-    # Check if it's time to update media opinions based on the update cycle.
-    if days % media_update_cycle == 0:
-        # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
-        media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
-
-        # Update opinions for each media entity.
-        for i, _ in enumerate(media):
-            # Calculate the new opinion by adding the change to the current opinion.
-            new_opinion = media[i].get_opinion() + media_change
-
-            # Ensure the opinion stays within bounds (-1 to 1).
-            if abs(new_opinion) < 1:
-                media[i].set_opinion(new_opinion)
-            elif new_opinion < 0:
-                media[i].set_opinion(-1)
-            elif new_opinion > 0:
-                media[i].set_opinion(1)
-
-    # Check if it's the end of an election cycle.
-    if days % number_of_days_election_cycle == 0:
-        dur = 0  # Duration multiplier for ruling party influence.
-
-        # Determine the duration of the ruling party's power.
-        if get_number_of_consecutive_terms(election_results) >= 2:
-            # Increase duration based on consecutive terms, with diminishing returns after the second term.
-            dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25
-            dur = min(dur, 3)  # Cap the duration multiplier at 3.
-
-        # Determine the direction of influence based on the ruling party.
-        if election_results:
-            i = (-1) * election_results[-1] if election_results[-1] is not None else 0
-        else:
-            i = 0
-
-        # Calculate the opinion change during the election cycle.
-        media_change = dur * 0.000376 * x * y * i
-
-        # Update opinions for each media entity based on election influence.
-        for i, _ in enumerate(media):
-            new_opinion = media[i].get_opinion() + media_change
-
-            # Ensure the opinion stays within bounds (-1 to 1).
-            if abs(new_opinion) < 1:
-                media[i].set_opinion(new_opinion)
-            elif new_opinion < 0:
-                media[i].set_opinion(-1)
-            elif new_opinion > 0:
-                media[i].set_opinion(1)
-
-    return media
