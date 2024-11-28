@@ -158,6 +158,7 @@ def main(args=None):
     plot_media_shares(df_stats=media_stats, output_folder=folder)
     df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
     plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
+    print_election_results(election_results)
 
 
 if __name__ == "__main__":

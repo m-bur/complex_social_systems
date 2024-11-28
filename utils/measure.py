@@ -821,6 +821,27 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
             file.write(f"{m[0]} \t {m[1]} \n")
 
 
+def print_election_results(election_results, folder, filename):
+    """
+    Saves a list to a specified file.
+
+    Args:
+        election_results (list): The list to save.
+        folder (str): The directory where the file will be saved.
+        filename (str): The name of the file.
+    """
+    # Ensure the directory exists
+    os.makedirs(folder, exist_ok=True)
+
+    # Construct the full file path
+    file_path = os.path.join(folder, filename)
+
+    # Write the list to the file
+    with open(file_path, "w") as file:
+        for item in election_results:
+            file.write(f"{item}\n")
+
+
 def get_consecutive_terms_counts(election_results):
     """
     Generate a DataFrame with counts of consecutive occurrences of 1 and -1.
