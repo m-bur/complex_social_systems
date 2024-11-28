@@ -42,8 +42,7 @@ def init_df_conx(c_min, c_max, gamma, L):
         prob = k ** (-gamma)
         prob_list.append(prob)
     prob_sum = sum(prob_list)
-    prob_list_norm = [_ / prob_sum for _ in prob_list] + \
-        [1]  # normalized prob list
+    prob_list_norm = [_ / prob_sum for _ in prob_list] + [1]  # normalized prob list
     prob_list = [
         sum(prob_list_norm[:_]) for _ in range(len(prob_list_norm))
     ]  # accumulative prob list
@@ -221,19 +220,21 @@ def update_df_conx(L, df_conx, connection_matrix):
     return df_conx
 
 
-def init_network(df_conx, L, media_feedback_probability, media_feedback_threshold_replacement_neutral):
+def init_network(
+    df_conx, L, media_feedback_probability, media_feedback_threshold_replacement_neutral
+):
     """
     Initializes a voter network based on a given connections dataframe.
 
-    This function creates a 2D grid of voter nodes, assigns initial opinions randomly, 
-    and establishes neighbors for each voter based on the connections provided in 
-    `df_conx`. It returns the resulting network as a list of lists, where each 
+    This function creates a 2D grid of voter nodes, assigns initial opinions randomly,
+    and establishes neighbors for each voter based on the connections provided in
+    `df_conx`. It returns the resulting network as a list of lists, where each
     element represents a voter node with its initialized properties and connections.
 
     Parameters
     ----------
     df_conx : pandas.DataFrame
-        A DataFrame containing connection information for the network. Each row 
+        A DataFrame containing connection information for the network. Each row
         should include:
             - 'x': int
                 X-coordinate of the voter in the grid.
@@ -249,7 +250,7 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     Returns
     -------
     list of list of Voter
-        A 2D list representing the network of voter nodes, where each voter has its 
+        A 2D list representing the network of voter nodes, where each voter has its
         neighbors and initial opinion set.
     """
     # Get the size of the network from the number of rows in the DataFrame
@@ -257,18 +258,25 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     # Create a 2D list of Voter objects, initialized with default opinions and media feedback settings
     network = [
         [
-            Voter(i, j, 0, 10, False, media_feedback_probability,
-                  media_feedback_threshold_replacement_neutral)
+            Voter(
+                i,
+                j,
+                0,
+                10,
+                False,
+                media_feedback_probability,
+                media_feedback_threshold_replacement_neutral,
+            )
             for i in range(L)
         ]
         for j in range(L)
     ]
-    
-    num_elements = L ** 2
+
+    num_elements = L**2
     ones = [1] * (num_elements // 3)
     zeros = [0] * (num_elements // 3)
     minus_ones = [-1] * (num_elements // 3)
-    
+
     # If L^2 is not perfectly divisible by 3, adjust by adding the remainder
     remainder = num_elements % 3
     if remainder == 1:
@@ -276,10 +284,10 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     elif remainder == 2:
         ones.append(1)
         zeros.append(0)
-    
+
     # Combine the three lists
     opinion_list = ones + zeros + minus_ones
-    
+
     # Shuffle the list to randomize it
     random.shuffle(opinion_list)
     # Iterate through the DataFrame to set voter properties and establish neighbor connections
@@ -299,7 +307,77 @@ def init_network(df_conx, L, media_feedback_probability, media_feedback_threshol
     # Return the fully initialized network
     return network
 
-def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, media_update_cycle=1):
+
+def turn_on_media_manipulation_by_id(media, IDs):
+    for i in range(len(media)):
+        if media[i].get_id() in IDs:
+            media[i].set_manipulation(True)
+
+
+def turn_off_media_manipulation_by_id(media, IDs):
+    for i in range(len(media)):
+        if media[i].get_id() in IDs:
+            media[i].set_manipulation(False)
+
+
+def turn_off_all_media_manipulation(media):
+    for i in range(len(media)):
+        media[i].set_manipulation(False)
+
+
+def turn_on_media_manipulation_by_category(media, N, category):
+    IDs = [m.get_id() for m in media if m.get_category() == category]
+
+    if N > len(IDs):
+        print(
+            f"The Number N = {N} is to large, there are only {len(IDs)} nodes in the category <{category}> "
+        )
+        N = len(IDs)
+
+    selected_nodes = random.sample(IDs, N)
+    turn_on_media_manipulation_by_id(media=media, IDs=selected_nodes)
+
+
+def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bound):
+    IDs = [
+        m.get_id()
+        for m in media
+        if ((m.get_opinion() > lower_bound) and m.get_opinion() < upper_bound)
+    ]
+
+    if N > len(IDs):
+        print(
+            f"The Number N = {N} is to large, there are only {len(IDs)} nodes in that have an opinion in the range ({lower_bound}, {upper_bound}) "
+        )
+        N = len(IDs)
+
+    selected_nodes = random.sample(IDs, N)
+    turn_on_media_manipulation_by_id(media=media, IDs=selected_nodes)
+
+
+def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
+    sorted_media = sorted(media, key=lambda x: abs(x.get_opinion() - target_opinion))
+
+    if N > len(media):
+        print(f"The Number N = {N} is to large, there are only {len(media)} nodes. ")
+        N = len(media)
+
+    sorted_media_ids = [sorted_media[i].get_id() for i in range(N)]
+    print(sorted_media_ids)
+    turn_on_media_manipulation_by_id(media=media, IDs=sorted_media_ids)
+
+
+def update_media(
+    days,
+    media,
+    election_results,
+    initial_media_opinion,
+    number_of_days_election_cycle,
+    x,
+    y,
+    manipulation_shift,
+    media_update_cycle=1,
+):
     """
     Updates the opinions of media entities based on daily cycles and election results.
 
@@ -310,7 +388,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
     media : list
         A list of media objects.
     election_results : list
-        A list of election outcomes, where the most recent result is the last element. 
+        A list of election outcomes, where the most recent result is the last element.
         Positive values represent red party; negative values represent the blue.
     initial_media_opinion : float
         The baseline opinion of the media.
@@ -339,12 +417,18 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
     if days % media_update_cycle == 0:
         # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
         media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
-        
+        media_change_manipulated = np.random.normal(
+            initial_media_opinion + manipulation_shift, 0.00022 * x
+        )
+
         # Update opinions for each media entity.
         for i, _ in enumerate(media):
             # Calculate the new opinion by adding the change to the current opinion.
-            new_opinion = media[i].get_opinion() + media_change
-            
+            if media[i].is_manipulated():
+                new_opinion = media[i].get_opinion() + media_change
+            else:
+                new_opinion = media[i].get_opinion() + media_change_manipulated
+
             # Ensure the opinion stays within bounds (-1 to 1).
             if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)
@@ -362,7 +446,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
             # Increase duration based on consecutive terms, with diminishing returns after the second term.
             dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25
             dur = min(dur, 3)  # Cap the duration multiplier at 3.
-        
+
         # Determine the direction of influence based on the ruling party.
         if election_results:
             i = (-1) * election_results[-1] if election_results[-1] is not None else 0
@@ -375,7 +459,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
         # Update opinions for each media entity based on election influence.
         for i, _ in enumerate(media):
             new_opinion = media[i].get_opinion() + media_change
-            
+
             # Ensure the opinion stays within bounds (-1 to 1).
             if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)
@@ -386,11 +470,12 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
 
     return media
 
+
 def generate_media_landscape(
     number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1
 ):
     """
-    Generate a pandas DataFrame containing media nodes and their respective IDs, 
+    Generate a pandas DataFrame containing media nodes and their respective IDs,
     where the opinions of the media nodes are generated based on the specified mode.
 
     Parameters
@@ -429,8 +514,7 @@ def generate_media_landscape(
     if mode == "standard":
         opinions = np.random.uniform(low=-1, high=1, size=number_of_media)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion)
-                       for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "uniform":
@@ -438,17 +522,13 @@ def generate_media_landscape(
             low=lower_bound, high=upper_bound, size=number_of_media
         )
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion)
-                       for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "fixed":
-        opinions = np.linspace(
-            start=lower_bound, stop=upper_bound, num=number_of_media
-        )
+        opinions = np.linspace(start=lower_bound, stop=upper_bound, num=number_of_media)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion)
-                       for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "gaussian":
@@ -456,8 +536,7 @@ def generate_media_landscape(
         # Set all values greater than 1 to 1 and all values smaller than -1 to -1
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion)
-                       for ID, opinion in zip(IDs, opinions)]
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
 
@@ -465,8 +544,8 @@ def media_conx(network, media, Nc):
     """
     Connect media nodes to random voters in the network.
 
-    Each media node is connected to `Nc` random voters in the network. This function ensures 
-    no duplicate connections are made between a media node and a voter. The updated network 
+    Each media node is connected to `Nc` random voters in the network. This function ensures
+    no duplicate connections are made between a media node and a voter. The updated network
     with media connections is returned.
 
     Parameters
@@ -507,8 +586,8 @@ def voter_update(voter, h, S, alpha, t0):
     """
     Update the opinion of a voter based on the local field and the current polarization state.
 
-    The opinion threshold to switch between states (red, blue, neutral) depends on the initial threshold `t0`, 
-    the total polarization `S`, and the adjustment factor `alpha`. The update favors the party with the minority 
+    The opinion threshold to switch between states (red, blue, neutral) depends on the initial threshold `t0`,
+    the total polarization `S`, and the adjustment factor `alpha`. The update favors the party with the minority
     opinion by lowering its threshold for neutral voters to adopt it.
 
     Parameters
@@ -537,7 +616,7 @@ def voter_update(voter, h, S, alpha, t0):
         - `1`: Red
         - `0`: Neutral
         - `-1`: Blue
-    - Thresholds are adjusted based on the system's polarization, with minority opinions having a lower threshold 
+    - Thresholds are adjusted based on the system's polarization, with minority opinions having a lower threshold
       for adoption by neutral voters.
     """
     changed_opinion = 0
@@ -594,7 +673,7 @@ def local_field(voter, network, media, W):
     """
     Compute the local opinion field experienced by a voter.
 
-    The local field combines the influence of neighboring voters and connected media nodes, 
+    The local field combines the influence of neighboring voters and connected media nodes,
     weighted by the media authority factor `W`.
 
     Parameters
@@ -638,6 +717,7 @@ def local_field(voter, network, media, W):
     # Normalize by the total influence (neighbors + weighted media)
     return h / (n + W * m)
 
+
 def get_election_winner(network):
     """
     Returns the party which has relative the majority in the network
@@ -656,12 +736,13 @@ def get_election_winner(network):
         return -1
     else:
         return 1
-    
+
+
 def get_number_of_consecutive_terms(election_results):
     """
     Takes a chronological list of the election results and returns the number of consecutive terms of the ruling party.
-    
-    Some example outputs: 
+
+    Some example outputs:
 
     get_number_of_consecutive_terms([1,-1,1,1]) == 1
     get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3
@@ -676,7 +757,7 @@ def get_number_of_consecutive_terms(election_results):
 
     if not election_results:  # Handle empty list
         return 0
-    
+
     last_value = election_results[-1]
 
     count = 0
@@ -686,7 +767,7 @@ def get_number_of_consecutive_terms(election_results):
         else:
             break
 
-    count -= 1 # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
+    count -= 1  # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
     return count
 
 
@@ -694,8 +775,8 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
     """
     Update the network for one timestep by randomly selecting voters and updating their opinions.
 
-    The function randomly picks `Nv` voters from the network, computes their local opinion field, 
-    and updates their opinions based on polarization and thresholds. Optionally, applies media feedback 
+    The function randomly picks `Nv` voters from the network, computes their local opinion field,
+    and updates their opinions based on polarization and thresholds. Optionally, applies media feedback
     to the selected voters.
 
     Parameters
@@ -757,14 +838,14 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
 
 
 def update_media(
-    days, 
-    media, 
-    election_results, 
-    initial_media_opinion, 
-    number_of_days_election_cycle, 
-    x, 
-    y, 
-    media_update_cycle=1
+    days,
+    media,
+    election_results,
+    initial_media_opinion,
+    number_of_days_election_cycle,
+    x,
+    y,
+    media_update_cycle=1,
 ):
     """
     Updates the opinions of media entities based on daily cycles and election results.
@@ -776,7 +857,7 @@ def update_media(
     media : list
         A list of media objects. Each object should have `get_opinion` and `set_opinion` methods.
     election_results : list
-        A list of election outcomes, where the most recent result is the last element. 
+        A list of election outcomes, where the most recent result is the last element.
         Positive values represent one party; negative values represent the other.
     initial_media_opinion : float
         The baseline opinion of the media.
@@ -806,12 +887,12 @@ def update_media(
     if days % media_update_cycle == 0:
         # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
         media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
-        
+
         # Update opinions for each media entity.
         for i, _ in enumerate(media):
             # Calculate the new opinion by adding the change to the current opinion.
             new_opinion = media[i].get_opinion() + media_change
-            
+
             # Ensure the opinion stays within bounds (-1 to 1).
             if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)
@@ -829,7 +910,7 @@ def update_media(
             # Increase duration based on consecutive terms, with diminishing returns after the second term.
             dur = 1 + (get_number_of_consecutive_terms(election_results) - 2) * 0.25
             dur = min(dur, 3)  # Cap the duration multiplier at 3.
-        
+
         # Determine the direction of influence based on the ruling party.
         if election_results:
             i = (-1) * election_results[-1] if election_results[-1] is not None else 0
@@ -842,7 +923,7 @@ def update_media(
         # Update opinions for each media entity based on election influence.
         for i, _ in enumerate(media):
             new_opinion = media[i].get_opinion() + media_change
-            
+
             # Ensure the opinion stays within bounds (-1 to 1).
             if abs(new_opinion) < 1:
                 media[i].set_opinion(new_opinion)

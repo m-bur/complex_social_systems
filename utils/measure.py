@@ -169,7 +169,6 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
     plt.savefig(output_path_shares)
 
 
-
 def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
     """
     Plot the time series of the mean and standard deviation for media statistics.
