@@ -540,6 +540,8 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
             # Calculate the new opinion by adding the change to the current opinion.
             if media[i].is_manipulated():
                 new_opinion = media[i].get_opinion() + media_change_manipulated
+                # make it such that the medium is shifted only once
+                media[i].set_manipulation(False)
             else:
                 new_opinion = media[i].get_opinion() + media_change
 
