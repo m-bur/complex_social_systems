@@ -66,7 +66,8 @@ class Voter:
         self.opinion = opinion
         self.neighbors = []  # This will hold the coordinates of neighboring voters
         self.media_connections = []  # List to store IDs of connected media nodes
-        self.media_weight = media_weight  # The factor by which is media is weighted higher than a normal neighbor
+        # The factor by which is media is weighted higher than a normal neighbor
+        self.media_weight = media_weight
 
         # boolean to switch on and off the media feedback
         self.media_feedback_turned_on = media_feedback_turned_on
@@ -140,7 +141,8 @@ class Voter:
         try:
             self.media_connections.remove(media_id)
         except ValueError:
-            raise ValueError(f"Media ID {media_id} is not connected to this voter.")
+            raise ValueError(
+                f"Media ID {media_id} is not connected to this voter.")
 
     def get_opinion_of_neighbours(self, network):
         """
@@ -160,7 +162,8 @@ class Voter:
         """
 
         res = [
-            network[neighbour_coordinates[0], neighbour_coordinates[1]].get_opinion()
+            network[neighbour_coordinates[0],
+                    neighbour_coordinates[1]].get_opinion()
             for neighbour_coordinates in self.get_neighbors()
         ]
         return res
@@ -225,7 +228,8 @@ class Voter:
 
         if self.get_opinion() == -1:
             for media_id in self.media_connections:
-                p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
+                # generate a random number between 0 and 1
+                p = np.random.uniform(0, 1)
 
                 if (
                     media[media_id].get_opinion() > 0
@@ -235,7 +239,8 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [media[media_id] for media_id in range(
+                            len(media)) if media_id not in self.media_connections]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -243,11 +248,13 @@ class Voter:
                         # if the randomly chosen new
                         if unconnected_media[i].get_opinion() <= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(unconnected_media[i].get_id())
+                            self.add_media_connection(
+                                unconnected_media[i].get_id())
 
         elif self.get_opinion() == 1:
             for media_id in self.media_connections:
-                p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
+                # generate a random number between 0 and 1
+                p = np.random.uniform(0, 1)
 
                 if (
                     media[media_id].get_opinion() < 0
@@ -257,7 +264,8 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [media[media_id] for media_id in range(
+                            len(media)) if media_id not in self.media_connections]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -265,11 +273,13 @@ class Voter:
                         # if the randomly chosen new
                         if unconnected_media[i].get_opinion() >= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(unconnected_media[i].get_id())
+                            self.add_media_connection(
+                                unconnected_media[i].get_id())
 
         elif self.get_opinion() == 0:
             for media_id in self.media_connections:
-                p = np.random.uniform(0, 1)  # generate a random number between 0 and 1
+                # generate a random number between 0 and 1
+                p = np.random.uniform(0, 1)
 
                 if (
                     abs(media[media_id].get_opinion())
@@ -280,7 +290,8 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [media[media_id] for media_id in range(
+                            len(media)) if media_id not in self.media_connections]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -291,7 +302,8 @@ class Voter:
                             <= self.meadia_feedback_threshold_replacement_neutral
                         ):
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(unconnected_media[i].get_id())
+                            self.add_media_connection(
+                                unconnected_media[i].get_id())
 
     def get_neighbors(self):
         """
@@ -348,7 +360,8 @@ class Voter:
         """
         return (
             f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, "
-            f"neighbors={self.neighbors}, media_connections={self.media_connections})"
+            f"neighbors={self.neighbors}, media_connections={
+                self.media_connections})"
         )
 
 

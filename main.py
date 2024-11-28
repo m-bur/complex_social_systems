@@ -5,6 +5,7 @@ from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
 import sys
+import copy
 
 
 
@@ -27,12 +28,16 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=float, default=4)
-    parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
+    parser.add_argument("--number_years", type=int, default=100)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
-    parser.add_argument("--number_of_days_election_cycle", type=int, default=25)
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
+    parser.add_argument("--mupdate_parameter_1", type=float, default=2.5)
+    parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     return parser.parse_args()
+
+
 
 
 def main(args=None):
@@ -56,6 +61,12 @@ def main(args=None):
     Ndays = int(365*args.number_years)
     mfeedback_on = args.media_feedback_turned_on
     number_of_days_election_cycle = args.number_of_days_election_cycle
+    mfeedback_prob = args.media_feedback_probability
+    mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
+    x = args.mupdate_parameter_1
+    y = args.mupdate_parameter_2
+    
+    mfeedback=False
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -69,9 +80,9 @@ def main(args=None):
 
     folder = make_foldername(base_name="Figure_collection/figures")
     print_parameters(args, folder, "parameters.txt")
-    network = init_network(df_conx, [[Voter(i, j) for i in range(L)] for j in range(L)])  # LxL network of voters
+    network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
-    media = generate_media_landscape(Nm, media_mode) 
+    media = generate_media_landscape(Nm, media_mode)
     media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(network, folder, "number_media_distribution.pdf")
     neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
@@ -82,6 +93,7 @@ def main(args=None):
     network_polarization = []
     network_std = []
     network_clustering = []
+    networks = []
     changed_voters = 0
     media_stats = pd.DataFrame()
 
@@ -89,42 +101,44 @@ def main(args=None):
    
 
     for days in range(Ndays):
-            
-            #was mues im loop sie: media.set
-            #active this to update media opinion:
-            if days >= 365:        
-                # have elections
-                if days % number_of_days_election_cycle == 0:
-                    winner = get_election_winner(network)
-                    election_results.append(winner)
-                media=update_media(days, media,election_results, mu, number_of_days_election_cycle)
+        
+        # start with elections after the first year
+        if days >= 365:        
+            # have elections
+            if days % number_of_days_election_cycle == 0:
+                winner = get_election_winner(network)
+                election_results.append(winner)
+            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
 
-            changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback_on)
-    
-            network_polarization.append(polarization(network))
-            network_std.append(std_opinion(network))
-            network_clustering.append(clustering(network))
-            media_stats = pd.concat([media_stats, media_statistics(media=media)], ignore_index=True)
+        changed_voters += network_update(network, media, Nv, w, t0, alpha,mfeedback)
 
+        # measure the network characteristics
+        network_polarization.append(polarization(network))
+        network_std.append(std_opinion(network))
+        network_clustering.append(clustering(network))
+        media_stats = pd.concat([media_stats, media_statistics(media=media)], ignore_index=True)
 
-            # progress bar #####################
-            sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
-            sys.stdout.flush()
-            
-            # update the changed voters once per year
-            if days % (365) == 0:
-                prob_to_change.append([days, changed_voters / (np.size(network))])
-            
-            #every 5th day, for gif visualization
-            if days % 5 == 0:
-                #networks.append(copy.deepcopy(network))
-                new_row = opinion_share(network)
-                new_row.index = [days]
-                op_trend = pd.concat([op_trend, new_row])
+        # progress bar #####################
+        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.flush()
+        
+        # update the changed voters once per year
+        if days % (365) == 0:
+            prob_to_change.append([days, changed_voters / (np.size(network))])
+            changed_voters = 0
+        
+        #every 5th day, for gif visualization
+        if days % 5 == 0:
+            #networks.append(copy.deepcopy(network))
+            new_row = opinion_share(network)
+            new_row.index = [days]
+            op_trend = pd.concat([op_trend, new_row])
 
-            #turn media feedback on
-            if days == 365:
-                mfeedback_on = mfeedback_on
+        #turn media feedback on
+        if days == 10*365:
+            mfeedback = mfeedback_on
+     
+    # plot and save the network charactersitics 
             
     #combined_visualization(op_trend, networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
