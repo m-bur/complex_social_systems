@@ -539,9 +539,9 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
         for i, _ in enumerate(media):
             # Calculate the new opinion by adding the change to the current opinion.
             if media[i].is_manipulated():
-                new_opinion = media[i].get_opinion() + media_change
-            else:
                 new_opinion = media[i].get_opinion() + media_change_manipulated
+            else:
+                new_opinion = media[i].get_opinion() + media_change
 
             # Ensure the opinion stays within bounds (-1 to 1).
             if abs(new_opinion) < 1:
