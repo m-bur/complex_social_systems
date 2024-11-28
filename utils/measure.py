@@ -892,6 +892,14 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
+    
+    df['group_index'] = df.index // 28
+
+    # Group by the new index and sum the values
+    df_grouped = df.groupby('group_index').sum()
+
+    df = df_grouped
+    
     os.makedirs(output_folder, exist_ok=True)
     output_path = os.path.join(output_folder, file_name)
 
@@ -900,11 +908,12 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
 
     # Plot the histogram
     plt.figure(figsize=(10, 6))
-    plt.bar(df.index, df[1], width=0.4, color="red", label="1", align="center")
-    plt.bar(df.index - 0.4, df[-1], width=0.4, color="blue", label="-1", align="center")
+    plt.bar(df.index + 1.2, df[1], width=0.4, color="red", label="1", align="center", alpha=0.8)
+    plt.bar(df.index + 0.8, df[-1], width=0.4, color="blue", label="-1", align="center", alpha=0.8)
 
     # Add titles and labels
-    plt.title("Histogram of Consecutive Terms", fontsize=14)
+    plt.xticks(ticks=range(int(df.index.min())+1, int(df.index.max()) + 2))
+    plt.title("Histogram of consecutive terms", fontsize=14)
     plt.xlabel("Number of consecutive terms", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
     plt.legend(loc="best")
