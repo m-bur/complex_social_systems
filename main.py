@@ -108,9 +108,9 @@ def main(args=None):
             if days % number_of_days_election_cycle == 0:
                 winner = get_election_winner(network)
                 election_results.append(winner)
-            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y)
+            media=update_media(days, media,election_results, mu, number_of_days_election_cycle, x, y, manipulation_shift = 0.5)
 
-        changed_voters += network_update(network, media, Nv, w, t0, alpha,mfeedback)
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
 
         # measure the network characteristics
         network_polarization.append(polarization(network))
@@ -137,7 +137,9 @@ def main(args=None):
         #turn media feedback on
         if days == 10*365:
             mfeedback = mfeedback_on
-     
+
+        if days == 700:
+            turn_on_media_manipulation_by_opinion_distance(media=media, N=4, target_opinion=-1)
     # plot and save the network charactersitics 
             
     #combined_visualization(op_trend, networks, folder)

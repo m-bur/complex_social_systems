@@ -375,7 +375,7 @@ def update_media(
     number_of_days_election_cycle,
     x,
     y,
-    manipulation_shift,
+    manipulation_shift=0.,
     media_update_cycle=1,
 ):
     """
@@ -398,6 +398,8 @@ def update_media(
         A scaling factor for media change.
     y : float
         Another scaling factor for election-related media updates.
+    manipulation_shift: float, optional,
+        The shift of the "biased/manipulated" media.
     media_update_cycle : int, optional
         The interval (in days) at which media opinions are updated. Defaults to 1.
 
