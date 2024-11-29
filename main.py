@@ -97,12 +97,12 @@ def main(args=None):
     folder = make_foldername(base_name=parent_folder+"/figures")
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
-    deg_distribution(network, folder, "deg_distribution.pdf")
+    # deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode)
-    media_conx(network, media, Nc)  # Nc random connections per media node
-    number_media_distribution(network, folder, "number_media_distribution.pdf")
-    neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
-    visualize_network(network, folder, "initial_network.pdf")
+    # media_conx(network, media, Nc)  # Nc random connections per media node
+    # number_media_distribution(network, folder, "number_media_distribution.pdf")
+    # neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
+    # visualize_network(network, folder, "initial_network.pdf")
 
     op_trend = pd.DataFrame()
     prob_to_change = []
@@ -161,23 +161,23 @@ def main(args=None):
             
     #combined_visualization(op_trend, networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
-    voter_trend(op_trend, folder, "voter_share.pdf")
+    # voter_trend(op_trend, folder, "voter_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
-    plot_polarization(network_polarization, folder, "network_polarization.pdf")
+    # plot_polarization(network_polarization, folder, "network_polarization.pdf")
     print_measure(network_polarization, folder, "network_polarizaiton.txt")
-    plot_std(network_std, folder, "network_std.pdf")
+    # plot_std(network_std, folder, "network_std.pdf")
     print_measure(network_std, folder, "network_std.txt")
-    plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
+    # plot_prob_to_change(prob_to_change, folder, "prob_to_change.pdf")
     print_prob_to_change(prob_to_change, folder, "prob_to_change.txt")
-    plot_clustering(network_clustering, folder, "network_clustering.pdf")
+    # plot_clustering(network_clustering, folder, "network_clustering.pdf")
     print_measure(network_clustering, folder, "network_clustering.txt")
-    neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
-    visualize_network(network, folder, "final_network.pdf")
+    # neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
+    # visualize_network(network, folder, "final_network.pdf")
     print_media_statistics(df_stats=media_stats, output_folder=folder)
     plot_media_stats(df_stats=media_stats, output_folder=folder)
-    plot_media_shares(df_stats=media_stats, output_folder=folder)
+    # plot_media_shares(df_stats=media_stats, output_folder=folder)
     df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
-    plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
+    # plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
     print_election_results(election_results, folder=folder, filename="election_results.txt")
 
 
