@@ -39,7 +39,7 @@ def parse_args():
     parser.add_argument("--manipulation_shift", type=float, default=1)
     parser.add_argument("--number_of_manipulated_media", type=int, default=1)
     parser.add_argument("--target_media_opinion", type=float, default=0)
-    parser.add_argument("--manipulation_day", type=int, default=700)
+    parser.add_argument("--manipulation_day", type=int, default=1000)
 
 
 
@@ -159,6 +159,7 @@ def main(args=None):
             
     #combined_visualization(op_trend, networks, folder)
     opinion_trend(op_trend, folder, "opinion_share.pdf")
+    voter_trend(op_trend, folder, "voter_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
     plot_polarization(network_polarization, folder, "network_polarization.pdf")
     print_measure(network_polarization, folder, "network_polarizaiton.txt")

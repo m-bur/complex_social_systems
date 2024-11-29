@@ -563,6 +563,60 @@ def opinion_trend(op_trend, output_folder, file_name):
     # Save the plot to the specified file
     plt.savefig(output_path)
 
+def voter_trend(op_trend, output_folder, file_name):
+    """
+    Plot the opinion share of -1 and 1 over time.
+
+    Parameters
+    ----------
+    op_trend : pandas.DataFrame
+        DataFrame where columns represent different opinions and the index is time.
+    output_folder : str
+        Path to the folder where the plot will be saved.
+    file_name : str
+        Name of the output file where the plot will be saved.
+
+    Notes
+    -----
+    This function assigns specific colors to the opinions: blue for -1, grey for 0,
+    and red for other opinions. It then plots the opinion share over time and saves the plot.
+    """
+    # Create the output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Construct the full output file path
+    output_path = os.path.join(output_folder, file_name)
+
+    # Create a new figure for the plot
+    plt.figure()
+    
+    df_voters = op_trend[[-1,1]]
+    df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
+
+    # Iterate over the columns (opinions) in the DataFrame
+    for column in df_voters.columns:
+        # Assign colors based on the opinion value
+        if column == -1:
+            color = 'blue'
+        elif column == 1:
+            color = 'red'
+
+        # Plot the opinion share over time
+        plt.plot(df_voters.index, df_voters[column],
+                 label=f"Opinion {column}", color=color)
+
+    # Label the x-axis (time)
+    plt.xlabel(r"$t [\mathrm{d}]$")
+
+    # Label the y-axis (opinion share)
+    plt.ylabel("Voter Share")
+
+    # Display the legend
+    plt.legend()
+
+    # Save the plot to the specified file
+    plt.savefig(output_path)
+    
 
 def plot_polarization(network_pol, output_folder, file_name):
     """
