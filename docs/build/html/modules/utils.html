@@ -48,9 +48,13 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-utils.nodes">utils.nodes module</a><ul>
 <li><a class="reference internal" href="#utils.nodes.Media"><code class="docutils literal notranslate"><span class="pre">Media</span></code></a><ul>
+<li><a class="reference internal" href="#utils.nodes.Media.get_bias"><code class="docutils literal notranslate"><span class="pre">Media.get_bias()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_category"><code class="docutils literal notranslate"><span class="pre">Media.get_category()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_id"><code class="docutils literal notranslate"><span class="pre">Media.get_id()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_opinion"><code class="docutils literal notranslate"><span class="pre">Media.get_opinion()</span></code></a></li>
+<li><a class="reference internal" href="#utils.nodes.Media.is_manipulated"><code class="docutils literal notranslate"><span class="pre">Media.is_manipulated()</span></code></a></li>
+<li><a class="reference internal" href="#utils.nodes.Media.set_bias"><code class="docutils literal notranslate"><span class="pre">Media.set_bias()</span></code></a></li>
+<li><a class="reference internal" href="#utils.nodes.Media.set_manipulation"><code class="docutils literal notranslate"><span class="pre">Media.set_manipulation()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.set_opinion"><code class="docutils literal notranslate"><span class="pre">Media.set_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.update_category"><code class="docutils literal notranslate"><span class="pre">Media.update_category()</span></code></a></li>
 </ul>
@@ -95,6 +99,7 @@
 <li><a class="reference internal" href="#utils.measure.plot_std"><code class="docutils literal notranslate"><span class="pre">plot_std()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.polarization"><code class="docutils literal notranslate"><span class="pre">polarization()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.power_law"><code class="docutils literal notranslate"><span class="pre">power_law()</span></code></a></li>
+<li><a class="reference internal" href="#utils.measure.print_election_results"><code class="docutils literal notranslate"><span class="pre">print_election_results()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_measure"><code class="docutils literal notranslate"><span class="pre">print_measure()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_media_statistics"><code class="docutils literal notranslate"><span class="pre">print_media_statistics()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_parameters"><code class="docutils literal notranslate"><span class="pre">print_parameters()</span></code></a></li>
@@ -104,12 +109,15 @@
 </li>
 <li><a class="reference internal" href="#id1">Module contents</a></li>
 <li><a class="reference internal" href="#utils-visualization-module">utils.visualization module</a><ul>
+<li><a class="reference internal" href="#utils.visualization.combined_visualization"><code class="docutils literal notranslate"><span class="pre">combined_visualization()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.media_boxplot"><code class="docutils literal notranslate"><span class="pre">media_boxplot()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.media_voter_histogramms"><code class="docutils literal notranslate"><span class="pre">media_voter_histogramms()</span></code></a></li>
-<li><a class="reference internal" href="#utils.visualization.test_visualize_matrix"><code class="docutils literal notranslate"><span class="pre">test_visualize_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.network_evolution_single_frame"><code class="docutils literal notranslate"><span class="pre">network_evolution_single_frame()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.opinion_trend_single_frame"><code class="docutils literal notranslate"><span class="pre">opinion_trend_single_frame()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.visualize_matrix"><code class="docutils literal notranslate"><span class="pre">visualize_matrix()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.visualize_media"><code class="docutils literal notranslate"><span class="pre">visualize_media()</span></code></a></li>
 <li><a class="reference internal" href="#utils.visualization.visualize_network"><code class="docutils literal notranslate"><span class="pre">visualize_network()</span></code></a></li>
+<li><a class="reference internal" href="#utils.visualization.visualize_network_evolution"><code class="docutils literal notranslate"><span class="pre">visualize_network_evolution()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id2">Module contents</a></li>
@@ -125,6 +133,12 @@
 <li><a class="reference internal" href="#utils.network.media_conx"><code class="docutils literal notranslate"><span class="pre">media_conx()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.network_update"><code class="docutils literal notranslate"><span class="pre">network_update()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.prob_first_connection"><code class="docutils literal notranslate"><span class="pre">prob_first_connection()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_off_all_media_manipulation"><code class="docutils literal notranslate"><span class="pre">turn_off_all_media_manipulation()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_off_media_manipulation_by_id"><code class="docutils literal notranslate"><span class="pre">turn_off_media_manipulation_by_id()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_on_media_manipulation_by_category"><code class="docutils literal notranslate"><span class="pre">turn_on_media_manipulation_by_category()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_on_media_manipulation_by_id"><code class="docutils literal notranslate"><span class="pre">turn_on_media_manipulation_by_id()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_on_media_manipulation_by_opinion_distance"><code class="docutils literal notranslate"><span class="pre">turn_on_media_manipulation_by_opinion_distance()</span></code></a></li>
+<li><a class="reference internal" href="#utils.network.turn_on_media_manipulation_by_opinion_range"><code class="docutils literal notranslate"><span class="pre">turn_on_media_manipulation_by_opinion_range()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.update_df_conx"><code class="docutils literal notranslate"><span class="pre">update_df_conx()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.update_media"><code class="docutils literal notranslate"><span class="pre">update_media()</span></code></a></li>
 <li><a class="reference internal" href="#utils.network.voter_update"><code class="docutils literal notranslate"><span class="pre">voter_update()</span></code></a></li>
@@ -168,8 +182,13 @@
 <span id="utils-nodes-module"></span><h2>utils.nodes module<a class="headerlink" href="#module-utils.nodes" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="utils.nodes.Media">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manipulation_turned_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.get_bias">
+<span class="sig-name descname"><span class="pre">get_bias</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_bias" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.get_category">
 <span class="sig-name descname"><span class="pre">get_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_category" title="Link to this definition"></a></dt>
@@ -211,6 +230,21 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.is_manipulated">
+<span class="sig-name descname"><span class="pre">is_manipulated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.is_manipulated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.set_bias">
+<span class="sig-name descname"><span class="pre">set_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.set_bias" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.set_manipulation">
+<span class="sig-name descname"><span class="pre">set_manipulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manipulation_bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.set_manipulation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.set_opinion">
@@ -426,13 +460,39 @@ with which the voter is connected.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.clustering">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.clustering" title="Link to this definition"></a></dt>
-<dd><p>Return the clustering (degree of agreement between neighbours)</p>
+<dd><p>Computes the average clustering coefficient for the entire network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The average clustering coefficient across all voters in the network.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.deg_distribution">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">deg_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.deg_distribution" title="Link to this definition"></a></dt>
-<dd><p>Fit the degree distribution of the network to a power law and plot the results. Returns the exponent of the power law fit.</p>
+<dd><p>Fits the degree distribution of the network to a power law and plots the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network where each Voter has a defined number of neighbors.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The exponent of the power law fit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -453,7 +513,21 @@ with which the voter is connected.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.local_clustering">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">local_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.local_clustering" title="Link to this definition"></a></dt>
-<dd><p>Returns the local clustering (i.e. the fraction of agreement between one voter and its neighbors)</p>
+<dd><p>Computes the local clustering coefficient for a voter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voter</strong> (<a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter for whom local clustering is calculated.</p></li>
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fraction of neighbors with the same opinion as the voter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -492,43 +566,132 @@ which contain the mean, the standard deviation, and the share of “blue”, “
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.neighbor_opinion">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">neighbor_opinion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.neighbor_opinion" title="Link to this definition"></a></dt>
-<dd><p>Return the average opinion of the neighbors of the voter</p>
+<dd><p>Calculates the average opinion of a voter’s neighbors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voter</strong> (<a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter whose neighbors are being analyzed.</p></li>
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The average opinion of the voter’s neighbors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.neighbor_opinion_distribution">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">neighbor_opinion_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.neighbor_opinion_distribution" title="Link to this definition"></a></dt>
-<dd><p>Displays the distribution of the average opinion of neighbors depending on the opinon of the voter. Returns the the mean and standard deviation for each catagory.</p>
+<dd><p>Plots the distribution of the average opinion of neighbors based on voter opinions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with opinions as keys and lists of average opinions and standard deviations as values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.number_media_distribution">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">number_media_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.number_media_distribution" title="Link to this definition"></a></dt>
-<dd><p>Displays the distribution of media connections of each voter. Returns the average and standard deviation.</p>
+<dd><p>Displays the distribution of media connections of voters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network where each Voter has media connections.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The average and standard deviation of media connections.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.opinion_list">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">opinion_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.opinion_list" title="Link to this definition"></a></dt>
-<dd><p>Returns the list of all opinions</p>
+<dd><p>Returns a list of all opinions in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network where each element is a <cite>Voter</cite> object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A flat list of opinions from all voters in the network.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.opinion_share">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">opinion_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.opinion_share" title="Link to this definition"></a></dt>
-<dd><p>Returns the share of opinion of the entire network.</p>
+<dd><p>Calculates the share of each opinion in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame where columns are unique opinions and values represent their share.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.opinion_trend">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">opinion_trend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_trend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.opinion_trend" title="Link to this definition"></a></dt>
-<dd><p>plots the opinion share</p>
+<dd><p>Plot the opinion share over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op_trend</strong> (<em>pandas.DataFrame</em>) – DataFrame where columns represent different opinions and the index is time.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function assigns specific colors to the opinions: blue for -1, grey for 0,
+and red for other opinions. It then plots the opinion share over time and saves the plot.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.plot_clustering">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clustering</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_clustering" title="Link to this definition"></a></dt>
-<dd><p>Plots the clustering</p>
+<dd><p>Plot the network clustering coefficient over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clustering</strong> (<em>array-like</em>) – Array or list of clustering coefficient values over time.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function plots the network clustering coefficient over time and saves the plot.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -610,37 +773,119 @@ is saved as a PDF file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.plot_polarization">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_polarization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_pol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_polarization" title="Link to this definition"></a></dt>
-<dd><p>plots the network polarization</p>
+<dd><p>Plot the network polarization over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network_pol</strong> (<em>array-like</em>) – Array or list of network polarization values over time.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function plots the network polarization over time and saves the plot.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.plot_prob_to_change">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_prob_to_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob_to_change</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_prob_to_change" title="Link to this definition"></a></dt>
-<dd><p>Plots the probability to change the opinions</p>
+<dd><p>Plot the probability to change opinions (per year) over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prob_to_change</strong> (<em>list</em><em> of </em><em>tuples</em>) – A list of tuples where each tuple contains time and corresponding probability to change opinion.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function plots the probability of opinion change over time and saves the plot.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.plot_std">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">plot_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.plot_std" title="Link to this definition"></a></dt>
-<dd><p>plots the standard deviation of the network polarizaiton</p>
+<dd><p>Plot the standard deviation of the network polarization over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network_std</strong> (<em>array-like</em>) – Array or list of standard deviation values of network polarization over time.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function plots the standard deviation of the network polarization and saves the plot.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.polarization">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">polarization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.polarization" title="Link to this definition"></a></dt>
-<dd><p>Returns the average opinion of  the network.</p>
+<dd><p>Calculates the average opinion of the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The average opinion of all voters in the network.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.power_law">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">power_law</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.power_law" title="Link to this definition"></a></dt>
-<dd><p>Fit function for degree distribution. For y scale free network 2 &lt; b &lt; 3.</p>
+<dd><p>Fit function for degree distribution in a network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em>) – Input data points (degrees).</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Scale parameter of the power law.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Exponent of the power law.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Power-law values for the input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.measure.print_election_results">
+<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_election_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">election_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_election_results" title="Link to this definition"></a></dt>
+<dd><p>Saves a list to a specified file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>election_results (list): The list to save.
+folder (str): The directory where the file will be saved.
+filename (str): The name of the file.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.print_measure">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_measure" title="Link to this definition"></a></dt>
-<dd><p>prints measure to file</p>
+<dd><p>Print a list of measures to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>measure</strong> (<em>list</em>) – List of measurements to be printed.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the file will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output text file.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function prints each item from the <cite>measure</cite> list to a text file.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -652,22 +897,52 @@ is saved as a PDF file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.print_parameters">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_parameters" title="Link to this definition"></a></dt>
-<dd><p>Saves all arguments from argparse to a text file.</p>
-<p>Parameters:
-- args: Namespace object from argparse.parse_args().
-- file_name: The name of the text file to save arguments.</p>
+<dd><p>Save all command line arguments to a text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>argparse.Namespace</em>) – Namespace object containing the parsed arguments.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the file will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output text file.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function saves all arguments parsed from <cite>argparse.parse_args()</cite> to a text file.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.print_prob_to_change">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">print_prob_to_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob_to_change</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.print_prob_to_change" title="Link to this definition"></a></dt>
-<dd><p>prints to file</p>
+<dd><p>Print the probability to change opinions over time to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prob_to_change</strong> (<em>list</em><em> of </em><em>tuples</em>) – A list of tuples where each tuple contains time and corresponding probability to change opinion.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the file will be saved.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output text file.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function prints the probability of opinion change over time to a text file.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.measure.std_opinion">
 <span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">std_opinion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.std_opinion" title="Link to this definition"></a></dt>
-<dd><p>Returns the standard deviation of opinion in the nework</p>
+<dd><p>Computes the standard deviation of opinions in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter network.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The standard deviation of opinions, normalized by the square root of the network size.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -677,6 +952,25 @@ is saved as a PDF file.</p>
 <section id="utils-visualization-module">
 <h2>utils.visualization module<a class="headerlink" href="#utils-visualization-module" title="Link to this heading"></a></h2>
 <dl class="py function" id="module-utils.visualization">
+<dt class="sig sig-object py" id="utils.visualization.combined_visualization">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">combined_visualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_trend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">networks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'combined_evolution.gif'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.combined_visualization" title="Link to this definition"></a></dt>
+<dd><p>Combines the opinion trend plot and network evolution visualization into a single GIF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op_trend</strong> (<em>pandas.DataFrame</em>) – Opinion trend data.</p></li>
+<li><p><strong>networks</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – Network data over time.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Folder to save the GIF.</p></li>
+<li><p><strong>gif_filename</strong> (<em>str</em>) – Name of the output GIF file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="utils.visualization.media_boxplot">
 <span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">media_boxplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.media_boxplot" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -687,19 +981,41 @@ is saved as a PDF file.</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="utils.visualization.test_visualize_matrix">
-<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">test_visualize_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.test_visualize_matrix" title="Link to this definition"></a></dt>
-<dd><p>Test the <cite>visualize_matrix</cite> function by creating and visualizing a sample matrix.</p>
-<p>This function generates a 1000x1000 matrix with specific structured regions:
-a red background, a blue circle in the center, and a grey ring between the circle
-and background. It then calls <cite>visualize_matrix</cite> to create and save the image with
-a unique filename. The test checks if the image was saved correctly.</p>
+<dt class="sig sig-object py" id="utils.visualization.network_evolution_single_frame">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">network_evolution_single_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.network_evolution_single_frame" title="Link to this definition"></a></dt>
+<dd><p>Generate a single frame for the network visualization at a given time step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>None</strong></p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The network at the current time step.</p></li>
+<li><p><strong>cmap</strong> (<em>matplotlib.colors.ListedColormap</em>) – The color map for the visualization.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure containing the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization.opinion_trend_single_frame">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">opinion_trend_single_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_trend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.opinion_trend_single_frame" title="Link to this definition"></a></dt>
+<dd><p>Generate a single frame for the opinion trend plot at a given time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op_trend</strong> (<em>pandas.DataFrame</em>) – DataFrame where columns represent different opinions and the index is time.</p></li>
+<li><p><strong>time_step</strong> (<em>int</em>) – The current time step to plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure containing the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -740,7 +1056,47 @@ the current timestamp is generated.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.visualization.visualize_network">
 <span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.visualize_network" title="Link to this definition"></a></dt>
-<dd><p>visualize voter network</p>
+<dd><p>Visualize the voter network by plotting the opinion distribution across the nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>array-like</em>) – A 2D array representing the network, where each element corresponds to a node (voter) in the network.
+Each node should have a method <cite>get_opinion()</cite> that returns the opinion of that voter.</p></li>
+<li><p><strong>folder</strong> (<em>str</em>) – The folder path where the visualized network will be saved.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file where the visualized network will be saved.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function constructs a 2D matrix representing the opinions of each voter in the network,
+and then calls the <cite>visualize_matrix</cite> function to generate and save the visualization.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.visualization.visualize_network_evolution">
+<span class="sig-prename descclassname"><span class="pre">utils.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_network_evolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">networks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'network_evolution.gif'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualization.visualize_network_evolution" title="Link to this definition"></a></dt>
+<dd><p>Visualizes the evolution of a network over time and saves the animation as a GIF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>networks</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – A list of time steps, where each time step is a list of lists representing the network at that time.
+Each element in the network is an instance of the Voter class.</p></li>
+<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the output images and the GIF will be saved.</p></li>
+<li><p><strong>gif_filename</strong> (<em>str</em><em>, </em><em>optional</em>) – The filename for the generated GIF. Default is “network_evolution.gif”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function saves the GIF to the specified output folder but does not return any value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function generates a color map for the network visualization:
+- -1 is shown in blue
+- 0 is shown in grey
+- 1 is shown in red</p>
 </dd></dl>
 
 </section>
@@ -802,7 +1158,8 @@ where the opinions of the media nodes are generated based on the specified mode.
 <li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The distribution mode for generating opinions. Can be one of the following:
 - ‘standard’: Uniform distribution between -1 and 1 (default).
 - ‘uniform’: Uniform distribution between -lower_bound and upper_bound.
-- ‘gaussian’: Gaussian (normal) distribution with mean <cite>mu</cite> and standard deviation <cite>sigma</cite>.</p></li>
+- ‘gaussian’: Gaussian (normal) distribution with mean <cite>mu</cite> and standard deviation <cite>sigma</cite>.
+- ‘fixed’: equally spaced media nodes.</p></li>
 <li><p><strong>mu</strong> (<em>float</em><em>, </em><em>optional</em>) – The mean of the Gaussian distribution (default is 0).</p></li>
 <li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – The standard deviation of the Gaussian distribution (default is 0.25).</p></li>
 <li><p><strong>lower_bound</strong> (<em>float</em><em>, </em><em>optional</em>) – The lower bound of the uniform distribution for ‘uniform’ mode (default is -1).</p></li>
@@ -887,26 +1244,158 @@ get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.init_network">
-<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">init_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_conx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.init_network" title="Link to this definition"></a></dt>
-<dd><p>Initiliaize the voter network with given connections. Returns the list of network nodes with neighbors according to df_conx.</p>
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">init_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_conx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_feedback_probability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_feedback_threshold_replacement_neutral</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.init_network" title="Link to this definition"></a></dt>
+<dd><p>Initializes a voter network based on a given connections dataframe.</p>
+<p>This function creates a 2D grid of voter nodes, assigns initial opinions randomly,
+and establishes neighbors for each voter based on the connections provided in
+<cite>df_conx</cite>. It returns the resulting network as a list of lists, where each
+element represents a voter node with its initialized properties and connections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_conx</strong> (<em>pandas.DataFrame</em>) – <p>A DataFrame containing connection information for the network. Each row
+should include:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>’x’: int</dt><dd><p>X-coordinate of the voter in the grid.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’y’: int</dt><dd><p>Y-coordinate of the voter in the grid.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’connection’: list of tuple of int</dt><dd><p>A list of neighboring coordinates for the voter.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>media_feedback_probability</strong> (<em>float</em>) – Probability that a voter is influenced by media feedback.</p></li>
+<li><p><strong>media_feedback_threshold_replacement_neutral</strong> (<em>float</em>) – Threshold for media feedback to replace a voter’s opinion with a neutral one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 2D list representing the network of voter nodes, where each voter has its
+neighbors and initial opinion set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of list of <a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter">Voter</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.local_field">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">local_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.local_field" title="Link to this definition"></a></dt>
-<dd><p>Computes the local opinion field for the voter. The media authority is W</p>
+<dd><p>Compute the local opinion field experienced by a voter.</p>
+<p>The local field combines the influence of neighboring voters and connected media nodes,
+weighted by the media authority factor <cite>W</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voter</strong> (<a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – <dl class="simple">
+<dt>The voter object whose local field is to be calculated. The object must have methods:</dt><dd><ul>
+<li><p><cite>get_neighbors()</cite>: Returns a list of neighboring voter coordinates.</p></li>
+<li><p><cite>get_number_of_neighbors()</cite>: Returns the total number of neighbors.</p></li>
+<li><p><cite>get_media_connections()</cite>: Returns a list of IDs of connected media nodes.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The 2D voter network, where each element is a <cite>Voter</cite> object.</p></li>
+<li><p><strong>media</strong> (<em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Media" title="utils.nodes.Media"><em>Media</em></a>) – A list of media nodes, indexed by their IDs. Each media node must have a <cite>get_opinion()</cite> method.</p></li>
+<li><p><strong>W</strong> (<em>float</em>) – Media authority factor, which determines the weight of media influence relative to neighbors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The local field value, computed as a weighted sum of neighbor and media opinions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The local field influences whether the voter changes their opinion during the update process.</p></li>
+<li><p>Neighbors contribute equally, while media influence is scaled by the authority factor <cite>W</cite>.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.media_conx">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">media_conx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.media_conx" title="Link to this definition"></a></dt>
-<dd><p>Make connections between Media and voters. Each media node is connected to Nc random voters. Return the updated voter network with media connections.</p>
+<dd><p>Connect media nodes to random voters in the network.</p>
+<p>Each media node is connected to <cite>Nc</cite> random voters in the network. This function ensures
+no duplicate connections are made between a media node and a voter. The updated network
+with media connections is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – A 2D list representing the voter network, where each element is a <cite>Voter</cite> object.</p></li>
+<li><p><strong>media</strong> (<em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Media" title="utils.nodes.Media"><em>Media</em></a>) – A list of media nodes, where each media node has an <cite>get_id()</cite> method to retrieve its ID.</p></li>
+<li><p><strong>Nc</strong> (<em>int</em>) – The number of connections each media node should establish with random voters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated voter network with media connections established.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of list of <a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter">Voter</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.network_update">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">network_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfeedback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.network_update" title="Link to this definition"></a></dt>
-<dd><p>Update the network one timestep by randomly picking Nv voters and updating their opinion. Media authority W and initial thresholds t0 with parameter alpha.</p>
+<dd><p>Update the network for one timestep by randomly selecting voters and updating their opinions.</p>
+<p>The function randomly picks <cite>Nv</cite> voters from the network, computes their local opinion field,
+and updates their opinions based on polarization and thresholds. Optionally, applies media feedback
+to the selected voters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The 2D voter network, where each element is a <cite>Voter</cite> object.</p></li>
+<li><p><strong>media</strong> (<em>list</em>) – A list of media nodes, indexed by their IDs. Each media node must have a <cite>get_opinion()</cite> method.</p></li>
+<li><p><strong>Nv</strong> (<em>int</em>) – The number of voters to randomly select and update during this timestep.</p></li>
+<li><p><strong>W</strong> (<em>float</em>) – Media authority factor, which determines the weight of media influence relative to neighbors.</p></li>
+<li><p><strong>t0</strong> (<em>tuple</em><em> of </em><em>float</em>) – <dl class="simple">
+<dt>Initial thresholds for opinion changes:</dt><dd><ul>
+<li><p><cite>t0[0]</cite>: Threshold to change from partisan (red/blue) to neutral.</p></li>
+<li><p><cite>t0[1]</cite>: Threshold to change from neutral to partisan (red/blue).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Adjustment factor for polarization-dependent threshold shifts.</p></li>
+<li><p><strong>mfeedback</strong> (<em>bool</em>) – If <cite>True</cite>, applies media feedback to voters after their opinion update.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of voters whose opinions changed during this timestep.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>The function assumes the existence of <cite>local_field</cite>, <cite>polarization</cite>, and <cite>voter_update</cite> functions:</dt><dd><ul>
+<li><p><cite>local_field(voter, network, media, W)</cite> computes the local opinion field.</p></li>
+<li><p><cite>polarization(network)</cite> computes the current system polarization.</p></li>
+<li><p><cite>voter_update(voter, h, S, alpha, t0)</cite> updates a voter’s opinion based on the local field and polarization.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>If <cite>mfeedback</cite> is enabled, voters apply media feedback via their <cite>media_feedback</cite> method.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -928,6 +1417,154 @@ get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_off_all_media_manipulation">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_off_all_media_manipulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_off_all_media_manipulation" title="Link to this definition"></a></dt>
+<dd><p>Deactivates manipulation for all media nodes in the given list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the <cite>set_manipulation()</cite>
+method, which accepts a boolean value to enable or disable manipulation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function sets the manipulation status of all media nodes to <cite>False</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This function iterates over the entire list of media nodes and disables manipulation
+for each one by calling their <cite>set_manipulation(False)</cite> method.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_off_media_manipulation_by_id">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_off_media_manipulation_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IDs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_off_media_manipulation_by_id" title="Link to this definition"></a></dt>
+<dd><p>Deactivates manipulation for specific media nodes identified by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the <cite>get_id()</cite> and
+<cite>set_manipulation()</cite> methods. The <cite>get_id()</cite> method returns a unique identifier for
+the media node, and <cite>set_manipulation()</cite> accepts a boolean to enable or disable manipulation.</p></li>
+<li><p><strong>IDs</strong> (<em>list</em>) – A list of unique identifiers (IDs) for the media nodes whose manipulation should be turned off.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function disables manipulation for the media nodes whose IDs are in the <cite>IDs</cite> list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_on_media_manipulation_by_category">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_on_media_manipulation_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_on_media_manipulation_by_category" title="Link to this definition"></a></dt>
+<dd><p>Activates media manipulation for a random selection of N media nodes within a specific category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the methods <cite>get_category()</cite>
+and <cite>get_id()</cite> to retrieve the category and unique identifier, respectively.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – The number of media nodes to activate manipulation for. If <cite>N</cite> exceeds the number
+of nodes in the specified category, all such nodes are considered.</p></li>
+<li><p><strong>category</strong> (<em>str</em>) – The category used to filter media nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function activates media manipulation for the selected media nodes by calling
+<cite>turn_on_media_manipulation_by_id</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_on_media_manipulation_by_id">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_on_media_manipulation_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IDs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_on_media_manipulation_by_id" title="Link to this definition"></a></dt>
+<dd><p>Activates manipulation for specific media nodes identified by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the <cite>get_id()</cite> and
+<cite>set_manipulation()</cite> methods. The <cite>get_id()</cite> method returns a unique identifier for
+the media node, and <cite>set_manipulation()</cite> accepts a boolean to enable or disable manipulation.</p></li>
+<li><p><strong>IDs</strong> (<em>list</em>) – A list of unique identifiers (IDs) for the media nodes whose manipulation should be turned on.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function enables manipulation for the media nodes whose IDs are in the <cite>IDs</cite> list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_on_media_manipulation_by_opinion_distance">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_on_media_manipulation_by_opinion_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_opinion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_on_media_manipulation_by_opinion_distance" title="Link to this definition"></a></dt>
+<dd><p>Activates media manipulation for the top N media nodes closest to the target opinion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the methods <cite>get_opinion()</cite>
+and <cite>get_id()</cite> to retrieve the opinion value and unique identifier, respectively.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – The number of media nodes to activate manipulation for. If <cite>N</cite> exceeds the number
+of media nodes, all nodes are considered.</p></li>
+<li><p><strong>target_opinion</strong> (<em>float</em>) – The opinion value to which media nodes are compared. Nodes are sorted by their
+absolute opinion distance from this target value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function activates media manipulation for the selected media nodes by calling
+<cite>turn_on_media_manipulation_by_id</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.network.turn_on_media_manipulation_by_opinion_range">
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">turn_on_media_manipulation_by_opinion_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.turn_on_media_manipulation_by_opinion_range" title="Link to this definition"></a></dt>
+<dd><p>Activates media manipulation for a random selection of N media nodes within a specific opinion range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media</strong> (<em>list</em>) – A list of media node objects. Each object must implement the methods <cite>get_opinion()</cite>
+and <cite>get_id()</cite> to retrieve the opinion value and unique identifier, respectively.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – The number of media nodes to activate manipulation for. If <cite>N</cite> exceeds the number
+of nodes within the specified range, all such nodes are considered.</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em>) – The lower bound of the opinion range (exclusive).</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em>) – The upper bound of the opinion range (exclusive).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function activates media manipulation for the selected media nodes by calling
+<cite>turn_on_media_manipulation_by_id</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Filters the media nodes whose opinions fall within the range <cite>(lower_bound, upper_bound)</cite>.</p></li>
+<li><p>If <cite>N</cite> exceeds the number of nodes within the range, all such nodes are selected, and a
+message is printed to notify the user.</p></li>
+<li><p>A random subset of nodes is selected from the eligible nodes for manipulation.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -953,14 +1590,84 @@ get_number_of_consecutive_terms([1,-1,-1,-1,-1]) == 3</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.update_media">
-<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">update_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">election_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_media_opinion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_days_election_cycle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_update_cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.update_media" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">update_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">election_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_media_opinion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_days_election_cycle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manipulation_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_update_cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.update_media" title="Link to this definition"></a></dt>
+<dd><p>Updates the opinions of media entities based on daily cycles and election results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<em>int</em>) – The current day in the simulation.</p></li>
+<li><p><strong>media</strong> (<em>list</em>) – A list of media objects.</p></li>
+<li><p><strong>election_results</strong> (<em>list</em>) – A list of election outcomes, where the most recent result is the last element.
+Positive values represent red party; negative values represent the blue.</p></li>
+<li><p><strong>initial_media_opinion</strong> (<em>float</em>) – The baseline opinion of the media.</p></li>
+<li><p><strong>number_of_days_election_cycle</strong> (<em>int</em>) – The number of days in an election cycle.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – A scaling factor for media change.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Another scaling factor for election-related media updates.</p></li>
+<li><p><strong>manipulation_shift</strong> (<em>float</em><em>, </em><em>optional</em><em>,</em>) – The shift of the “biased/manipulated” media.</p></li>
+<li><p><strong>media_update_cycle</strong> (<em>int</em><em>, </em><em>optional</em>) – The interval (in days) at which media opinions are updated. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated list of media objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Media opinion is bounded between -1 and 1.</p></li>
+<li><p>Media opinions are updated daily based on a normal distribution scaled by <cite>x</cite>.</p></li>
+<li><p>During election cycles, media opinions are further influenced by the duration
+of the ruling party’s power (<cite>DUR</cite>) and a scaling factor (<cite>y</cite>).</p></li>
+</ul>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.voter_update">
 <span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">voter_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.voter_update" title="Link to this definition"></a></dt>
-<dd><p>Update the opinion of the voters based on the local field h. The threshold to change the opinion depends on the initial threshold t0 and the total polarization S.
-It favors the party which has the minority.</p>
+<dd><p>Update the opinion of a voter based on the local field and the current polarization state.</p>
+<p>The opinion threshold to switch between states (red, blue, neutral) depends on the initial threshold <cite>t0</cite>,
+the total polarization <cite>S</cite>, and the adjustment factor <cite>alpha</cite>. The update favors the party with the minority
+opinion by lowering its threshold for neutral voters to adopt it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voter</strong> (<a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter object whose opinion is to be updated. The object must have <cite>get_opinion</cite> and <cite>set_opinion</cite> methods.</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – The local field experienced by the voter, representing the influence from neighbors and media.</p></li>
+<li><p><strong>S</strong> (<em>float</em>) – The total polarization in the system. Positive values indicate red majority, and negative values indicate blue majority.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Adjustment factor for polarization-dependent threshold shifts.</p></li>
+<li><p><strong>t0</strong> (<em>tuple</em><em> of </em><em>float</em>) – <dl class="simple">
+<dt>Initial thresholds for opinion changes:</dt><dd><ul>
+<li><p><cite>t0[0]</cite>: Threshold to change from partisan (red/blue) to neutral.</p></li>
+<li><p><cite>t0[1]</cite>: Threshold to change from neutral to partisan (red/blue).</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns <cite>1</cite> if the voter’s opinion changes, otherwise <cite>0</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Opinion values are:</dt><dd><ul>
+<li><p><cite>1</cite>: Red</p></li>
+<li><p><cite>0</cite>: Neutral</p></li>
+<li><p><cite>-1</cite>: Blue</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Thresholds are adjusted based on the system’s polarization, with minority opinions having a lower threshold
+for adoption by neutral voters.</p></li>
+</ul>
 </dd></dl>
 
 </section>

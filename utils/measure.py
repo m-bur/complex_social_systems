@@ -118,11 +118,16 @@ def media_statistics(media):
     unique_elements, counts = np.unique(
         [m.get_category() for m in media], return_counts=True
     )
+    
     shares = dict(zip(unique_elements, counts / np.sum(counts)))
 
+    # Ensure 'blue', 'neutral', 'red' are in the dictionary with a default value of 0 if not found
+    blue_share = shares.get("blue", 0)
+    neutral_share = shares.get("neutral", 0)
+    red_share = shares.get("red", 0)
 
     return pd.DataFrame(
-        {"mean":[mean_opinion],"std": [std_opinion],"blue": [shares["blue"]],"neutral": [shares["neutral"]],"red": [shares["red"]]}
+        {"mean":[mean_opinion],"std": [std_opinion],"blue": [blue_share],"neutral": [neutral_share],"red": [red_share]}
     )
 
 
@@ -167,7 +172,6 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
     ax.set_ylim(0, max(df_stats[["blue", "neutral", "red"]].max()) * 1.1)
     plt.tight_layout()
     plt.savefig(output_path_shares)
-
 
 
 def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
@@ -820,6 +824,27 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
     with open(output_path, 'w') as file:
         for m in prob_to_change:
             file.write(f"{m[0]} \t {m[1]} \n")
+
+
+def print_election_results(election_results, folder, filename):
+    """
+    Saves a list to a specified file.
+
+    Args:
+        election_results (list): The list to save.
+        folder (str): The directory where the file will be saved.
+        filename (str): The name of the file.
+    """
+    # Ensure the directory exists
+    os.makedirs(folder, exist_ok=True)
+
+    # Construct the full file path
+    file_path = os.path.join(folder, filename)
+
+    # Write the list to the file
+    with open(file_path, "w") as file:
+        for item in election_results:
+            file.write(f"{item}\n")
 
 
 def get_consecutive_terms_counts(election_results):
