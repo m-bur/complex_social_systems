@@ -41,6 +41,8 @@ def parse_args():
     parser.add_argument("--target_media_opinion", type=float, default=0)
     parser.add_argument("--manipulation_day", type=int, default=700)
 
+    parser.add_argument("--parent_folder", type=str, default="Figure_collection")
+
 
 
     return parser.parse_args()
@@ -78,7 +80,8 @@ def main(args=None):
     number_of_manipulated_media = args.number_of_manipulated_media
     target_media_opinion = args.target_media_opinion
     manipulation_day = args.manipulation_day
-
+    # parent folder
+    parent_folder = args.parent_folder
     
     mfeedback=False
 
@@ -92,7 +95,7 @@ def main(args=None):
     else:
         df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    folder = make_foldername(base_name="Figure_collection/figures")
+    folder = make_foldername(base_name=parent_folder+"/figures")
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     deg_distribution(network, folder, "deg_distribution.pdf")
