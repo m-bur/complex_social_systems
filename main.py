@@ -44,7 +44,6 @@ def parse_args():
     parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
 
-
     return parser.parse_args()
 
 

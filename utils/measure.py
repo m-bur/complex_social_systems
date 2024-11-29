@@ -842,9 +842,13 @@ def print_election_results(election_results, folder, filename):
     file_path = os.path.join(folder, filename)
 
     # Write the list to the file
-    with open(file_path, "w") as file:
-        for item in election_results:
-            file.write(f"{item}\n")
+    if len(election_results) > 0:
+        with open(file_path, "w") as file:
+            for item in election_results:
+                file.write(f"{item}\n")
+    else: 
+        with open(file_path, "w") as file:
+            file.write(f"no elections were held in this simulation.")
 
 
 def get_consecutive_terms_counts(election_results):
