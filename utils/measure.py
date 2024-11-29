@@ -552,7 +552,7 @@ def opinion_trend(op_trend, output_folder, file_name):
                  label=f"Opinion {column}", color=color)
 
     # Label the x-axis (time)
-    plt.xlabel("$t [\mathrm{d}]$")
+    plt.xlabel(r"$t [\mathrm{d}]$")
 
     # Label the y-axis (opinion share)
     plt.ylabel("Opinion Share")
