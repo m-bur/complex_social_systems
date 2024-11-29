@@ -41,7 +41,13 @@ if __name__ == "__main__":
     # List of parameter sets to pass to main.py
     parameters = [
         ["--parent_folder", "Folder_A", "--number_years", "0.1"],
-        ["--parent_folder", "Folder_B", "--number_years", "0.2"]
+        ["--parent_folder", "Folder_B", "--number_years", "0.2"],
+        ["--parent_folder", "Folder_C", "--number_years", "0.1"],
+        ["--parent_folder", "Folder_D", "--number_years", "0.2"],
+        ["--parent_folder", "Folder_A", "--number_years", "0.1"],
+        ["--parent_folder", "Folder_B", "--number_years", "0.2"],
+        ["--parent_folder", "Folder_C", "--number_years", "0.1"],
+        ["--parent_folder", "Folder_D", "--number_years", "0.2"]
     ]
 
     # Define the maximum number of cores to use
