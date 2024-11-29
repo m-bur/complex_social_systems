@@ -49,7 +49,7 @@ def generate_parameters():
         for t_opinion in target_opinion:
             for i in range(average_factor):
                 name = folder_name + f"_n_{n_media}" + f"_o_{round(t_opinion,3)}".replace(".","p")
-                parameters.append(["-- number_of_manipulated_media", str(n_media), "--manipulation_shift", str(m_shift), "--target_media_opinion", str(t_opinion), "--parent_folder", name])
+                parameters.append(["--number_of_manipulated_media", str(n_media), "--manipulation_shift", str(m_shift), "--target_media_opinion", str(t_opinion), "--parent_folder", name])
     
     return parameters
 # Example usage
