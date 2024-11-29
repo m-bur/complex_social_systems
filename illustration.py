@@ -1,6 +1,11 @@
 import pandas as pd
 from utils.measure import *
 
+# df_stats = pd.read_csv('illustration/media_statistics.csv')
+# df_results = pd.read_csv('illustration/network_polarization.txt')
+# df_results.iloc[:,0] = df_results.iloc[:,0].apply(lambda x: 1 if x > 0 else -1)
+# df_election = df_results.iloc[::4*365,0]
+#df = get_consecutive_terms_counts(df_election.to_list())
 
 
 # df1 = pd.read_csv('illustration/consecutive_terms_1.txt', sep=';', header=None)
@@ -69,16 +74,41 @@ plt.rcParams.update({
 
 # # Plot the histogram
 # plt.figure(figsize=(8, 6))
-# plt.bar(df.index+1.2, df.iloc[:,1], width=0.4, color="red", label="1", align="center", alpha=0.8)
-# plt.bar(df.index+0.8, df.iloc[:,0], width=0.4, color="blue", label="-1", align="center", alpha=0.8)
+# plt.bar(df.index+0.2, df.iloc[:,0], width=0.4, color="red", label="Opinion 1", align="center", alpha=0.8)
+# plt.bar(df.index-0.2, df.iloc[:,1], width=0.4, color="blue", label="Opinion -1", align="center", alpha=0.8)
 
 # # Add titles and labels
-# plt.xticks(ticks=range(int(df.index.min())+1, int(df.index.max()) + 2))
-# plt.yticks(ticks=range(0, 21, 5))
-# plt.ylim([0, 21])
+# plt.xticks(ticks=range(int(df.index.min()), int(df.index.max())+1))
+# plt.yticks(ticks=range(0, 7, 1))
+# plt.ylim([0, 6])
 # #plt.title("Histogram of consecutive terms")
 # plt.xlabel("Number of consecutive terms")
 # plt.ylabel("Frequency")
 # plt.legend(loc="upper right")
 # plt.grid(axis="y", linestyle="-", linewidth=0.5, alpha=0.6)
 # plt.savefig('illustration/consecutive_terms_1.pdf')
+# plt.savefig('illustration/consecutive_terms_1.png')
+# x_values = df_stats.index / 365
+# fig, ax = plt.subplots(figsize=(12, 6))
+# ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
+# ax.fill_between(
+#         x_values,
+#         df_stats["mean"] - df_stats["std"],
+#         df_stats["mean"] + df_stats["std"],
+#         color="grey",
+#         alpha=0.75,
+#         label="Mean ± Std"
+# )
+# for i in range(len(df_election)-1):
+#     color = "blue" if df_election.iloc[i] == -1 else "red"
+#     ax.axvspan(df_election.index[i] / 365, df_election.index[i+1] / 365, color=color, alpha=0.2)
+# color = "blue" if df_election.iloc[-1] == -1 else "red"
+# ax.axvspan(df_election.index[-1] / 365, x_values[-1], color=color, alpha=0.0875)
+# plt.xlim([0, 100])
+# ax.set_xlabel(r"$t \; (years)$")
+# ax.set_ylabel("Media Opinion")
+# ax.legend()
+# # ax.set_ylim(min(df_stats["mean"]+df_stats["std"]), max((df_stats["mean"] + df_stats["std"]).max()) * 1.1)
+# plt.tight_layout()
+# plt.savefig('illustration/media_opinion.png')
+# plt.savefig('illustration/media_opinion.pdf')
