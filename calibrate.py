@@ -6,6 +6,8 @@ from utils.visualization import *
 from ast import literal_eval
 import sys
 import glob
+from matplotlib import gridspec
+from matplotlib.colors import TwoSlopeNorm
 
 
 def parse_args():
@@ -161,61 +163,99 @@ def calibrate_parameters(args=None):
                 )
 
 def plot_calibration_heatmap():
-    # Read the data from the file
-    file_path = 'nmedia_calibration_results/calibration_log.txt'
-    # Read the file line by line, skipping the header
-    data = []
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        header = lines[0].strip().split(',')  # Extract the header
-        for line in lines[1:]:
-            row = line.strip().split(',')
-            data.append(row)
+    # File paths
+    file_path = 'regimes_of_the_network/calibration_log_1.txt'
+    output_path = 'regimes_of_the_network/calibration_result.png'
 
-    # Create a DataFrame manually
-    df = pd.DataFrame(data, columns=['x', 'y', 'final_opinion','final_std','final_clustering', 'final_polarization'])
+    # Read the file into a DataFrame
+    df = pd.read_csv(file_path)
 
-    # Parse the `initial_threshold` column into `x` and `y` coordinates
-    df['x'] = df['x'].str.strip('()').astype(float)
-    df['y'] = df['y'].str.strip('()').astype(float)
-
-    df['x'] = pd.to_numeric(df['x'], errors='coerce')
-    df['y'] = pd.to_numeric(df['y'], errors='coerce')
+    # Ensure all columns are numeric (skip the first two for plotting axes)
+    df['media_authority'] = pd.to_numeric(df['media_authority'], errors='coerce')
+    df['initial_threshold'] = pd.to_numeric(df['initial_threshold'], errors='coerce')
     df['final_opinion'] = pd.to_numeric(df['final_opinion'], errors='coerce')
     df['final_std'] = pd.to_numeric(df['final_std'], errors='coerce')
     df['final_clustering'] = pd.to_numeric(df['final_clustering'], errors='coerce')
     df['final_polarization'] = pd.to_numeric(df['final_polarization'], errors='coerce')
+    df['prob_to_change'] = pd.to_numeric(df['prob_to_change'], errors='coerce')
 
     # Drop rows with NaN values
     df = df.dropna()
 
-    x_ticks = sorted(df['x'].unique())
-    y_ticks = sorted(df['y'].unique())
+    # Get unique sorted values for axes
+    x_ticks = sorted(df['initial_threshold'].unique())
+    y_ticks = sorted(df['media_authority'].unique())
 
     # Pivot data for imshow
-    pivot_data_opinion = df.pivot(index='y', columns='x', values='final_opinion')
-    pivot_data_std = df.pivot(index='y', columns='x', values='final_std')
-    pivot_data_clustering = df.pivot(index='y', columns='x', values='final_clustering')
-    pivot_data_pol = df.pivot(index='y', columns='x', values='final_polarization')
+    pivot_data_opinion = df.pivot(index='media_authority', columns='initial_threshold', values='final_opinion')
+    pivot_data_std = df.pivot(index='media_authority', columns='initial_threshold', values='final_std')
+    pivot_data_clustering = df.pivot(index='media_authority', columns='initial_threshold', values='final_clustering')
+    pivot_data_pol = df.pivot(index='media_authority', columns='initial_threshold', values='final_polarization')
+    pivot_data_prob_to_change = df.pivot(index='media_authority', columns='initial_threshold', values='prob_to_change')
+
+    midpoints = {
+        'final_opinion': 0.115,  # Example midpoint for final_opinion
+        'final_std': 0.0185,   # Example midpoint for final_std
+        'final_clustering': 0.58,  # Example midpoint for final_clustering
+        'prob_to_change': 0.95  # Example midpoint for prob_to_change
+    }
+    norms = {
+        'final_opinion': TwoSlopeNorm(vmin=pivot_data_opinion.min().min(), 
+                                    vcenter=midpoints['final_opinion'], 
+                                    vmax=pivot_data_opinion.max().max()),
+        'final_std': TwoSlopeNorm(vmin=pivot_data_std.min().min(), 
+                                vcenter=midpoints['final_std'], 
+                                vmax=pivot_data_std.max().max()),
+        'final_clustering': TwoSlopeNorm(vmin=pivot_data_clustering.min().min(), 
+                                        vcenter=midpoints['final_clustering'], 
+                                        vmax=pivot_data_clustering.max().max()),
+        'prob_to_change': TwoSlopeNorm(vmin=pivot_data_prob_to_change.min().min(), 
+                                        vcenter=midpoints['prob_to_change'], 
+                                        vmax=pivot_data_prob_to_change.max().max())
+    }
 
     # Plot using imshow
-    fig, axes = plt.subplots(1, 4, figsize=(18, 6), constrained_layout=True)
-    plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering]
-    titles = ['Non-Voters', 'Final Std', 'Final Clustering', 'Final Polarization']
+    fig = plt.figure(figsize=(12, 10), constrained_layout=True)
+    spec = gridspec.GridSpec(2, 2, width_ratios=[1, 1], height_ratios=[1, 1], figure=fig)
+    axes = [fig.add_subplot(spec[i, j]) for i in range(2) for j in range(2)]
+    plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering, pivot_data_prob_to_change]
+    titles = ['Non-Voters', 'Standard Deviation', 'Clustering', 'Opinion Changes per Year per Voter']
+    
+    # fonts
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='sans-serif')  # Use a serif font for LaTeX style
+    plt.rc('text.latex', preamble=r'\usepackage{sfmath}')  # Use sans-serif math mode
+    plt.rcParams.update({
+        'font.size': 18,  # General font size
+        'axes.titlesize': 20,  # Title font size
+        'axes.labelsize': 20,  # Label font size
+        'legend.fontsize': 16,  # Legend font size
+        'xtick.labelsize': 16,  # x-axis tick font size
+        'ytick.labelsize': 16   # y-axis tick font size
+    })
 
-    for ax, data, title in zip(axes, plots, titles):
-        cax = ax.imshow(data, cmap='viridis', origin='lower', aspect='auto')
-        ax.set_title(title, fontsize=14)
-        ax.set_xlabel('$T_{V\\rightarrow NV}$', fontsize=12)
-        ax.set_ylabel('$T_{NV\\rightarrow V}$', fontsize=12)
-        fig.colorbar(cax, ax=ax, orientation='vertical')
+    for idx, (ax, data, title, key) in enumerate(zip(axes, plots, titles, norms.keys())):
+        cax = ax.imshow(data, cmap='seismic', norm=norms[key], origin='lower', aspect='equal')
+        ax.set_title(title)        
+        cbar = fig.colorbar(cax, ax=ax, orientation='vertical')
+        cbar.ax.tick_params(labelsize=16)
+      # Set ticks to match the pivot table indices and columns
         ax.set_xticks(range(len(x_ticks)))
-        ax.set_xticklabels([f"{val:.2f}" for val in x_ticks])
+        ax.set_xticklabels([f"{val:.2f}" for val in x_ticks], rotation=45, fontsize=16)
         ax.set_yticks(range(len(y_ticks)))
-        ax.set_yticklabels([f"{val:.2f}" for val in y_ticks])
+        ax.set_yticklabels([f"{val:.1f}" for val in y_ticks], fontsize=16)
 
-    plt.savefig("initial_threshold_calibration_results/initial_threshold_calibration.pdf")
-
+        # Remove tick labels for middle plots
+        if idx % 2 == 1:  # Right column
+            ax.set_yticklabels([])
+        if idx < 2:  # Top row
+            ax.set_xticklabels([])
+        if idx % 2 == 0:  # Left column plots
+            ax.set_ylabel(r'Media Authority', fontsize=18)
+        if idx >= 2:
+            ax.set_xlabel(r'$T^0_{NV \rightarrow V}$', fontsize=18)            
+    # Save the plot
+    plt.savefig(output_path)
 
 def plot_calibration():
     # Define file paths and load data from all files
@@ -271,5 +311,6 @@ def plot_calibration():
 
 if __name__ == "__main__":
     _args = parse_args()
-    calibrate_parameters(_args)
+    #calibrate_parameters(_args)
     #plot_calibration()
+    plot_calibration_heatmap()

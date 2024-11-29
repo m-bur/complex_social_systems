@@ -1,4 +1,4 @@
-media_authority,initial_threshold,final_opinion,final_std,final_clustering,final_pol,prob_to_change
+media_authority,initial_threshold,final_opinion,final_std,final_clustering,final_polarization,prob_to_change
 0,0.03,0.0028,0.019953627840570747,0.8349087260845119,-0.0428,1.3376
 0,0.06,0.016,0.018975055625741918,0.8219802414737831,0.2896,1.1936
 0,0.09,0.018,0.018994990497496967,0.8149740456708141,-0.2828,1.1504
