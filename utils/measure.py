@@ -552,7 +552,7 @@ def opinion_trend(op_trend, output_folder, file_name):
                  label=f"Opinion {column}", color=color)
 
     # Label the x-axis (time)
-    plt.xlabel("$t [\mathrm{d}]$")
+    plt.xlabel(r"$t [\mathrm{d}]$")
 
     # Label the y-axis (opinion share)
     plt.ylabel("Opinion Share")
@@ -563,6 +563,60 @@ def opinion_trend(op_trend, output_folder, file_name):
     # Save the plot to the specified file
     plt.savefig(output_path)
 
+def voter_trend(op_trend, output_folder, file_name):
+    """
+    Plot the opinion share of -1 and 1 over time.
+
+    Parameters
+    ----------
+    op_trend : pandas.DataFrame
+        DataFrame where columns represent different opinions and the index is time.
+    output_folder : str
+        Path to the folder where the plot will be saved.
+    file_name : str
+        Name of the output file where the plot will be saved.
+
+    Notes
+    -----
+    This function assigns specific colors to the opinions: blue for -1, grey for 0,
+    and red for other opinions. It then plots the opinion share over time and saves the plot.
+    """
+    # Create the output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Construct the full output file path
+    output_path = os.path.join(output_folder, file_name)
+
+    # Create a new figure for the plot
+    plt.figure()
+    
+    df_voters = op_trend[[-1,1]]
+    df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
+
+    # Iterate over the columns (opinions) in the DataFrame
+    for column in df_voters.columns:
+        # Assign colors based on the opinion value
+        if column == -1:
+            color = 'blue'
+        elif column == 1:
+            color = 'red'
+
+        # Plot the opinion share over time
+        plt.plot(df_voters.index, df_voters[column],
+                 label=f"Opinion {column}", color=color)
+
+    # Label the x-axis (time)
+    plt.xlabel(r"$t [\mathrm{d}]$")
+
+    # Label the y-axis (opinion share)
+    plt.ylabel("Voter Share")
+
+    # Display the legend
+    plt.legend()
+
+    # Save the plot to the specified file
+    plt.savefig(output_path)
+    
 
 def plot_polarization(network_pol, output_folder, file_name):
     """
@@ -921,6 +975,14 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
+    
+    df['group_index'] = df.index // 28
+
+    # Group by the new index and sum the values
+    df_grouped = df.groupby('group_index').sum()
+
+    df = df_grouped
+    
     os.makedirs(output_folder, exist_ok=True)
     output_path = os.path.join(output_folder, file_name)
 
@@ -929,11 +991,12 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
 
     # Plot the histogram
     plt.figure(figsize=(10, 6))
-    plt.bar(df.index, df[1], width=0.4, color="red", label="1", align="center")
-    plt.bar(df.index - 0.4, df[-1], width=0.4, color="blue", label="-1", align="center")
+    plt.bar(df.index + 1.2, df[1], width=0.4, color="red", label="1", align="center", alpha=0.8)
+    plt.bar(df.index + 0.8, df[-1], width=0.4, color="blue", label="-1", align="center", alpha=0.8)
 
     # Add titles and labels
-    plt.title("Histogram of Consecutive Terms", fontsize=14)
+    plt.xticks(ticks=range(int(df.index.min())+1, int(df.index.max()) + 2))
+    plt.title("Histogram of consecutive terms", fontsize=14)
     plt.xlabel("Number of consecutive terms", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
     plt.legend(loc="best")
