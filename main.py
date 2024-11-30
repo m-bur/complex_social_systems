@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument("--number_of_manipulated_media", type=int, default=1)
     parser.add_argument("--target_media_opinion", type=float, default=0)
     parser.add_argument("--manipulation_day", type=int, default=1000)
+    parser.add_argument("media_feedback_turned_on_after", type=int, default=10*365)
 
     parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
@@ -74,6 +75,9 @@ def main(args=None):
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
+
+    mfeedback_on_after = args.media_media_feedback_turned_on_after
+
     # manipulation parameters
     manipulation_shift = args.manipulation_shift
     number_of_manipulated_media = args.number_of_manipulated_media
@@ -151,7 +155,7 @@ def main(args=None):
             op_trend = pd.concat([op_trend, new_row])
 
         # turn media feedback on
-        if days == 10*365:
+        if days == mfeedback_on_after:
             mfeedback = mfeedback_on
 
         # turn on media_manipulation
