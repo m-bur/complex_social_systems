@@ -39,12 +39,12 @@ def run_in_parallel(params_list, max_cores):
 
 
 def generate_parameters():
-    folder_name = "Run_2_2"
+    folder_name = "Run_2"
     parameters = []
     number_of_media = np.arange(1,5)
     media_shift = 0.8 / number_of_media
     target_opinion = np.linspace(-1, 0.9, num=20)
-    average_factor = 15
+    average_factor = 20
     for m_shift, n_media in zip(media_shift, number_of_media):
         for t_opinion in target_opinion:
             for i in range(average_factor):
