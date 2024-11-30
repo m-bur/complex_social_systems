@@ -39,7 +39,7 @@ def run_in_parallel(params_list, max_cores):
 
 
 def generate_parameters():
-    folder_name = "Run_2_2"
+    folder_name = "Run_2"
     parameters = []
     number_of_media = np.arange(1,5)
     media_shift = 0.8 / number_of_media
