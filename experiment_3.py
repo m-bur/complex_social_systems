@@ -42,7 +42,7 @@ def generate_parameters():
     manip_day = str(365*31)
     folder_name = "Run_3"
     parameters = []
-    number_of_media = [1,2,3,4]
+    number_of_media = np.array([1,2,3,4])
     media_shift = 0.8 / number_of_media
     target_opinion = np.linspace(-1, 0.9, num=10)
     average_factor = 8
