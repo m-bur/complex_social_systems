@@ -39,17 +39,18 @@ def run_in_parallel(params_list, max_cores):
 
 
 def generate_parameters():
+    manip_day = str(365*31)
     folder_name = "Run_3"
     parameters = []
-    number_of_media = np.arange(2,4)
+    number_of_media = [1,2,3,4]
     media_shift = 0.8 / number_of_media
-    target_opinion = np.linspace(-1, 0.9, num=12)
+    target_opinion = np.linspace(-1, 0.9, num=10)
     average_factor = 8
     for m_shift, n_media in zip(media_shift, number_of_media):
         for t_opinion in target_opinion:
             for i in range(average_factor):
                 name = folder_name + f"_n_{n_media}" + f"_o_{round(t_opinion,3)}".replace(".","p")
-                parameters.append(["--number_of_manipulated_media", str(n_media), "--manipulation_shift", str(m_shift), "--target_media_opinion", str(t_opinion), "--parent_folder", name, "--number_years", "35" , "--manipulation_day", "31"])
+                parameters.append(["--number_of_manipulated_media", str(n_media), "--manipulation_shift", str(m_shift), "--target_media_opinion", str(t_opinion), "--parent_folder", name, "--number_years", "35" , "--manipulation_day", manip_day, "--media_feedback_turned_on_after", "730"])
     
     return parameters
 # Example usage
