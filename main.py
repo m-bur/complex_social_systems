@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument("--number_of_manipulated_media", type=int, default=1)
     parser.add_argument("--target_media_opinion", type=float, default=0)
     parser.add_argument("--manipulation_day", type=int, default=1000)
-    parser.add_argument("media_feedback_turned_on_after", type=int, default=10*365)
+    parser.add_argument("--media_feedback_turned_on_after", type=int, default=10*365)
 
     parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
@@ -76,7 +76,7 @@ def main(args=None):
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
 
-    mfeedback_on_after = args.media_media_feedback_turned_on_after
+    mfeedback_on_after = args.media_feedback_turned_on_after
 
     # manipulation parameters
     manipulation_shift = args.manipulation_shift
