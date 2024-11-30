@@ -41,19 +41,21 @@ def run_in_parallel(params_list, max_cores):
 def generate_parameters():
     folder_name = "Init_media_distributions"
     parameters = []
-    media_dists = ["uniform", "gaussian"]
+    media_dists = ["extremist"]
+    extr = [0.1, 0.5]
     average_factor = 1
     for m_dist in media_dists:
-        for _ in range(average_factor):
-                name = folder_name + f"_{m_dist}"
-                parameters.append(["--media_init_mode", str(m_dist), "--parent_folder", name, "--number_years", "100"])
-    
+        for e in extr:
+            for _ in range(average_factor):
+                    name = folder_name + f"_{m_dist}" + f"_{e}".replace('.','p')
+                    parameters.append(["--media_init_mode", str(m_dist), "--parent_folder", name, "--number_years", "100"])
+        
     return parameters
 # Example usage
 if __name__ == "__main__":
     # List of parameter sets to pass to main.py
     parameters = generate_parameters()
-
+    # print(parameters)
     # Define the maximum number of cores to use
     MAX_CORES = 1000
     # Run in parallel

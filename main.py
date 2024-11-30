@@ -19,9 +19,10 @@ def parse_args():
     parser.add_argument("--prob_second_conx", type=float, default=0.2)
     parser.add_argument("--regen_network", type=bool, default=False)
     parser.add_argument("--network_path", type=str, default="network.csv")
-    parser.add_argument("--media_init_mode", type=str, default="fixed")
+    parser.add_argument("--media_init_mode", type=str, default="extremist")
     parser.add_argument("--average_media_opinion", type=float, default=0)
     parser.add_argument("--std_media_opinion", type=float, default=0.25)
+    parser.add_argument("--extremist_mode_parameter", type=float, default=0.1)
     parser.add_argument("--number_media", type=int, default=40)
     parser.add_argument("--number_media_connection", type=int, default=350)
     parser.add_argument("--media_authority", type=int, default=10)
@@ -61,6 +62,7 @@ def main(args=None):
     network_path = args.network_path
     mu = args.average_media_opinion
     sigma = args.std_media_opinion
+    extr = args.extremist_mode_parameter
     media_mode =args.media_init_mode
     Nm = args.number_media
     Nc = args.number_media_connection
@@ -100,7 +102,7 @@ def main(args=None):
     print_parameters(args, folder, "parameters.txt")
     network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement)  # LxL network of voters
     # deg_distribution(network, folder, "deg_distribution.pdf")
-    media = generate_media_landscape(Nm, media_mode)
+    media = generate_media_landscape(Nm, media_mode, extr=extr)
     media_conx(network, media, Nc)  # Nc random connections per media node
     # number_media_distribution(network, folder, "number_media_distribution.pdf")
     # neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")

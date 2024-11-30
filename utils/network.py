@@ -665,6 +665,7 @@ def generate_media_landscape(
     
     elif mode == "extremist":
         opinions = np.random.beta(extr, extr, size=number_of_media)
+        opinions = opinions * 2 - 1
         opinions = opinions - np.mean(opinions)
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
