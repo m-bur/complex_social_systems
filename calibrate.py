@@ -164,8 +164,8 @@ def calibrate_parameters(args=None):
 
 def plot_calibration_heatmap():
     # File paths
-    file_path = 'regimes_of_the_network/calibration_log_1.txt'
-    output_path = 'regimes_of_the_network/calibration_result.png'
+    file_path = 'calibrations/regimes_of_the_network/calibration_log_1.txt'
+    output_path = 'calibrations/regimes_of_the_network/calibration_result.png'
 
     # Read the file into a DataFrame
     df = pd.read_csv(file_path)
@@ -257,9 +257,9 @@ def plot_calibration_heatmap():
     # Save the plot
     plt.savefig(output_path)
 
-def plot_calibration():
+def plot_calibration_media_feedback():
     # Define file paths and load data from all files
-    file_paths = glob.glob("mfeedback1_calibration_results/calibration_log*.txt")
+    file_paths = glob.glob("calibrations/mfeedback1_calibration_results/calibration_log*.txt")
     dataframes = [pd.read_csv(file, sep=",") for file in file_paths]
 
     # Combine all data into a single DataFrame
@@ -280,15 +280,28 @@ def plot_calibration():
         prob_to_change_std=("prob_to_change", "std")
     ).reset_index()
 
-
+    # fonts
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='sans-serif')  # Use a serif font for LaTeX style
+    plt.rc('text.latex', preamble=r'\usepackage{sfmath}')  # Use sans-serif math mode
+    plt.rcParams.update({
+        'font.size': 18,  # General font size
+        'axes.titlesize': 20,  # Title font size
+        'axes.labelsize': 20,  # Label font size
+        'legend.fontsize': 16,  # Legend font size
+        'xtick.labelsize': 16,  # x-axis tick font size
+        'ytick.labelsize': 16   # y-axis tick font size
+    })
+    
     # Plot the results
-    fig, axs = plt.subplots(5, 1, figsize=(10, 16), sharex=True)
+    fig = plt.figure(figsize=(16, 10), constrained_layout=True)
+    spec = gridspec.GridSpec(2, 2, width_ratios=[1, 1], height_ratios=[1, 1], figure=fig)
+    axs = [fig.add_subplot(spec[i, j]) for i in range(2) for j in range(2)]
     parameters = [
         ("final_opinion", "Non-Voters"),
-        ("final_std", "Final Std"),
-        ("final_clustering", "Final Clustering"),
-        ("final_pol", "Final Polarization"),
-        ("prob_to_change", "Changes in Opinion per year")
+        ("final_std", "Standard Deviation"),
+        ("final_clustering", "Clustering"),
+        ("prob_to_change", "Opinion Changes per Year per Voter")
     ]
 
     for ax, (col_prefix, title) in zip(axs, parameters):
@@ -297,20 +310,24 @@ def plot_calibration():
             aggregated_data[f"{col_prefix}_mean"],
             yerr=aggregated_data[f"{col_prefix}_std"],
             fmt='-o',
-            capsize=5,
+            capsize=8,
+            elinewidth=1.8,
+            markersize=10,
+            linewidth=1.8,
             label=f"{title} Mean ± Std"
         )
         ax.set_title(title)
         ax.set_ylabel(title)
         ax.grid(True)
-        ax.legend()
-
+        ax.legend(loc="upper right")
+    axs[-2].set_xlabel("Media Feedback")
     axs[-1].set_xlabel("Media Feedback")
     plt.tight_layout()
-    plt.savefig("mfeedback1_calibration_results/mfeedback_calibration.pdf")
+    plt.savefig("calibrations/mfeedback1_calibration_results/mfeedback_calibration.pdf")
+    plt.savefig("calibrations/mfeedback1_calibration_results/mfeedback_calibration.png")
 
 if __name__ == "__main__":
     _args = parse_args()
     #calibrate_parameters(_args)
-    #plot_calibration()
-    plot_calibration_heatmap()
+    #plot_calibration_media_feedback()
+    #plot_calibration_heatmap()
