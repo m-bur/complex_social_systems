@@ -588,7 +588,7 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
 
 
 def generate_media_landscape(
-    number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1
+    number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1, extr = 0.5
 ):
     """
     Generate a pandas DataFrame containing media nodes and their respective IDs,
@@ -604,6 +604,7 @@ def generate_media_landscape(
         - 'uniform': Uniform distribution between -lower_bound and upper_bound.
         - 'gaussian': Gaussian (normal) distribution with mean `mu` and standard deviation `sigma`.
         - 'fixed': equally spaced media nodes.
+        - 'extremist': beta distribution favoring extremist media opinions.
     mu : float, optional
         The mean of the Gaussian distribution (default is 0).
     sigma : float, optional
@@ -612,6 +613,8 @@ def generate_media_landscape(
         The lower bound of the uniform distribution for 'uniform' mode (default is -1).
     upper_bound : float, optional
         The upper bound of the uniform distribution for 'uniform' mode (default is 1).
+    extr: float, optional
+        The parameter for the extremist mode beta distribution (default is 0.5)
 
     Returns
     -------
@@ -629,6 +632,8 @@ def generate_media_landscape(
 
     if mode == "standard":
         opinions = np.random.uniform(low=-1, high=1, size=number_of_media)
+        opinions = opinions - np.mean(opinions)
+        opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
@@ -637,6 +642,8 @@ def generate_media_landscape(
         opinions = np.random.uniform(
             low=lower_bound, high=upper_bound, size=number_of_media
         )
+        opinions = opinions - np.mean(opinions)
+        opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
@@ -650,6 +657,16 @@ def generate_media_landscape(
     elif mode == "gaussian":
         opinions = np.random.normal(loc=mu, scale=sigma, size=number_of_media)
         # Set all values greater than 1 to 1 and all values smaller than -1 to -1
+        opinions = opinions - np.mean(opinions)
+        opinions = np.clip(opinions, -1, 1)
+        IDs = np.arange(number_of_media)
+        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        return media_nodes
+    
+    elif mode == "extremist":
+        opinions = np.random.beta(extr, extr, size=number_of_media)
+        opinions = opinions * 2 - 1
+        opinions = opinions - np.mean(opinions)
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
