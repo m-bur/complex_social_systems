@@ -31,7 +31,6 @@ def parse_args():
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=100)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
-    parser.add_argument("--media_feedback_turned_on_after", type=int, default=10*365)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
     parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
@@ -41,7 +40,8 @@ def parse_args():
     parser.add_argument("--manipulation_shift", type=float, default=0)
     parser.add_argument("--number_of_manipulated_media", type=int, default=0)
     parser.add_argument("--target_media_opinion", type=float, default=0)
-    parser.add_argument("--manipulation_day", type=int, default=4*365)
+    parser.add_argument("--manipulation_day", type=int, default=1000)
+    parser.add_argument("--media_feedback_turned_on_after", type=int, default=10*365)
 
     parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
@@ -72,12 +72,14 @@ def main(args=None):
     t0 = args.initial_threshold
     Ndays = int(365*args.number_years)
     mfeedback_on = args.media_feedback_turned_on
-    mfeedback_after = args.media_feedback_turned_on_after
     number_of_days_election_cycle = args.number_of_days_election_cycle
     mfeedback_prob = args.media_feedback_probability
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
+
+    mfeedback_on_after = args.media_feedback_turned_on_after
+
     # manipulation parameters
     manipulation_shift = args.manipulation_shift
     number_of_manipulated_media = args.number_of_manipulated_media
@@ -154,7 +156,7 @@ def main(args=None):
             # networks.append(copy.deepcopy(network))
 
         # turn media feedback on
-        if days == mfeedback_after:
+        if days == mfeedback_on_after:
             mfeedback = mfeedback_on
 
         # turn on media_manipulation
