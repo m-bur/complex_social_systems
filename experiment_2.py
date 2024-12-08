@@ -48,7 +48,7 @@ def generate_parameters():
         for e in extr:
             for _ in range(average_factor):
                     name = folder_name + f"_{m_dist}" + f"_{e}".replace('.','p')
-                    parameters.append(["--media_init_mode", str(m_dist), "--parent_folder", name, "--number_years", "100"])
+                    parameters.append(["--media_init_mode", str(m_dist), "--parent_folder", name, "--number_years", "100", '--extremist_mode_parameter', str(e)])
         
     return parameters
 # Example usage
