@@ -273,6 +273,92 @@ def plot_calibration_heatmap():
             ax.set_xlabel(r'$T^0_{NV \rightarrow V}$', fontsize=18)            
     # Save the plot
     plt.savefig(output_path)
+    
+def plot_calibration_init_threshold():
+    # File paths
+    file_path = 'calibrations/initial_threshold_calibration_results/calibration_log.txt'
+    output_path = 'calibrations/initial_threshold_calibration_results/calibration_result_3.pdf'
+
+    # Read the file into a DataFrame
+    df = pd.read_csv(file_path, index_col=False)
+
+    # Ensure all columns are numeric
+    df['initial_threshold_1'] = df['initial_threshold_1'].str.replace("(", "").str.replace(")", "")
+    df['initial_threshold_2'] = df['initial_threshold_2'].str.replace("(", "").str.replace(")", "")
+    df['initial_threshold_1'] = pd.to_numeric(df['initial_threshold_1'], errors='coerce')
+    df['initial_threshold_2'] = pd.to_numeric(df['initial_threshold_2'], errors='coerce')
+    df['final_opinion'] = pd.to_numeric(df['final_opinion'], errors='coerce')
+    df['final_std'] = pd.to_numeric(df['final_std'], errors='coerce')
+    df['final_clustering'] = pd.to_numeric(df['final_clustering'], errors='coerce')
+
+    # Drop rows with NaN values
+    df = df.dropna()
+
+    # Get unique sorted values for axes
+    x_ticks = sorted(df['initial_threshold_2'].unique())
+    y_ticks = sorted(df['initial_threshold_1'].unique())
+
+    # Pivot data for imshow
+    pivot_data_opinion = df.pivot(index='initial_threshold_1', columns='initial_threshold_2', values='final_opinion')
+    pivot_data_std = df.pivot(index='initial_threshold_1', columns='initial_threshold_2', values='final_std')
+    pivot_data_clustering = df.pivot(index='initial_threshold_1', columns='initial_threshold_2', values='final_clustering')
+
+    # midpoints = {
+    #     'final_opinion': 0.172,  # Example midpoint for final_opinion
+    #     'final_std': 0.018,   # Example midpoint for final_std
+    #     'final_clustering': 0.58,  # Example midpoint for final_clustering
+    #     'prob_to_change': 0.95  # Example midpoint for prob_to_change
+    # }
+    # norms = {
+    #     'final_opinion': CenteredNorm(
+    #                                 vcenter=midpoints['final_opinion'], 
+    #                                 ),
+    #     'final_std': CenteredNorm( 
+    #                             vcenter=midpoints['final_std'], 
+    #                             ),
+    #     'final_clustering': CenteredNorm( 
+    #                                     vcenter=midpoints['final_clustering'], 
+    #                                    ),
+    #     'prob_to_change': CenteredNorm( 
+    #                                     vcenter=midpoints['prob_to_change'], 
+    #                                     )
+    # }
+
+    # Plot using imshow
+    fig = plt.figure(figsize=(5, 14), constrained_layout=True)
+    spec = gridspec.GridSpec(3, 1, height_ratios=[1, 1, 1], figure=fig)
+    axes = [fig.add_subplot(spec[i, j]) for i in range(3) for j in range(1)]
+    plots = [pivot_data_opinion, pivot_data_std, pivot_data_clustering]
+    titles = ['Non-Voters', 'Standard Deviation', 'Clustering']
+    
+    # fonts
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='sans-serif')  # Use a serif font for LaTeX style
+    plt.rc('text.latex', preamble=r'\usepackage{sfmath}')  # Use sans-serif math mode
+    plt.rcParams.update({
+        'font.size': 16,  # General font size
+        'axes.titlesize': 20,  # Title font size
+        'axes.labelsize': 18,  # Label font size
+        'legend.fontsize': 16,  # Legend font size
+        'xtick.labelsize': 16,  # x-axis tick font size
+        'ytick.labelsize': 16   # y-axis tick font size
+    })
+
+    for idx, (ax, data, title) in enumerate(zip(axes, plots, titles)):
+        cax = ax.imshow(data, cmap='seismic',  origin='lower', aspect='equal')
+        ax.set_title(title)        
+        cbar = fig.colorbar(cax, ax=ax, orientation='vertical')
+        cbar.ax.tick_params(labelsize=16)
+      # Set ticks to match the pivot table indices and columns
+        ax.set_xticks(range(len(x_ticks)))
+        ax.set_xticklabels([f"{val:.2f}" for val in x_ticks], rotation=45, fontsize=14)
+        ax.set_yticks(range(len(y_ticks)))
+        ax.set_yticklabels([f"{val:.2f}" for val in y_ticks], fontsize=14)
+        ax.set_ylabel(r'$T^0_{V \rightarrow NV}$', fontsize=16)
+        if idx == 2:
+            ax.set_xlabel(r'$T^0_{NV \rightarrow V}$', fontsize=16)            
+    # Save the plot
+    plt.savefig(output_path)
 
 def plot_calibration_media_feedback():
     # Define file paths and load data from all files
@@ -481,8 +567,8 @@ def plot_calibration_alpha():
         ax.grid(True)
         ax.legend(loc="upper right")
         
-    axs[-2].set_xlabel("Number Media")
-    axs[-1].set_xlabel("Number Media")
+    axs[-2].set_xlabel("Threshold parameter")
+    axs[-1].set_xlabel("Threshold parameter")
     plt.tight_layout()
     plt.savefig("calibrations/alpha_calibration_results_1/alpha_calibration.pdf")
     plt.savefig("calibrations/alpha_calibration_results_1/alpha_calibration.png")
@@ -563,6 +649,7 @@ if __name__ == "__main__":
     # calibrate_parameters(_args)
     # plot_calibration_media_feedback()
     # plot_calibration_media_number()
+    plot_calibration_init_threshold()
     # plot_calibration_alpha()
     # plot_calibration_heatmap()
     # plot_extremism()
