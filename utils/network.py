@@ -1,7 +1,6 @@
 import random
 import numpy as np
 import pandas as pd
-import random
 from utils.measure import polarization
 from utils.measure import opinion_share
 
@@ -449,7 +448,8 @@ def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bou
 
     if N > len(IDs):
         print(
-            f"The Number N = {N} is to large, there are only {len(IDs)} nodes in that have an opinion in the range ({lower_bound}, {upper_bound}) "
+            f"The Number N = {N} is to large, there are only {len(IDs)} nodes in that have an opinion"
+            f" in the range ({lower_bound}, {upper_bound}) "
         )
         N = len(IDs)
 
@@ -642,7 +642,8 @@ def generate_media_landscape(
     - In 'standard' mode, opinions are uniformly distributed between -1 and 1.
     - In 'uniform' mode, opinions are uniformly distributed between -lower_bound and upper_bound.
     - In 'gaussian' mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].
-    - In 'fixed' mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound from the input parameters
+    - In 'fixed' mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound
+      from the input parameters
 
     """
 
@@ -746,7 +747,8 @@ def voter_update(voter, h, S, alpha, t0):
     h : float
         The local field experienced by the voter, representing the influence from neighbors and media.
     S : float
-        The total polarization in the system. Positive values indicate red majority, and negative values indicate blue majority.
+        The total polarization in the system. Positive values indicate red majority,
+        and negative values indicate blue majority.
     alpha : float
         Adjustment factor for polarization-dependent threshold shifts.
     t0 : tuple of float
