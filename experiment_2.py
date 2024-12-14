@@ -1,6 +1,5 @@
 import multiprocessing
 import subprocess
-import numpy as np
 
 
 def run_main_with_params(params):
