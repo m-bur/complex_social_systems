@@ -35,7 +35,7 @@ def visualize_media(media):
     ax.imshow([colors], aspect="auto", extent=[-1, 1, 0, 5])
 
     # Add a colorbar
-    cbar = plt.colorbar(
+    plt.colorbar(
         plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax, orientation="vertical"
     )
 
