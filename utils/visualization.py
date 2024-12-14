@@ -94,11 +94,14 @@ def media_voter_histogramms(network, media):
             media_connections = network[i, j].get_media_connections()
             opinion = network[i, j].get_opinion()
             if opinion == -1:
-                blue_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                blue_voter_connections += [media_dict[connection].get_category()
+                                           for connection in media_connections]
             elif opinion == 0:
-                neutral_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                neutral_voter_connections += [media_dict[connection].get_category()
+                                              for connection in media_connections]
             elif opinion == 1:
-                red_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                red_voter_connections += [media_dict[connection].get_category()
+                                          for connection in media_connections]
 
     unique_neutral, counts_neutral = np.unique(
         neutral_voter_connections, return_counts=True
@@ -281,8 +284,8 @@ def visualize_network_evolution(networks, output_folder, gif_filename="network_e
     # Save the frames as a GIF
     gif_path = os.path.join(output_folder, gif_filename)
     imageio.mimsave(gif_path, frames, duration=0.75)  # 0.75 seconds per frame
-    
-    
+
+
 def opinion_trend_single_frame(op_trend, time_step):
     """
     Generate a single frame for the opinion trend plot at a given time step.
@@ -304,11 +307,11 @@ def opinion_trend_single_frame(op_trend, time_step):
         color = 'blue' if column == -1 else 'grey' if column == 0 else 'red'
         xs = op_trend.index[:time_step].to_numpy()
         ys = op_trend[column][:time_step]
-        ax.plot(xs, ys, 
+        ax.plot(xs, ys,
                 label=f"Opinion {column}", color=color)
         # Highlight the current point with a large open circle
-        ax.scatter(xs[-1], 
-                   ys.iloc[-1], 
+        ax.scatter(xs[-1],
+                   ys.iloc[-1],
                    color=color, edgecolor='black', s=100, zorder=5)
 
         # Draw a dashed line to the x-axis
@@ -318,11 +321,13 @@ def opinion_trend_single_frame(op_trend, time_step):
     ax.set_ylabel("Opinion Share", fontsize=16)
     ax.set_xlim([0, op_trend.index.max()])  # x-axis range based on time
     y_max = 1.3 * op_trend.max().max()  # Global maximum of op_trend
-    ax.set_ylim([0, y_max])  # Set y-axis limits dynamically based on the maximum value
+    # Set y-axis limits dynamically based on the maximum value
+    ax.set_ylim([0, y_max])
     # Turn on the grid
     ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.legend(loc="upper right", fontsize=16)
-    ax.tick_params(axis='both', which='major', labelsize=14)  # Increase major tick label size
+    # Increase major tick label size
+    ax.tick_params(axis='both', which='major', labelsize=14)
     fig.subplots_adjust(left=0.075, right=1, top=1, bottom=0.125)
     return fig
 
@@ -344,11 +349,13 @@ def network_evolution_single_frame(network, cmap):
         The figure containing the plot.
     """
     fig, ax = plt.subplots(figsize=(5, 5))
-    matrix = np.array([[voter.get_opinion() for voter in row] for row in network])
+    matrix = np.array([[voter.get_opinion() for voter in row]
+                      for row in network])
     ax.imshow(matrix, cmap=cmap, interpolation="nearest")
     ax.axis("off")
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
     return fig
+
 
 def combined_visualization(op_trend, networks, output_folder, gif_filename="combined_evolution.gif"):
     """
@@ -379,7 +386,8 @@ def combined_visualization(op_trend, networks, output_folder, gif_filename="comb
         network_fig = network_evolution_single_frame(network, cmap)
 
         # Combine the two plots into one figure
-        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={'wspace': 0})  # Reduce spacing
+        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={
+                                          'wspace': 0})  # Reduce spacing
         trend_canvas = trend_fig.canvas
         network_canvas = network_fig.canvas
 
