@@ -82,7 +82,8 @@ def opinion_share(network):
         A DataFrame where columns are unique opinions and values represent their share.
     """
     expected_columns = [-1, 0, 1]  # Replace with your expected unique elements
-    unique_elements, counts = np.unique(opinion_list(network), return_counts=True)
+    unique_elements, counts = np.unique(
+        opinion_list(network), return_counts=True)
     share = counts / np.sum(counts)
 
     # Create a DataFrame with the calculated shares
@@ -97,6 +98,7 @@ def opinion_share(network):
     df = df[expected_columns]
 
     return df
+
 
 def media_statistics(media):
     """
@@ -118,7 +120,7 @@ def media_statistics(media):
     unique_elements, counts = np.unique(
         [m.get_category() for m in media], return_counts=True
     )
-    
+
     shares = dict(zip(unique_elements, counts / np.sum(counts)))
 
     # Ensure 'blue', 'neutral', 'red' are in the dictionary with a default value of 0 if not found
@@ -127,7 +129,8 @@ def media_statistics(media):
     red_share = shares.get("red", 0)
 
     return pd.DataFrame(
-        {"mean":[mean_opinion],"std": [std_opinion],"blue": [blue_share],"neutral": [neutral_share],"red": [red_share]}
+        {"mean": [mean_opinion], "std": [std_opinion], "blue": [
+            blue_share], "neutral": [neutral_share], "red": [red_share]}
     )
 
 
@@ -155,16 +158,17 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
     None
         Saves the plot as a PDF file in the specified folder.
     """
-   
+
     os.makedirs(output_folder, exist_ok=True)
     output_path_shares = os.path.join(output_folder, file_name_shares)
 
     x_values = df_stats.index  # Days from DataFrame index
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha = 0.8)
-    ax.plot(x_values, df_stats["neutral"], label="Neutral", color="gray", alpha = 0.8)
-    ax.plot(x_values, df_stats["red"], label="Red", color="red", alpha = 0.8)
+    ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha=0.8)
+    ax.plot(x_values, df_stats["neutral"],
+            label="Neutral", color="gray", alpha=0.8)
+    ax.plot(x_values, df_stats["red"], label="Red", color="red", alpha=0.8)
     ax.set_title("Shares Over Time")
     ax.set_xlabel("Days")
     ax.set_ylabel("Shares")
@@ -203,14 +207,15 @@ def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_m
     - The shaded region represents the range of `mean ± std`.
     - The x-axis corresponds to the index of `df_stats`, which is expected to represent time (e.g., days).
     """
-   
+
     os.makedirs(output_folder, exist_ok=True)
     output_path_mean = os.path.join(output_folder, file_name_mean)
 
     x_values = df_stats.index  # Days from DataFrame index
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(x_values, df_stats["mean"], label="Mean", color="black", linestyle="--")
+    ax.plot(x_values, df_stats["mean"], label="Mean",
+            color="black", linestyle="--")
     ax.fill_between(
         x_values,
         df_stats["mean"] - df_stats["std"],
@@ -563,6 +568,7 @@ def opinion_trend(op_trend, output_folder, file_name):
     # Save the plot to the specified file
     plt.savefig(output_path)
 
+
 def voter_trend(op_trend, output_folder, file_name):
     """
     Plot the opinion share of -1 and 1 over time.
@@ -589,8 +595,8 @@ def voter_trend(op_trend, output_folder, file_name):
 
     # Create a new figure for the plot
     plt.figure()
-    
-    df_voters = op_trend[[-1,1]]
+
+    df_voters = op_trend[[-1, 1]]
     df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
 
     # Iterate over the columns (opinions) in the DataFrame
@@ -616,7 +622,7 @@ def voter_trend(op_trend, output_folder, file_name):
 
     # Save the plot to the specified file
     plt.savefig(output_path)
-    
+
 
 def plot_polarization(network_pol, output_folder, file_name):
     """
@@ -900,7 +906,7 @@ def print_election_results(election_results, folder, filename):
         with open(file_path, "w") as file:
             for item in election_results:
                 file.write(f"{item}\n")
-    else: 
+    else:
         with open(file_path, "w") as file:
             file.write(f"no elections were held in this simulation.")
 
@@ -975,14 +981,14 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
-    
+
     df['group_index'] = df.index // 28
 
     # Group by the new index and sum the values
     df_grouped = df.groupby('group_index').sum()
 
     df = df_grouped
-    
+
     os.makedirs(output_folder, exist_ok=True)
     output_path = os.path.join(output_folder, file_name)
 
@@ -991,8 +997,10 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
 
     # Plot the histogram
     plt.figure(figsize=(10, 6))
-    plt.bar(df.index + 1.2, df[1], width=0.4, color="red", label="1", align="center", alpha=0.8)
-    plt.bar(df.index + 0.8, df[-1], width=0.4, color="blue", label="-1", align="center", alpha=0.8)
+    plt.bar(df.index + 1.2, df[1], width=0.4,
+            color="red", label="1", align="center", alpha=0.8)
+    plt.bar(df.index + 0.8, df[-1], width=0.4,
+            color="blue", label="-1", align="center", alpha=0.8)
 
     # Add titles and labels
     plt.xticks(ticks=range(int(df.index.min())+1, int(df.index.max()) + 2))
@@ -1002,4 +1010,3 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
     plt.legend(loc="best")
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     plt.savefig(output_path)
-
