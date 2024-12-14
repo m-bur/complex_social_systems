@@ -1,2 +1,6 @@
 [flake8]
+
+# Specify the error codes to ignore
+ignore = F403, F405
+
 max-line-length = 120
