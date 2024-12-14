@@ -2,6 +2,7 @@ import multiprocessing
 import subprocess
 import numpy as np
 
+
 def run_main_with_params(params):
     """
     Runs the main.py file with the given parameters on a separate process.
@@ -14,14 +15,16 @@ def run_main_with_params(params):
 
         # Run the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
-        
+
         print(f"Running main.py with params: {params}")
         print(f"Output: {result.stdout}")
         if result.stderr:
             print(f"Error: {result.stderr}")
-    
+
     except Exception as e:
-        print(f"An error occurred while running main.py with params {params}: {e}")
+        print(
+            f"An error occurred while running main.py with params {params}: {e}")
+
 
 def run_in_parallel(params_list, max_cores):
     """
@@ -32,7 +35,7 @@ def run_in_parallel(params_list, max_cores):
     """
     # Use the minimum of max_cores and available CPU cores
     num_processes = min(max_cores, multiprocessing.cpu_count()) - 2
-    
+
     # Create a pool of processes
     with multiprocessing.Pool(processes=num_processes) as pool:
         pool.map(run_main_with_params, params_list)
@@ -47,10 +50,13 @@ def generate_parameters():
     for m_dist in media_dists:
         for e in extr:
             for _ in range(average_factor):
-                    name = folder_name + f"_{m_dist}" + f"_{e}".replace('.','p')
-                    parameters.append(["--media_init_mode", str(m_dist), "--parent_folder", name, "--number_years", "100", '--extremist_mode_parameter', str(e)])
-        
+                name = folder_name + f"_{m_dist}" + f"_{e}".replace('.', 'p')
+                parameters.append(["--media_init_mode", str(m_dist), "--parent_folder",
+                                  name, "--number_years", "100", '--extremist_mode_parameter', str(e)])
+
     return parameters
+
+
 # Example usage
 if __name__ == "__main__":
     # List of parameter sets to pass to main.py
