@@ -648,7 +648,7 @@ def plot_polarization(network_pol, output_folder, file_name):
     plt.plot(network_pol, label="Network Polarization", color='black')
 
     # Label the x-axis (time)
-    plt.xlabel("$t [\mathrm{d}]$")
+    plt.xlabel(r"$t [\mathrm{d}]$")
 
     # Label the y-axis (polarization)
     plt.ylabel("$S$")
@@ -691,10 +691,10 @@ def plot_std(network_std, output_folder, file_name):
         network_std, label="Standard deviation of network polarization", color='black')
 
     # Label the x-axis (time)
-    plt.xlabel("$t [\mathrm{d}]$")
+    plt.xlabel(r"$t [\mathrm{d}]$")
 
     # Label the y-axis (standard deviation)
-    plt.ylabel("$\sigma$")
+    plt.ylabel(r"$\sigma$")
 
     # Display the legend
     plt.legend()
@@ -739,7 +739,7 @@ def plot_prob_to_change(prob_to_change, output_folder, file_name):
             label="Probability to change the opinon",
             color="black",
         )
-        plt.xlabel("$t [\mathrm{d}]$")
+        plt.xlabel(r"$t [\mathrm{d}]$")
 
         # Label the y-axis (probability)
         plt.ylabel("$P$")
@@ -781,7 +781,7 @@ def plot_clustering(clustering, output_folder, file_name):
     plt.plot(clustering, label="Network clustering", color='black')
 
     # Label the x-axis (time)
-    plt.xlabel("$t [\mathrm{d}]$")
+    plt.xlabel(r"$t [\mathrm{d}]$")
 
     # Label the y-axis (clustering coefficient)
     plt.ylabel("$C_v$")
