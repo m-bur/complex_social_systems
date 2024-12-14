@@ -315,7 +315,7 @@ def turn_on_media_manipulation_by_id(media, IDs):
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the `get_id()` and 
+        A list of media node objects. Each object must implement the `get_id()` and
         `set_manipulation()` methods. The `get_id()` method returns a unique identifier for
         the media node, and `set_manipulation()` accepts a boolean to enable or disable manipulation.
     IDs : list
@@ -338,7 +338,7 @@ def turn_off_media_manipulation_by_id(media, IDs):
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the `get_id()` and 
+        A list of media node objects. Each object must implement the `get_id()` and
         `set_manipulation()` methods. The `get_id()` method returns a unique identifier for
         the media node, and `set_manipulation()` accepts a boolean to enable or disable manipulation.
     IDs : list
@@ -361,7 +361,7 @@ def turn_off_all_media_manipulation(media):
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the `set_manipulation()` 
+        A list of media node objects. Each object must implement the `set_manipulation()`
         method, which accepts a boolean value to enable or disable manipulation.
 
     Returns
@@ -385,7 +385,7 @@ def turn_on_media_manipulation_by_category(media, N, category):
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the methods `get_category()` 
+        A list of media node objects. Each object must implement the methods `get_category()`
         and `get_id()` to retrieve the category and unique identifier, respectively.
     N : int
         The number of media nodes to activate manipulation for. If `N` exceeds the number
@@ -418,7 +418,7 @@ def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bou
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the methods `get_opinion()` 
+        A list of media node objects. Each object must implement the methods `get_opinion()`
         and `get_id()` to retrieve the opinion value and unique identifier, respectively.
     N : int
         The number of media nodes to activate manipulation for. If `N` exceeds the number
@@ -437,7 +437,7 @@ def turn_on_media_manipulation_by_opinion_range(media, N, lower_bound, upper_bou
     Notes
     -----
     - Filters the media nodes whose opinions fall within the range `(lower_bound, upper_bound)`.
-    - If `N` exceeds the number of nodes within the range, all such nodes are selected, and a 
+    - If `N` exceeds the number of nodes within the range, all such nodes are selected, and a
       message is printed to notify the user.
     - A random subset of nodes is selected from the eligible nodes for manipulation.
     """
@@ -464,13 +464,13 @@ def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
     Parameters
     ----------
     media : list
-        A list of media node objects. Each object must implement the methods `get_opinion()` 
+        A list of media node objects. Each object must implement the methods `get_opinion()`
         and `get_id()` to retrieve the opinion value and unique identifier, respectively.
     N : int
         The number of media nodes to activate manipulation for. If `N` exceeds the number
         of media nodes, all nodes are considered.
     target_opinion : float
-        The opinion value to which media nodes are compared. Nodes are sorted by their 
+        The opinion value to which media nodes are compared. Nodes are sorted by their
         absolute opinion distance from this target value.
 
     Returns
@@ -489,7 +489,17 @@ def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
     turn_on_media_manipulation_by_id(media=media, IDs=sorted_media_ids)
 
 
-def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, manipulation_shift=0., media_update_cycle=1):
+def update_media(
+    days,
+    media,
+    election_results,
+    initial_media_opinion,
+    number_of_days_election_cycle,
+    x,
+    y,
+    manipulation_shift=0.0,
+    media_update_cycle=1,
+):
     """
     Updates the opinions of media entities based on daily cycles and election results.
 
@@ -588,7 +598,13 @@ def update_media(days, media, election_results, initial_media_opinion, number_of
 
 
 def generate_media_landscape(
-    number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1, extr = 0.5
+    number_of_media,
+    mode="standard",
+    mu=0,
+    sigma=0.25,
+    lower_bound=-1,
+    upper_bound=1,
+    extr=0.5,
 ):
     """
     Generate a pandas DataFrame containing media nodes and their respective IDs,
@@ -662,7 +678,7 @@ def generate_media_landscape(
         IDs = np.arange(number_of_media)
         media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
-    
+
     elif mode == "extremist":
         opinions = np.random.beta(extr, extr, size=number_of_media)
         opinions = opinions * 2 - 1
@@ -900,7 +916,8 @@ def get_number_of_consecutive_terms(election_results):
         else:
             break
 
-    count -= 1  # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
+    # correct the counting such that [1,-1,1,1] for example results in 1 and not 2
+    count -= 1
     return count
 
 
