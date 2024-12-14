@@ -362,7 +362,7 @@ class Voter:
 
 
 class Media:
-    def __init__(self, media_id, opinion=0.0, category_threshold=1/3, manipulation_turned_on = False, bias=0.0):
+    def __init__(self, media_id, opinion=0.0, category_threshold=1/3, manipulation_turned_on=False):
         """
         Initialize a Media object.
 
@@ -389,18 +389,12 @@ class Media:
         self.bias = bias
 
     def is_manipulated(self):
-        
+
         return self.manipulation_turned_on
-    
+
     def set_manipulation(self, manipulation_bool):
 
         self.manipulation_turned_on = manipulation_bool
-    
-    def set_bias(self, bias):
-        self.bias = bias
-
-    def get_bias(self):
-        return self.bias
 
     def update_category(self):
         """updates the category of the media opinion"""
@@ -443,7 +437,6 @@ class Media:
             self.update_category()
         else:
             raise ValueError("Opinion must be between -1 and 1 (inclusive).")
-        
 
     def get_opinion(self):
         """
