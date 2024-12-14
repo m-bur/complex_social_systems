@@ -5,7 +5,6 @@ from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
 import sys
-import copy
 
 
 def parse_args():
@@ -30,12 +29,11 @@ def parse_args():
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
     parser.add_argument("--number_years", type=int, default=100)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
-    parser.add_argument("--media_feedback_probability",
-                        type=float, default=0.1)
+    parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument(
-        "--media_feedback_threshold_replacement_neutral", type=float, default=0.1)
-    parser.add_argument("--number_of_days_election_cycle",
-                        type=int, default=50)
+        "--media_feedback_threshold_replacement_neutral", type=float, default=0.1
+    )
+    parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
     parser.add_argument("--mupdate_parameter_1", type=float, default=2.5)
     parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     # media manipulation parameters
@@ -43,11 +41,9 @@ def parse_args():
     parser.add_argument("--number_of_manipulated_media", type=int, default=0)
     parser.add_argument("--target_media_opinion", type=float, default=0)
     parser.add_argument("--manipulation_day", type=int, default=1000)
-    parser.add_argument("--media_feedback_turned_on_after",
-                        type=int, default=10*365)
+    parser.add_argument("--media_feedback_turned_on_after", type=int, default=10 * 365)
 
-    parser.add_argument("--parent_folder", type=str,
-                        default="Figure_collection")
+    parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
     return parser.parse_args()
 
@@ -71,7 +67,7 @@ def main(args=None):
     alpha = args.threshold_parameter
     Nv = args.updated_voters
     t0 = args.initial_threshold
-    Ndays = int(365*args.number_years)
+    Ndays = int(365 * args.number_years)
     mfeedback_on = args.media_feedback_turned_on
     number_of_days_election_cycle = args.number_of_days_election_cycle
     mfeedback_prob = args.media_feedback_probability
@@ -99,13 +95,13 @@ def main(args=None):
         df_conx = update_df_conx(L, df_conx, connection_matrix)
         df_conx.to_csv(network_path)
     else:
-        df_conx = pd.read_csv(network_path, converters={
-                              "connection": literal_eval})
+        df_conx = pd.read_csv(network_path, converters={"connection": literal_eval})
 
-    folder = make_foldername(base_name=parent_folder+"/figures")
+    folder = make_foldername(base_name=parent_folder + "/figures")
     print_parameters(args, folder, "parameters.txt")
-    network = init_network(df_conx, L, mfeedback_prob,
-                           mfeedback_threshold_replacement)  # LxL network of voters
+    network = init_network(
+        df_conx, L, mfeedback_prob, mfeedback_threshold_replacement
+    )  # LxL network of voters
     # deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode, extr=extr)
     media_conx(network, media, Nc)  # Nc random connections per media node
@@ -132,18 +128,26 @@ def main(args=None):
             if days % number_of_days_election_cycle == 0:
                 winner = get_election_winner(network)
                 election_results.append(winner)
-            media = update_media(days, media, election_results, mu,
-                                 number_of_days_election_cycle, x, y, manipulation_shift=manipulation_shift)
+            media = update_media(
+                days,
+                media,
+                election_results,
+                mu,
+                number_of_days_election_cycle,
+                x,
+                y,
+                manipulation_shift=manipulation_shift,
+            )
 
-        changed_voters += network_update(network,
-                                         media, Nv, w, t0, alpha, mfeedback)
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
 
         # measure the network characteristics
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
         media_stats = pd.concat(
-            [media_stats, media_statistics(media=media)], ignore_index=True)
+            [media_stats, media_statistics(media=media)], ignore_index=True
+        )
         new_row = opinion_share(network)
         new_row.index = [days]
         op_trend = pd.concat([op_trend, new_row])
@@ -158,7 +162,7 @@ def main(args=None):
 
         # every 5th day, for gif visualization
         # if days % 5 == 0:
-            # networks.append(copy.deepcopy(network))
+        # networks.append(copy.deepcopy(network))
 
         # turn media feedback on
         if days == mfeedback_on_after:
@@ -167,7 +171,10 @@ def main(args=None):
         # turn on media_manipulation
         if days == manipulation_day:
             turn_on_media_manipulation_by_opinion_distance(
-                media=media, N=number_of_manipulated_media, target_opinion=target_media_opinion)
+                media=media,
+                N=number_of_manipulated_media,
+                target_opinion=target_media_opinion,
+            )
     # plot and save the network charactersitics
 
     # combined_visualization(op_trend, networks, folder)
@@ -188,10 +195,12 @@ def main(args=None):
     plot_media_stats(df_stats=media_stats, output_folder=folder)
     # plot_media_shares(df_stats=media_stats, output_folder=folder)
     df_consecutive_terms = get_consecutive_terms_counts(
-        election_results=election_results)
+        election_results=election_results
+    )
     # plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
-    print_election_results(election_results, folder=folder,
-                           filename="election_results.txt")
+    print_election_results(
+        election_results, folder=folder, filename="election_results.txt"
+    )
 
 
 if __name__ == "__main__":
