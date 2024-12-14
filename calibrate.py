@@ -7,7 +7,6 @@ from ast import literal_eval
 import sys
 import glob
 from matplotlib import gridspec
-from matplotlib.colors import TwoSlopeNorm
 from matplotlib.colors import CenteredNorm
 
 
@@ -134,7 +133,7 @@ def run_simulation(args):
         network_polarization.append(polarization(network))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
-        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.write(f"\rProgress: ({days + 1}/{Ndays}) days completed")
         sys.stdout.flush()
         new_row = opinion_share(network)
         new_row.index = [days]
@@ -238,11 +237,6 @@ def plot_calibration_heatmap():
     )
     pivot_data_clustering = df.pivot(
         index="media_authority", columns="initial_threshold", values="final_clustering"
-    )
-    pivot_data_pol = df.pivot(
-        index="media_authority",
-        columns="initial_threshold",
-        values="final_polarization",
     )
     pivot_data_prob_to_change = df.pivot(
         index="media_authority", columns="initial_threshold", values="prob_to_change"
@@ -380,27 +374,6 @@ def plot_calibration_init_threshold():
         columns="initial_threshold_2",
         values="final_clustering",
     )
-
-    # midpoints = {
-    #     'final_opinion': 0.172,  # Example midpoint for final_opinion
-    #     'final_std': 0.018,   # Example midpoint for final_std
-    #     'final_clustering': 0.58,  # Example midpoint for final_clustering
-    #     'prob_to_change': 0.95  # Example midpoint for prob_to_change
-    # }
-    # norms = {
-    #     'final_opinion': CenteredNorm(
-    #                                 vcenter=midpoints['final_opinion'],
-    #                                 ),
-    #     'final_std': CenteredNorm(
-    #                             vcenter=midpoints['final_std'],
-    #                             ),
-    #     'final_clustering': CenteredNorm(
-    #                                     vcenter=midpoints['final_clustering'],
-    #                                    ),
-    #     'prob_to_change': CenteredNorm(
-    #                                     vcenter=midpoints['prob_to_change'],
-    #                                     )
-    # }
 
     # Plot using imshow
     fig = plt.figure(figsize=(5, 14), constrained_layout=True)
