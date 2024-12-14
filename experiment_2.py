@@ -22,8 +22,7 @@ def run_main_with_params(params):
             print(f"Error: {result.stderr}")
 
     except Exception as e:
-        print(
-            f"An error occurred while running main.py with params {params}: {e}")
+        print(f"An error occurred while running main.py with params {params}: {e}")
 
 
 def run_in_parallel(params_list, max_cores):
@@ -50,9 +49,19 @@ def generate_parameters():
     for m_dist in media_dists:
         for e in extr:
             for _ in range(average_factor):
-                name = folder_name + f"_{m_dist}" + f"_{e}".replace('.', 'p')
-                parameters.append(["--media_init_mode", str(m_dist), "--parent_folder",
-                                  name, "--number_years", "100", '--extremist_mode_parameter', str(e)])
+                name = folder_name + f"_{m_dist}" + f"_{e}".replace(".", "p")
+                parameters.append(
+                    [
+                        "--media_init_mode",
+                        str(m_dist),
+                        "--parent_folder",
+                        name,
+                        "--number_years",
+                        "100",
+                        "--extremist_mode_parameter",
+                        str(e),
+                    ]
+                )
 
     return parameters
 

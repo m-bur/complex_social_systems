@@ -22,8 +22,7 @@ def run_main_with_params(params):
             print(f"Error: {result.stderr}")
 
     except Exception as e:
-        print(
-            f"An error occurred while running main.py with params {params}: {e}")
+        print(f"An error occurred while running main.py with params {params}: {e}")
 
 
 def run_in_parallel(params_list, max_cores):
@@ -42,7 +41,7 @@ def run_in_parallel(params_list, max_cores):
 
 
 def generate_parameters():
-    manip_day = str(365*31)
+    manip_day = str(365 * 31)
     folder_name = "Run_3"
     parameters = []
     number_of_media = np.array([1, 2, 3, 4])
@@ -52,10 +51,29 @@ def generate_parameters():
     for m_shift, n_media in zip(media_shift, number_of_media):
         for t_opinion in target_opinion:
             for i in range(average_factor):
-                name = folder_name + f"_n_{n_media}" + \
-                    f"_o_{round(t_opinion, 3)}".replace(".", "p")
-                parameters.append(["--number_of_manipulated_media", str(n_media), "--manipulation_shift", str(m_shift), "--target_media_opinion", str(
-                    t_opinion), "--parent_folder", name, "--number_years", "35", "--manipulation_day", manip_day, "--media_feedback_turned_on_after", "730"])
+                name = (
+                    folder_name
+                    + f"_n_{n_media}"
+                    + f"_o_{round(t_opinion, 3)}".replace(".", "p")
+                )
+                parameters.append(
+                    [
+                        "--number_of_manipulated_media",
+                        str(n_media),
+                        "--manipulation_shift",
+                        str(m_shift),
+                        "--target_media_opinion",
+                        str(t_opinion),
+                        "--parent_folder",
+                        name,
+                        "--number_years",
+                        "35",
+                        "--manipulation_day",
+                        manip_day,
+                        "--media_feedback_turned_on_after",
+                        "730",
+                    ]
+                )
 
     return parameters
 
