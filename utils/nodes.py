@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 class Voter:
@@ -14,7 +13,7 @@ class Voter:
         meadia_feedback_threshold_replacement_neutral=0.1,
     ):
         """
-        Initialize a Voter object, representing a voter with specific coordinates, opinion, 
+        Initialize a Voter object, representing a voter with specific coordinates, opinion,
         and media-related attributes, including feedback mechanisms and media connections.
 
         Parameters
@@ -27,18 +26,21 @@ class Voter:
             The initial opinion of the voter, which can be -1 (against), 0 (neutral), or 1 (supportive).
             Default is 0 (neutral).
         media_weight : int, optional
-            A weight factor indicating the importance of media in influencing the voter's opinion 
+            A weight factor indicating the importance of media in influencing the voter's opinion
             relative to neighboring voters. Default is 10.
         media_feedback_turned_on : bool, optional
-            A flag indicating whether media feedback is active. If `True`, the voter can be influenced 
+            A flag indicating whether media feedback is active. If `True`, the voter can be influenced
             by media nodes. Default is `False`.
         media_feedback_probability : float, optional
-            The probability that the voter will seek to change media they disagree with. (When media feedback is enabled.) 
-            This corresponds to the parameter beta in the associated paper (Media preference increases polarization in an agent-based
+            The probability that the voter will seek to change media they disagree with.
+            (When media feedback is enabled.)
+            This corresponds to the parameter beta in the associated paper
+            (Media preference increases polarization in an agent-based
             election model by Di Benedetto et al.). Default is 0.5.
         meadia_feedback_threshold_replacement_neutral : float, optional
             The threshold that defines the range of media opinions considered neutral for the voter with opinion 0.
-            Only media opinions within this range will be accepted, otherwise the voter will seek to replace the media node. Default is 0.1.
+            Only media opinions within this range will be accepted, otherwise the voter will seek to replace the media
+            node. Default is 0.1.
 
         Attributes
         ----------
@@ -141,8 +143,7 @@ class Voter:
         try:
             self.media_connections.remove(media_id)
         except ValueError:
-            raise ValueError(
-                f"Media ID {media_id} is not connected to this voter.")
+            raise ValueError(f"Media ID {media_id} is not connected to this voter.")
 
     def get_opinion_of_neighbours(self, network):
         """
@@ -162,8 +163,7 @@ class Voter:
         """
 
         res = [
-            network[neighbour_coordinates[0],
-                    neighbour_coordinates[1]].get_opinion()
+            network[neighbour_coordinates[0], neighbour_coordinates[1]].get_opinion()
             for neighbour_coordinates in self.get_neighbors()
         ]
         return res
@@ -186,8 +186,7 @@ class Voter:
         """
 
         res = [
-            media[media_id].get_opinion()
-            for media_id in self.get_media_connections()
+            media[media_id].get_opinion() for media_id in self.get_media_connections()
         ]
         return res
 
@@ -239,8 +238,11 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(
-                            len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [
+                            media[media_id]
+                            for media_id in range(len(media))
+                            if media_id not in self.media_connections
+                        ]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -248,8 +250,7 @@ class Voter:
                         # if the randomly chosen new
                         if unconnected_media[i].get_opinion() <= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(
-                                unconnected_media[i].get_id())
+                            self.add_media_connection(unconnected_media[i].get_id())
 
         elif self.get_opinion() == 1:
             for media_id in self.media_connections:
@@ -264,8 +265,11 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(
-                            len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [
+                            media[media_id]
+                            for media_id in range(len(media))
+                            if media_id not in self.media_connections
+                        ]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -273,8 +277,7 @@ class Voter:
                         # if the randomly chosen new
                         if unconnected_media[i].get_opinion() >= 0:
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(
-                                unconnected_media[i].get_id())
+                            self.add_media_connection(unconnected_media[i].get_id())
 
         elif self.get_opinion() == 0:
             for media_id in self.media_connections:
@@ -290,8 +293,11 @@ class Voter:
                     # check if there are any media nodes left that are not yet connected to this voter
                     if len(media) > len(self.media_connections):
                         # get all the media nodes that are not connected to this voter in a new dataframe
-                        unconnected_media = [media[media_id] for media_id in range(
-                            len(media)) if media_id not in self.media_connections]
+                        unconnected_media = [
+                            media[media_id]
+                            for media_id in range(len(media))
+                            if media_id not in self.media_connections
+                        ]
 
                         # generate a random integer to pick a random node:
                         i = np.random.randint(0, len(unconnected_media) - 1)
@@ -302,8 +308,7 @@ class Voter:
                             <= self.meadia_feedback_threshold_replacement_neutral
                         ):
                             self.remove_media_connection(media_id)
-                            self.add_media_connection(
-                                unconnected_media[i].get_id())
+                            self.add_media_connection(unconnected_media[i].get_id())
 
     def get_neighbors(self):
         """
@@ -358,11 +363,20 @@ class Voter:
         str
             A string representation of the Voter object.
         """
-        return (f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors}, media_connections={self.media_connections})")
+        return (
+            f"Voter(i={self.i}, j={self.j}, opinion={self.opinion}, neighbors={self.neighbors}, "
+            f"media_connections={self.media_connections})"
+        )
 
 
 class Media:
-    def __init__(self, media_id, opinion=0.0, category_threshold=1/3, manipulation_turned_on = False, bias=0.0):
+    def __init__(
+        self,
+        media_id,
+        opinion=0.0,
+        category_threshold=1 / 3,
+        manipulation_turned_on=False,
+    ):
         """
         Initialize a Media object.
 
@@ -373,8 +387,8 @@ class Media:
         opinion : float, optional
             The opinion of the media, which should be a value between -1 and 1. Default is 0.0.
         category_threshold : float
-            Opinion values inside the interval [t,-t] are categorized as "neutral". Values bigger than 
-            the value "red", otherwise "blue". 
+            Opinion values inside the interval [t,-t] are categorized as "neutral". Values bigger than
+            the value "red", otherwise "blue".
 
         Raises
         ------
@@ -386,21 +400,14 @@ class Media:
         self.opinion = opinion
         self.set_opinion(opinion)  # Ensures opinion is within the valid range
         self.manipulation_turned_on = manipulation_turned_on
-        self.bias = bias
 
     def is_manipulated(self):
-        
+
         return self.manipulation_turned_on
-    
+
     def set_manipulation(self, manipulation_bool):
 
         self.manipulation_turned_on = manipulation_bool
-    
-    def set_bias(self, bias):
-        self.bias = bias
-
-    def get_bias(self):
-        return self.bias
 
     def update_category(self):
         """updates the category of the media opinion"""
@@ -443,7 +450,6 @@ class Media:
             self.update_category()
         else:
             raise ValueError("Opinion must be between -1 and 1 (inclusive).")
-        
 
     def get_opinion(self):
         """
@@ -476,4 +482,7 @@ class Media:
         str
             A string representation of the Media object.
         """
-        return f"Media(id={self.media_id}, opinion={self.opinion}, category={self.category}, manipulated={self.manipulation_turned_on})"
+        return (
+            f"Media(id={self.media_id}, opinion={self.opinion}, category={self.category},"
+            f" manipulated={self.manipulation_turned_on})"
+        )

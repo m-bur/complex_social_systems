@@ -98,6 +98,7 @@ def opinion_share(network):
 
     return df
 
+
 def media_statistics(media):
     """
     Returns a dataframe with the statistics of the current media landscape
@@ -114,11 +115,11 @@ def media_statistics(media):
         which contain the mean, the standard deviation, and the share of "blue", "neutral" and "red" media nodes.
     """
     mean_opinion = np.mean([m.get_opinion() for m in media])
-    std_opinion = np.std([m.get_opinion() for m in media])/np.sqrt(len(media))
+    std_opinion = np.std([m.get_opinion() for m in media]) / np.sqrt(len(media))
     unique_elements, counts = np.unique(
         [m.get_category() for m in media], return_counts=True
     )
-    
+
     shares = dict(zip(unique_elements, counts / np.sum(counts)))
 
     # Ensure 'blue', 'neutral', 'red' are in the dictionary with a default value of 0 if not found
@@ -127,15 +128,23 @@ def media_statistics(media):
     red_share = shares.get("red", 0)
 
     return pd.DataFrame(
-        {"mean":[mean_opinion],"std": [std_opinion],"blue": [blue_share],"neutral": [neutral_share],"red": [red_share]}
+        {
+            "mean": [mean_opinion],
+            "std": [std_opinion],
+            "blue": [blue_share],
+            "neutral": [neutral_share],
+            "red": [red_share],
+        }
     )
 
 
-def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistics_shares.pdf"):
+def plot_media_shares(
+    df_stats, output_folder, file_name_shares="media_statistics_shares.pdf"
+):
     """
     Plot the time series of media shares for 'blue', 'neutral', and 'red'.
 
-    This function generates a line plot of the shares over time for the three categories 
+    This function generates a line plot of the shares over time for the three categories
     ('blue', 'neutral', 'red') and saves the resulting figure as a PDF file.
 
     Parameters
@@ -155,16 +164,16 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
     None
         Saves the plot as a PDF file in the specified folder.
     """
-   
+
     os.makedirs(output_folder, exist_ok=True)
     output_path_shares = os.path.join(output_folder, file_name_shares)
 
     x_values = df_stats.index  # Days from DataFrame index
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha = 0.8)
-    ax.plot(x_values, df_stats["neutral"], label="Neutral", color="gray", alpha = 0.8)
-    ax.plot(x_values, df_stats["red"], label="Red", color="red", alpha = 0.8)
+    ax.plot(x_values, df_stats["blue"], label="Blue", color="blue", alpha=0.8)
+    ax.plot(x_values, df_stats["neutral"], label="Neutral", color="gray", alpha=0.8)
+    ax.plot(x_values, df_stats["red"], label="Red", color="red", alpha=0.8)
     ax.set_title("Shares Over Time")
     ax.set_xlabel("Days")
     ax.set_ylabel("Shares")
@@ -174,12 +183,14 @@ def plot_media_shares(df_stats, output_folder, file_name_shares="media_statistic
     plt.savefig(output_path_shares)
 
 
-def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"):
+def plot_media_stats(
+    df_stats, output_folder, file_name_mean="media_statistics_mean.pdf"
+):
     """
     Plot the time series of the mean and standard deviation for media statistics.
 
-    This function generates a line plot for the mean of the data over time and overlays 
-    a shaded region representing the mean ± standard deviation. The resulting figure 
+    This function generates a line plot for the mean of the data over time and overlays
+    a shaded region representing the mean ± standard deviation. The resulting figure
     is saved as a PDF file.
 
     Parameters
@@ -203,7 +214,7 @@ def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_m
     - The shaded region represents the range of `mean ± std`.
     - The x-axis corresponds to the index of `df_stats`, which is expected to represent time (e.g., days).
     """
-   
+
     os.makedirs(output_folder, exist_ok=True)
     output_path_mean = os.path.join(output_folder, file_name_mean)
 
@@ -217,7 +228,7 @@ def plot_media_stats(df_stats, output_folder, file_name_mean="media_statistics_m
         df_stats["mean"] + df_stats["std"],
         color="lightgreen",
         alpha=0.2,
-        label="Mean ± Std"
+        label="Mean ± Std",
     )
     ax.set_title("Mean ± Std Over Time")
     ax.set_xlabel("Days")
@@ -456,8 +467,7 @@ def deg_distribution(network, output_folder, file_name):
     plt.figure()
     # Fitted curve
     plt.plot(xvals, yvals, "k--", label=f"Exponent $b = {b:.2f}$")
-    plt.plot(unique_elements, counts, "ko",
-             label="Degree distribution")  # Data points
+    plt.plot(unique_elements, counts, "ko", label="Degree distribution")  # Data points
     plt.xlabel("$k$")  # Degree of nodes
     plt.ylabel("$P(k)$")  # Probability of nodes with degree k
     plt.legend()
@@ -488,8 +498,7 @@ def number_media_distribution(network, output_folder, file_name):
     output_path = os.path.join(output_folder, file_name)
 
     # Collect the number of media connections for all voters in the network
-    m_conx = [len(voter.get_media_connections())
-              for row in network for voter in row]
+    m_conx = [len(voter.get_media_connections()) for row in network for voter in row]
 
     # Calculate average and standard deviation of media connections
     avg = np.mean(m_conx)
@@ -498,9 +507,7 @@ def number_media_distribution(network, output_folder, file_name):
     # Plot the histogram of media connections
     plt.figure()
     plt.hist(
-        m_conx,
-        alpha=0.5,
-        label=f"Media connections: ave = {avg:.2f}, std = {std:.2f}"
+        m_conx, alpha=0.5, label=f"Media connections: ave = {avg:.2f}, std = {std:.2f}"
     )
     plt.legend()  # Add a legend with summary statistics
     plt.xlabel("$n_m$")  # Media connections of each voter
@@ -541,15 +548,16 @@ def opinion_trend(op_trend, output_folder, file_name):
     for column in op_trend.columns:
         # Assign colors based on the opinion value
         if column == -1:
-            color = 'blue'
+            color = "blue"
         elif column == 0:
-            color = 'grey'
+            color = "grey"
         else:
-            color = 'red'
+            color = "red"
 
         # Plot the opinion share over time
-        plt.plot(op_trend.index, op_trend[column],
-                 label=f"Opinion {column}", color=color)
+        plt.plot(
+            op_trend.index, op_trend[column], label=f"Opinion {column}", color=color
+        )
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")
@@ -562,6 +570,7 @@ def opinion_trend(op_trend, output_folder, file_name):
 
     # Save the plot to the specified file
     plt.savefig(output_path)
+
 
 def voter_trend(op_trend, output_folder, file_name):
     """
@@ -589,21 +598,22 @@ def voter_trend(op_trend, output_folder, file_name):
 
     # Create a new figure for the plot
     plt.figure()
-    
-    df_voters = op_trend[[-1,1]]
+
+    df_voters = op_trend[[-1, 1]]
     df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
 
     # Iterate over the columns (opinions) in the DataFrame
     for column in df_voters.columns:
         # Assign colors based on the opinion value
         if column == -1:
-            color = 'blue'
+            color = "blue"
         elif column == 1:
-            color = 'red'
+            color = "red"
 
         # Plot the opinion share over time
-        plt.plot(df_voters.index, df_voters[column],
-                 label=f"Opinion {column}", color=color)
+        plt.plot(
+            df_voters.index, df_voters[column], label=f"Opinion {column}", color=color
+        )
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")
@@ -616,7 +626,7 @@ def voter_trend(op_trend, output_folder, file_name):
 
     # Save the plot to the specified file
     plt.savefig(output_path)
-    
+
 
 def plot_polarization(network_pol, output_folder, file_name):
     """
@@ -645,7 +655,7 @@ def plot_polarization(network_pol, output_folder, file_name):
     plt.figure()
 
     # Plot the network polarization
-    plt.plot(network_pol, label="Network Polarization", color='black')
+    plt.plot(network_pol, label="Network Polarization", color="black")
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")
@@ -688,7 +698,8 @@ def plot_std(network_std, output_folder, file_name):
 
     # Plot the standard deviation of network polarization
     plt.plot(
-        network_std, label="Standard deviation of network polarization", color='black')
+        network_std, label="Standard deviation of network polarization", color="black"
+    )
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")
@@ -778,7 +789,7 @@ def plot_clustering(clustering, output_folder, file_name):
     plt.figure()
 
     # Plot the network clustering coefficient
-    plt.plot(clustering, label="Network clustering", color='black')
+    plt.plot(clustering, label="Network clustering", color="black")
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")
@@ -817,7 +828,7 @@ def print_parameters(args, output_folder, file_name):
     output_path = os.path.join(output_folder, file_name)
 
     # Open the output file and write the arguments to it
-    with open(output_path, 'w') as file:
+    with open(output_path, "w") as file:
         for arg, value in vars(args).items():
             file.write(f"{arg}: {value}\n")
 
@@ -846,7 +857,7 @@ def print_measure(measure, output_folder, file_name):
     output_path = os.path.join(output_folder, file_name)
 
     # Open the output file and write the measures to it
-    with open(output_path, 'w') as file:
+    with open(output_path, "w") as file:
         for m in measure:
             file.write(f"{m} \n")
 
@@ -875,7 +886,7 @@ def print_prob_to_change(prob_to_change, output_folder, file_name):
     output_path = os.path.join(output_folder, file_name)
 
     # Open the output file and write the data to it
-    with open(output_path, 'w') as file:
+    with open(output_path, "w") as file:
         for m in prob_to_change:
             file.write(f"{m[0]} \t {m[1]} \n")
 
@@ -900,9 +911,9 @@ def print_election_results(election_results, folder, filename):
         with open(file_path, "w") as file:
             for item in election_results:
                 file.write(f"{item}\n")
-    else: 
+    else:
         with open(file_path, "w") as file:
-            file.write(f"no elections were held in this simulation.")
+            file.write("no elections were held in this simulation.")
 
 
 def get_consecutive_terms_counts(election_results):
@@ -975,14 +986,14 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
         This function does not return any value. It displays a histogram
         where each column is plotted in a different color (red for `1` and blue for `-1`).
     """
-    
-    df['group_index'] = df.index // 28
+
+    df["group_index"] = df.index // 28
 
     # Group by the new index and sum the values
-    df_grouped = df.groupby('group_index').sum()
+    df_grouped = df.groupby("group_index").sum()
 
     df = df_grouped
-    
+
     os.makedirs(output_folder, exist_ok=True)
     output_path = os.path.join(output_folder, file_name)
 
@@ -991,15 +1002,30 @@ def plot_consecutive_terms_histogram(df, output_folder, file_name):
 
     # Plot the histogram
     plt.figure(figsize=(10, 6))
-    plt.bar(df.index + 1.2, df[1], width=0.4, color="red", label="1", align="center", alpha=0.8)
-    plt.bar(df.index + 0.8, df[-1], width=0.4, color="blue", label="-1", align="center", alpha=0.8)
+    plt.bar(
+        df.index + 1.2,
+        df[1],
+        width=0.4,
+        color="red",
+        label="1",
+        align="center",
+        alpha=0.8,
+    )
+    plt.bar(
+        df.index + 0.8,
+        df[-1],
+        width=0.4,
+        color="blue",
+        label="-1",
+        align="center",
+        alpha=0.8,
+    )
 
     # Add titles and labels
-    plt.xticks(ticks=range(int(df.index.min())+1, int(df.index.max()) + 2))
+    plt.xticks(ticks=range(int(df.index.min()) + 1, int(df.index.max()) + 2))
     plt.title("Histogram of consecutive terms", fontsize=14)
     plt.xlabel("Number of consecutive terms", fontsize=12)
     plt.ylabel("Frequency", fontsize=12)
     plt.legend(loc="best")
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     plt.savefig(output_path)
-

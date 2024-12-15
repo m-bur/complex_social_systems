@@ -35,7 +35,7 @@ def visualize_media(media):
     ax.imshow([colors], aspect="auto", extent=[-1, 1, 0, 5])
 
     # Add a colorbar
-    cbar = plt.colorbar(
+    plt.colorbar(
         plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax, orientation="vertical"
     )
 
@@ -94,28 +94,33 @@ def media_voter_histogramms(network, media):
             media_connections = network[i, j].get_media_connections()
             opinion = network[i, j].get_opinion()
             if opinion == -1:
-                blue_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                blue_voter_connections += [
+                    media_dict[connection].get_category()
+                    for connection in media_connections
+                ]
             elif opinion == 0:
-                neutral_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                neutral_voter_connections += [
+                    media_dict[connection].get_category()
+                    for connection in media_connections
+                ]
             elif opinion == 1:
-                red_voter_connections += [media_dict[connection].get_category() for connection in media_connections]
+                red_voter_connections += [
+                    media_dict[connection].get_category()
+                    for connection in media_connections
+                ]
 
     unique_neutral, counts_neutral = np.unique(
         neutral_voter_connections, return_counts=True
     )
     result_neutral = dict(zip(unique_neutral, counts_neutral))
 
-    unique_red, counts_red = np.unique(
-        red_voter_connections, return_counts=True
-    )
+    unique_red, counts_red = np.unique(red_voter_connections, return_counts=True)
     result_red = dict(zip(unique_red, counts_red))
 
-    unique_blue, counts_blue = np.unique(
-        blue_voter_connections, return_counts=True
-    )
+    unique_blue, counts_blue = np.unique(blue_voter_connections, return_counts=True)
     result_blue = dict(zip(unique_blue, counts_blue))
 
-    y_lim = max([max(counts_blue), max(counts_neutral), max(counts_red)])+10
+    y_lim = max([max(counts_blue), max(counts_neutral), max(counts_red)]) + 10
 
     # Data for plotting
     dicts = [result_blue, result_neutral, result_red]
@@ -125,11 +130,11 @@ def media_voter_histogramms(network, media):
     fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
 
     for i, (ax, data, title) in enumerate(zip(axes, dicts, titles)):
-        ax.bar(data.keys(), data.values(), color=['blue', 'gray', 'red'])
+        ax.bar(data.keys(), data.values(), color=["blue", "gray", "red"])
         ax.set_title(title)
-        ax.set_xlabel('Media Type')
+        ax.set_xlabel("Media Type")
         if i == 0:  # Add y-label only to the first subplot for clarity
-            ax.set_ylabel('# Connections')
+            ax.set_ylabel("# Connections")
         ax.set_ylim(0, y_lim)  # Assuming a consistent scale for comparison
 
     plt.tight_layout()
@@ -218,7 +223,9 @@ def visualize_network(network, folder, filename):
     visualize_matrix(matrix, folder, filename)
 
 
-def visualize_network_evolution(networks, output_folder, gif_filename="network_evolution.gif"):
+def visualize_network_evolution(
+    networks, output_folder, gif_filename="network_evolution.gif"
+):
     """
     Visualizes the evolution of a network over time and saves the animation as a GIF.
 
@@ -246,7 +253,7 @@ def visualize_network_evolution(networks, output_folder, gif_filename="network_e
     """
 
     # Create a color map: blue for -1, grey for 0, red for 1
-    cmap = ListedColormap(['blue', 'grey', 'red'])
+    cmap = ListedColormap(["blue", "grey", "red"])
 
     # Ensure the output folder exists
     os.makedirs(output_folder, exist_ok=True)
@@ -257,8 +264,7 @@ def visualize_network_evolution(networks, output_folder, gif_filename="network_e
     # Loop over the networks at different time steps and create frames
     for t, network in enumerate(networks):
         # Get the opinions of all voters in the network at time step t
-        matrix = np.array([[voter.get_opinion()
-                          for voter in row] for row in network])
+        matrix = np.array([[voter.get_opinion() for voter in row] for row in network])
 
         # Create the figure and axis
         fig, ax = plt.subplots(figsize=(10, 10), dpi=100)
@@ -281,8 +287,8 @@ def visualize_network_evolution(networks, output_folder, gif_filename="network_e
     # Save the frames as a GIF
     gif_path = os.path.join(output_folder, gif_filename)
     imageio.mimsave(gif_path, frames, duration=0.75)  # 0.75 seconds per frame
-    
-    
+
+
 def opinion_trend_single_frame(op_trend, time_step):
     """
     Generate a single frame for the opinion trend plot at a given time step.
@@ -301,28 +307,27 @@ def opinion_trend_single_frame(op_trend, time_step):
     """
     fig, ax = plt.subplots()
     for column in op_trend.columns:
-        color = 'blue' if column == -1 else 'grey' if column == 0 else 'red'
+        color = "blue" if column == -1 else "grey" if column == 0 else "red"
         xs = op_trend.index[:time_step].to_numpy()
         ys = op_trend[column][:time_step]
-        ax.plot(xs, ys, 
-                label=f"Opinion {column}", color=color)
+        ax.plot(xs, ys, label=f"Opinion {column}", color=color)
         # Highlight the current point with a large open circle
-        ax.scatter(xs[-1], 
-                   ys.iloc[-1], 
-                   color=color, edgecolor='black', s=100, zorder=5)
+        ax.scatter(xs[-1], ys.iloc[-1], color=color, edgecolor="black", s=100, zorder=5)
 
         # Draw a dashed line to the x-axis
-        ax.axvline(xs[-1], color='k', linestyle="--", alpha=0.6)
+        ax.axvline(xs[-1], color="k", linestyle="--", alpha=0.6)
     # Configure the plot labels and limits
     ax.set_xlabel("$t [\\mathrm{d}]$", fontsize=16)
     ax.set_ylabel("Opinion Share", fontsize=16)
     ax.set_xlim([0, op_trend.index.max()])  # x-axis range based on time
     y_max = 1.3 * op_trend.max().max()  # Global maximum of op_trend
-    ax.set_ylim([0, y_max])  # Set y-axis limits dynamically based on the maximum value
+    # Set y-axis limits dynamically based on the maximum value
+    ax.set_ylim([0, y_max])
     # Turn on the grid
-    ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.7)
     ax.legend(loc="upper right", fontsize=16)
-    ax.tick_params(axis='both', which='major', labelsize=14)  # Increase major tick label size
+    # Increase major tick label size
+    ax.tick_params(axis="both", which="major", labelsize=14)
     fig.subplots_adjust(left=0.075, right=1, top=1, bottom=0.125)
     return fig
 
@@ -350,7 +355,10 @@ def network_evolution_single_frame(network, cmap):
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
     return fig
 
-def combined_visualization(op_trend, networks, output_folder, gif_filename="combined_evolution.gif"):
+
+def combined_visualization(
+    op_trend, networks, output_folder, gif_filename="combined_evolution.gif"
+):
     """
     Combines the opinion trend plot and network evolution visualization into a single GIF.
 
@@ -370,16 +378,18 @@ def combined_visualization(op_trend, networks, output_folder, gif_filename="comb
     None
     """
     os.makedirs(output_folder, exist_ok=True)
-    cmap = ListedColormap(['blue', 'grey', 'red'])
+    cmap = ListedColormap(["blue", "grey", "red"])
     frames = []
 
     for t, network in enumerate(networks):
         # Generate the two plots
-        trend_fig = opinion_trend_single_frame(op_trend, t+1)
+        trend_fig = opinion_trend_single_frame(op_trend, t + 1)
         network_fig = network_evolution_single_frame(network, cmap)
 
         # Combine the two plots into one figure
-        combined_fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={'wspace': 0})  # Reduce spacing
+        combined_fig, axes = plt.subplots(
+            1, 2, figsize=(15, 5), gridspec_kw={"wspace": 0}
+        )  # Reduce spacing
         trend_canvas = trend_fig.canvas
         network_canvas = network_fig.canvas
 
