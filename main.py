@@ -156,7 +156,7 @@ def main(args=None):
         new_row.index = [days]
         op_trend = pd.concat([op_trend, new_row])
         # progress bar #####################
-        sys.stdout.write(f"\rProgress: ({days+1}/{Ndays}) days completed")
+        sys.stdout.write(f"\rProgress: ({days + 1}/{Ndays}) days completed")
         sys.stdout.flush()
 
         # update the changed voters once per year
