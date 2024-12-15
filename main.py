@@ -103,7 +103,7 @@ def main(args=None):
         df_conx, L, mfeedback_prob, mfeedback_threshold_replacement
     )  # LxL network of voters
     # deg_distribution(network, folder, "deg_distribution.pdf")
-    media = generate_media_landscape(Nm, media_mode, extr=extr)
+    media = generate_media_landscape(Nm, media_mode, mu=mu, sigma=sigma, extr=extr)
     media_conx(network, media, Nc)  # Nc random connections per media node
     number_media_distribution(
         network, folder, "number_media_distribution.pdf"
