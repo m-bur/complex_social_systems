@@ -48,10 +48,12 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-utils.nodes">utils.nodes module</a><ul>
 <li><a class="reference internal" href="#utils.nodes.Media"><code class="docutils literal notranslate"><span class="pre">Media</span></code></a><ul>
+<li><a class="reference internal" href="#utils.nodes.Media.get_bias"><code class="docutils literal notranslate"><span class="pre">Media.get_bias()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_category"><code class="docutils literal notranslate"><span class="pre">Media.get_category()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_id"><code class="docutils literal notranslate"><span class="pre">Media.get_id()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.get_opinion"><code class="docutils literal notranslate"><span class="pre">Media.get_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.is_manipulated"><code class="docutils literal notranslate"><span class="pre">Media.is_manipulated()</span></code></a></li>
+<li><a class="reference internal" href="#utils.nodes.Media.set_bias"><code class="docutils literal notranslate"><span class="pre">Media.set_bias()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.set_manipulation"><code class="docutils literal notranslate"><span class="pre">Media.set_manipulation()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.set_opinion"><code class="docutils literal notranslate"><span class="pre">Media.set_opinion()</span></code></a></li>
 <li><a class="reference internal" href="#utils.nodes.Media.update_category"><code class="docutils literal notranslate"><span class="pre">Media.update_category()</span></code></a></li>
@@ -103,7 +105,6 @@
 <li><a class="reference internal" href="#utils.measure.print_parameters"><code class="docutils literal notranslate"><span class="pre">print_parameters()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.print_prob_to_change"><code class="docutils literal notranslate"><span class="pre">print_prob_to_change()</span></code></a></li>
 <li><a class="reference internal" href="#utils.measure.std_opinion"><code class="docutils literal notranslate"><span class="pre">std_opinion()</span></code></a></li>
-<li><a class="reference internal" href="#utils.measure.voter_trend"><code class="docutils literal notranslate"><span class="pre">voter_trend()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id1">Module contents</a></li>
@@ -181,8 +182,13 @@
 <span id="utils-nodes-module"></span><h2>utils.nodes module<a class="headerlink" href="#module-utils.nodes" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="utils.nodes.Media">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manipulation_turned_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.nodes.</span></span><span class="sig-name descname"><span class="pre">Media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manipulation_turned_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.get_bias">
+<span class="sig-name descname"><span class="pre">get_bias</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_bias" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.get_category">
 <span class="sig-name descname"><span class="pre">get_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.get_category" title="Link to this definition"></a></dt>
@@ -228,30 +234,17 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.is_manipulated">
 <span class="sig-name descname"><span class="pre">is_manipulated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.is_manipulated" title="Link to this definition"></a></dt>
-<dd><p>Check if manipulation is turned on.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if manipulation is turned on, False otherwise.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.nodes.Media.set_bias">
+<span class="sig-name descname"><span class="pre">set_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.set_bias" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.set_manipulation">
 <span class="sig-name descname"><span class="pre">set_manipulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manipulation_bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.set_manipulation" title="Link to this definition"></a></dt>
-<dd><p>Set the manipulation status.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>manipulation_bool</strong> (<em>bool</em>) – A boolean value to turn manipulation on (True) or off (False).</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.set_opinion">
@@ -270,16 +263,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="utils.nodes.Media.update_category">
 <span class="sig-name descname"><span class="pre">update_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.nodes.Media.update_category" title="Link to this definition"></a></dt>
-<dd><p>Update the category of the media opinion based on the opinion value.</p>
-<p>The category is determined as follows:
-- “red” if the opinion is greater than the category threshold.
-- “blue” if the opinion is less than the negative of the category threshold.
-- “neutral” otherwise.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
+<dd><p>updates the category of the media opinion</p>
 </dd></dl>
 
 </dd></dl>
@@ -961,24 +945,6 @@ filename (str): The name of the file.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.measure.voter_trend">
-<span class="sig-prename descclassname"><span class="pre">utils.measure.</span></span><span class="sig-name descname"><span class="pre">voter_trend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_trend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.measure.voter_trend" title="Link to this definition"></a></dt>
-<dd><p>Plot the opinion share of -1 and 1 over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>op_trend</strong> (<em>pandas.DataFrame</em>) – DataFrame where columns represent different opinions and the index is time.</p></li>
-<li><p><strong>output_folder</strong> (<em>str</em>) – Path to the folder where the plot will be saved.</p></li>
-<li><p><strong>file_name</strong> (<em>str</em>) – Name of the output file where the plot will be saved.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This function assigns specific colors to the opinions: blue for -1, grey for 0,
-and red for other opinions. It then plots the opinion share over time and saves the plot.</p>
-</dd></dl>
-
 </section>
 <section id="id1">
 <h2>Module contents<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
@@ -1182,7 +1148,7 @@ Each element in the network is an instance of the Voter class.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.network.generate_media_landscape">
-<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">generate_media_landscape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.generate_media_landscape" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">utils.network.</span></span><span class="sig-name descname"><span class="pre">generate_media_landscape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_media</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.network.generate_media_landscape" title="Link to this definition"></a></dt>
 <dd><p>Generate a pandas DataFrame containing media nodes and their respective IDs,
 where the opinions of the media nodes are generated based on the specified mode.</p>
 <dl class="field-list simple">
@@ -1193,13 +1159,11 @@ where the opinions of the media nodes are generated based on the specified mode.
 - ‘standard’: Uniform distribution between -1 and 1 (default).
 - ‘uniform’: Uniform distribution between -lower_bound and upper_bound.
 - ‘gaussian’: Gaussian (normal) distribution with mean <cite>mu</cite> and standard deviation <cite>sigma</cite>.
-- ‘fixed’: equally spaced media nodes.
-- ‘extremist’: beta distribution favoring extremist media opinions.</p></li>
+- ‘fixed’: equally spaced media nodes.</p></li>
 <li><p><strong>mu</strong> (<em>float</em><em>, </em><em>optional</em>) – The mean of the Gaussian distribution (default is 0).</p></li>
 <li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – The standard deviation of the Gaussian distribution (default is 0.25).</p></li>
 <li><p><strong>lower_bound</strong> (<em>float</em><em>, </em><em>optional</em>) – The lower bound of the uniform distribution for ‘uniform’ mode (default is -1).</p></li>
 <li><p><strong>upper_bound</strong> (<em>float</em><em>, </em><em>optional</em>) – The upper bound of the uniform distribution for ‘uniform’ mode (default is 1).</p></li>
-<li><p><strong>extr</strong> (<em>float</em><em>, </em><em>optional</em>) – The parameter for the extremist mode beta distribution (default is 0.5)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1214,8 +1178,7 @@ where the opinions of the media nodes are generated based on the specified mode.
 <li><p>In ‘standard’ mode, opinions are uniformly distributed between -1 and 1.</p></li>
 <li><p>In ‘uniform’ mode, opinions are uniformly distributed between -lower_bound and upper_bound.</p></li>
 <li><p>In ‘gaussian’ mode, opinions are generated from a Gaussian distribution and clipped to the range [-1, 1].</p></li>
-<li><p>In ‘fixed’ mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound
-from the input parameters</p></li>
+<li><p>In ‘fixed’ mode, opinions are generated a non - random way using numpy linspace and -lower bound and upper bound from the input parameters</p></li>
 </ul>
 </dd></dl>
 
@@ -1672,8 +1635,7 @@ opinion by lowering its threshold for neutral voters to adopt it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>voter</strong> (<a class="reference internal" href="#utils.nodes.Voter" title="utils.nodes.Voter"><em>Voter</em></a>) – The voter object whose opinion is to be updated. The object must have <cite>get_opinion</cite> and <cite>set_opinion</cite> methods.</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – The local field experienced by the voter, representing the influence from neighbors and media.</p></li>
-<li><p><strong>S</strong> (<em>float</em>) – The total polarization in the system. Positive values indicate red majority,
-and negative values indicate blue majority.</p></li>
+<li><p><strong>S</strong> (<em>float</em>) – The total polarization in the system. Positive values indicate red majority, and negative values indicate blue majority.</p></li>
 <li><p><strong>alpha</strong> (<em>float</em>) – Adjustment factor for polarization-dependent threshold shifts.</p></li>
 <li><p><strong>t0</strong> (<em>tuple</em><em> of </em><em>float</em>) – <dl class="simple">
 <dt>Initial thresholds for opinion changes:</dt><dd><ul>
