@@ -105,9 +105,13 @@ def main(args=None):
     # deg_distribution(network, folder, "deg_distribution.pdf")
     media = generate_media_landscape(Nm, media_mode, extr=extr)
     media_conx(network, media, Nc)  # Nc random connections per media node
-    # number_media_distribution(network, folder, "number_media_distribution.pdf")
-    # neighbor_opinion_distribution(network, folder, "initial_neighbour_dist.pdf")
-    # visualize_network(network, folder, "initial_network.pdf")
+    number_media_distribution(
+        network, folder, "number_media_distribution.pdf"
+    )  # may be turned off (to save space)
+    neighbor_opinion_distribution(
+        network, folder, "initial_neighbour_dist.pdf"
+    )  # may be turned off
+    visualize_network(network, folder, "initial_network.pdf")  # may be turned off
 
     op_trend = pd.DataFrame()
     prob_to_change = []
@@ -190,14 +194,16 @@ def main(args=None):
     plot_clustering(network_clustering, folder, "network_clustering.pdf")
     print_measure(network_clustering, folder, "network_clustering.txt")
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
-    # visualize_network(network, folder, "final_network.pdf")
+    visualize_network(network, folder, "final_network.pdf")  # may be turned off
     print_media_statistics(df_stats=media_stats, output_folder=folder)
     plot_media_stats(df_stats=media_stats, output_folder=folder)
-    # plot_media_shares(df_stats=media_stats, output_folder=folder)
+    plot_media_shares(df_stats=media_stats, output_folder=folder)  # may be turned off
     df_consecutive_terms = get_consecutive_terms_counts(
         election_results=election_results
     )
-    # plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
+    plot_consecutive_terms_histogram(
+        df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf"
+    )
     print_election_results(
         election_results, folder=folder, filename="election_results.txt"
     )
