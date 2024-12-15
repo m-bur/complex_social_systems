@@ -1,6 +1,9 @@
 # complex_social_systems
 
 Welcome to the GitHub of Team BJSS-Model
+
+Please read all of the readme before diving into our code, it will save you some time.
+
 We used [numpy doc style](https://numpydoc.readthedocs.io/en/latest/format.html) for our code. This also allow for automatic documentation using sphinx.
 
 The documentation of our project can be found in the [docs](docs) folder. More instructions can be found there.
