@@ -1,10 +1,3 @@
 # complex_social_systems
 
-As our code will be judged by its quality and readability and of course also because it will be relevant for a good collaboration, we should all adherre to the same standard for comments.
-I suggest we use [numpy doc style](https://numpydoc.readthedocs.io/en/latest/format.html) for our code. This will also allow for automatic documentation using sphinx.
-
-The documentation of our project can be found in the [docs](docs) folder. More instructions can be found there.
-
-## CI Status:
-
-![tests](https://github.com/m-bur/complex_social_systems/actions/workflows/style-check.yml/badge.svg)
+This is the branch for the outlook opinion multi-dimensionality. As the definition of variables are mostly lists instead of integer or float, this part is separated from the main branch. For the general calibration and results, please refer to the main branch
