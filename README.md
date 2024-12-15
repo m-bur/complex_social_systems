@@ -23,4 +23,8 @@ The most important file is [main.py](main.py). This is where the main loop of ou
 
 Furthermore there are is folder called [networks](networks), which contains precalculated networks, which avoids the necessesity to calculate the initial network each time from scratch.
 
+[calibration.py](calibration.py) was used to perform the calibration, the results can be found in the [calibration](calibrations) folder.
+
+The files named experiment are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster execution.
+
 
