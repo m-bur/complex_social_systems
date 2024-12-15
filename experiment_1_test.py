@@ -53,7 +53,7 @@ def generate_parameters():
                 name = (
                     folder_name
                     + f"_n_{n_media}"
-                    + f"_o_{round(t_opinion,3)}".replace(".", "p")
+                    + f"_o_{round(t_opinion, 3)}".replace(".", "p")
                 )
                 parameters.append(
                     [
