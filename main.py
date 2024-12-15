@@ -5,6 +5,7 @@ from utils.nodes import *
 from utils.visualization import *
 from ast import literal_eval
 import sys
+import copy
 
 
 def parse_args():
@@ -164,9 +165,9 @@ def main(args=None):
             prob_to_change.append([days, changed_voters / (np.size(network))])
             changed_voters = 0
 
-        # every 5th day, for gif visualization
-        # if days % 5 == 0:
-        # networks.append(copy.deepcopy(network))
+        # every 5th day, for gif visualization, can be turned off to save performance
+        if days % 5 == 0:
+            networks.append(copy.deepcopy(network))
 
         # turn media feedback on
         if days == mfeedback_on_after:
@@ -181,7 +182,7 @@ def main(args=None):
             )
     # plot and save the network charactersitics
 
-    # combined_visualization(op_trend, networks, folder)
+    combined_visualization(op_trend, networks, folder)  # can be turned off for increased performance
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     voter_trend(op_trend, folder, "voter_share.pdf")
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
