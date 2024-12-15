@@ -1,7 +1,7 @@
 # complex_social_systems
 
-As our code will be judged by its quality and readability and of course also because it will be relevant for a good collaboration, we should all adherre to the same standard for comments.
-I suggest we use [numpy doc style](https://numpydoc.readthedocs.io/en/latest/format.html) for our code. This will also allow for automatic documentation using sphinx.
+Welcome to the GitHub of Team BJSS-Model
+We used [numpy doc style](https://numpydoc.readthedocs.io/en/latest/format.html) for our code. This also allow for automatic documentation using sphinx.
 
 The documentation of our project can be found in the [docs](docs) folder. More instructions can be found there.
 It can be opened with your favorite browser and looks something like this:
@@ -11,3 +11,16 @@ It can be opened with your favorite browser and looks something like this:
 
 Flake8 check:
 ![tests](https://github.com/m-bur/complex_social_systems/actions/workflows/style-check.yml/badge.svg)
+
+## Some important information for you
+
+The most important file is [main.py](main.py). This is where the main loop of our programm is located. In this file, many functions and classes are used that are defined in the [utils](utils) folder. In particular, we have:
+
+- nodes.py which defines the classes for voter and media nodes
+- network.py which generates the network, and defines processes on the network
+- measure.py defines functions to calculate important quantities and also to save them
+- visualization.py offers tools visualize these quantities
+
+Furthermore there are is folder called [networks](networks), which contains precalculated networks, which avoids the necessesity to calculate the initial network each time from scratch.
+
+
