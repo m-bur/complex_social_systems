@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from utils.measure import polarization
 from utils.measure import opinion_share
-
 from utils.nodes import *
 
 

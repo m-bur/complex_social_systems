@@ -913,7 +913,7 @@ def print_election_results(election_results, folder, filename):
                 file.write(f"{item}\n")
     else:
         with open(file_path, "w") as file:
-            file.write(f"no elections were held in this simulation.")
+            file.write("no elections were held in this simulation.")
 
 
 def get_consecutive_terms_counts(election_results):
