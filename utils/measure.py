@@ -32,7 +32,7 @@ def opinion_list(network):
     return opinions
 
 
-def polarization(network):
+def polarization(network, dim_opinion):
     """
     Calculates the average opinion of the network.
 
@@ -40,13 +40,24 @@ def polarization(network):
     ----------
     network : list of list of Voter
         The voter network.
+    dim_opinion : int
+        Dimensionality of voter opinions.
 
     Returns
     -------
-    float
+    float, list
         The average opinion of all voters in the network.
     """
-    return np.mean(opinion_list(network))
+    if dim_opinion == 1:
+        return np.mean(opinion_list(network))
+    else:
+        opinions = opinion_list(network)
+        mean_opinion = np.array([0] * dim_opinion)
+        for n in opinions:
+            for i in range(dim_opinion):
+                mean_opinion[i] += n[i]
+        mean_opinion = np.divide(mean_opinion, len(opinions))
+        return mean_opinion
 
 
 def std_opinion(network):
@@ -67,7 +78,7 @@ def std_opinion(network):
     return np.std(opinion_list(network)) / np.sqrt(n[0] * n[1])
 
 
-def opinion_share(network):
+def opinion_share(network, dim_opinion):
     """
     Calculates the share of each opinion in the network.
 
@@ -81,8 +92,26 @@ def opinion_share(network):
     pd.DataFrame
         A DataFrame where columns are unique opinions and values represent their share.
     """
-    expected_columns = [-1, 0, 1]  # Replace with your expected unique elements
-    unique_elements, counts = np.unique(opinion_list(network), return_counts=True)
+    if dim_opinion == 1:
+        expected_columns = [-1, 0, 1]  # Replace with your expected unique elements
+        opinions = opinion_list(network)
+
+    elif dim_opinion == 2:
+        expected_columns = [
+            '[-1, -1]',
+            '[-1, 0]',
+            '[-1, 1]',
+            '[0, -1]',
+            '[0, 0]',
+            '[0, 1]',
+            '[1, -1]',
+            '[1, 0]',
+            '[1, 1]',
+            ]
+
+        opinions = [str(_) for _ in opinion_list(network)]
+
+    unique_elements, counts = np.unique(opinions, return_counts=True)
     share = counts / np.sum(counts)
 
     # Create a DataFrame with the calculated shares
@@ -95,7 +124,6 @@ def opinion_share(network):
 
     # Reorder the columns to match the expected order
     df = df[expected_columns]
-
     return df
 
 
@@ -296,7 +324,7 @@ def clustering(network):
     return clust / (n[0] * n[1])
 
 
-def neighbor_opinion(voter, network):
+def neighbor_opinion(voter, network, dim_opinion):
     """
     Calculates the average opinion of a voter's neighbors.
 
@@ -312,13 +340,22 @@ def neighbor_opinion(voter, network):
     float
         The average opinion of the voter's neighbors.
     """
-    s = 0
-    my_neighbors = voter.get_neighbors()
-    n = len(my_neighbors)
+    if dim_opinion == 1:
+        s = 0
+        my_neighbors = voter.get_neighbors()
+        n = len(my_neighbors)
 
-    for coordinate in my_neighbors:
-        s += network[coordinate[0]][coordinate[1]].get_opinion()
-    return s / n
+        for coordinate in my_neighbors:
+            s += network[coordinate[0]][coordinate[1]].get_opinion()
+        return s / n
+    elif dim_opinion == 2:
+        s = np.array([0, 0])
+        my_neighbors = voter.get_neighbors()
+        n = len(my_neighbors)
+
+        for coordinate in my_neighbors:
+            s = s + np.array(network[coordinate[0]][coordinate[1]].get_opinion())
+        return s / n
 
 
 def make_foldername(base_name="figures"):
@@ -346,7 +383,7 @@ def make_foldername(base_name="figures"):
     return foldername
 
 
-def neighbor_opinion_distribution(network, output_folder, file_name):
+def neighbor_opinion_distribution(network, output_folder, dim_opinion, file_name):
     """
     Plots the distribution of the average opinion of neighbors based on voter opinions.
 
@@ -375,7 +412,16 @@ def neighbor_opinion_distribution(network, output_folder, file_name):
         for j in range(n[1]):
             voter = network[i][j]
             opinion = voter.get_opinion()
-            neigh_opinion = neighbor_opinion(voter, network)
+            if dim_opinion == 2:
+                if sum(opinion) > 0:
+                    opinion = 1
+                elif sum(opinion) == 0:
+                    opinion = 0
+                else:
+                    opinion = -1
+            neigh_opinion = neighbor_opinion(voter, network, dim_opinion)
+            if dim_opinion == 2:
+                neigh_opinion = sum(neigh_opinion)
             neigh_opinion_dist[opinion].append(neigh_opinion)
 
     plt.figure()
@@ -517,7 +563,7 @@ def number_media_distribution(network, output_folder, file_name):
     return avg, std  # Return the average and standard deviation of media connections
 
 
-def opinion_trend(op_trend, output_folder, file_name):
+def opinion_trend(op_trend, output_folder, file_name, dim_opinion, days=None, Ndays=None):
     """
     Plot the opinion share over time.
 
@@ -544,6 +590,7 @@ def opinion_trend(op_trend, output_folder, file_name):
     # Create a new figure for the plot
     plt.figure()
 
+<<<<<<< Updated upstream
     # Iterate over the columns (opinions) in the DataFrame
     for column in op_trend.columns:
         # Assign colors based on the opinion value
@@ -558,21 +605,61 @@ def opinion_trend(op_trend, output_folder, file_name):
         plt.plot(
             op_trend.index, op_trend[column], label=f"Opinion {column}", color=color
         )
+=======
+    if dim_opinion == 1:
+        # Iterate over the columns (opinions) in the DataFrame
+        for column in op_trend.columns:
+            # Assign colors based on the opinion value
+            if column == -1:
+                color = 'blue'
+            elif column == 0:
+                color = 'grey'
+            else:
+                color = 'red'
 
-    # Label the x-axis (time)
-    plt.xlabel(r"$t [\mathrm{d}]$")
+            # Plot the opinion share over time
+            plt.plot(op_trend.index, op_trend[column],
+                     label=f"Opinion {column}", color=color)
+>>>>>>> Stashed changes
 
-    # Label the y-axis (opinion share)
-    plt.ylabel("Opinion Share")
+            # Label the x-axis (time)
+            plt.xlabel(r"$t [\mathrm{d}]$")
 
-    # Display the legend
-    plt.legend()
+            # Label the y-axis (opinion share)
+            plt.ylabel("Opinion Share")
 
-    # Save the plot to the specified file
-    plt.savefig(output_path)
+            # Display the legend
+            plt.legend()
 
+            # Save the plot to the specified file
+            plt.savefig(output_path)
+
+<<<<<<< Updated upstream
 
 def voter_trend(op_trend, output_folder, file_name):
+=======
+    elif dim_opinion == 2:
+
+        column = op_trend.columns
+        colors = ['blue', 'red', 'gray', 'purple']
+        for i in range(len(column)):
+            plt.plot(op_trend.index, op_trend[column[i]], color=colors[i], label=f"Opinion {column[i]}")
+
+        # Label the x-axis (time)
+        plt.xlim([0, Ndays])
+        plt.xlabel(r"$t [\mathrm{d}]$")
+        # Label the y-axis (opinion share)
+        plt.ylabel("Opinion Share")
+        # Display the legend
+        plt.legend()
+        plt.grid(axis='both', lw=0.2, c='grey')
+        plt.tight_layout()
+        plt.savefig(output_path)
+        plt.close()
+
+
+def voter_trend(op_trend, output_folder, file_name, dim_opinion):
+>>>>>>> Stashed changes
     """
     Plot the opinion share of -1 and 1 over time.
 
@@ -598,6 +685,7 @@ def voter_trend(op_trend, output_folder, file_name):
 
     # Create a new figure for the plot
     plt.figure()
+<<<<<<< Updated upstream
 
     df_voters = op_trend[[-1, 1]]
     df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
@@ -614,6 +702,41 @@ def voter_trend(op_trend, output_folder, file_name):
         plt.plot(
             df_voters.index, df_voters[column], label=f"Opinion {column}", color=color
         )
+=======
+    
+    if dim_opinion == 1:
+        df_voters = op_trend[[-1,1]]
+        df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
+        # Iterate over the columns (opinions) in the DataFrame
+        for column in df_voters.columns:
+            # Assign colors based on the opinion value
+            if column == -1:
+                color = 'blue'
+            elif column == 1:
+                color = 'red'
+    elif dim_opinion == 2:
+        op_trend_agg = pd.DataFrame()
+        op_trend_agg['Blue'] = op_trend['[-1, -1]'] + op_trend['[-1, 0]'] + op_trend['[0, -1]']
+        op_trend_agg['Red'] = op_trend['[1, 1]'] + op_trend['[1, 0]'] + op_trend['[0, 1]']
+        op_trend_agg['Gray'] = op_trend['[0, 0]']
+        op_trend_agg['Purple'] = op_trend['[-1, 1]'] + op_trend['[1, -1]']
+
+        column = op_trend_agg.columns
+        colors = ['blue', 'red', 'gray', 'purple']
+
+        df_voters = op_trend_agg[['Blue', 'Red']]
+        df_voters = df_voters.div(df_voters.sum(axis=1), axis=0)
+        for column in df_voters.columns:
+            # Assign colors based on the opinion value
+            if column == 'Blue':
+                color = 'blue'
+            elif column == 'Red':
+                color = 'red'
+
+    # Plot the opinion share over time
+    plt.plot(df_voters.index, df_voters[column],
+             label=f"Opinion {column}", color=color)
+>>>>>>> Stashed changes
 
     # Label the x-axis (time)
     plt.xlabel(r"$t [\mathrm{d}]$")

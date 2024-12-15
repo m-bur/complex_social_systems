@@ -28,22 +28,37 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
+<<<<<<< Updated upstream
     parser.add_argument("--number_years", type=int, default=100)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument(
         "--media_feedback_threshold_replacement_neutral", type=float, default=0.1
     )
+=======
+    parser.add_argument("--number_years", type=int, default=1)
+    parser.add_argument("--media_feedback_turned_on", type=bool, default=True)
+    parser.add_argument("--media_feedback_probability", type=float, default=1)
+    parser.add_argument("--media_feedback_threshold_replacement_neutral", type=float, default=1)
+>>>>>>> Stashed changes
     parser.add_argument("--number_of_days_election_cycle", type=int, default=50)
     parser.add_argument("--mupdate_parameter_1", type=float, default=2.5)
     parser.add_argument("--mupdate_parameter_2", type=float, default=1)
     # media manipulation parameters
+<<<<<<< Updated upstream
     parser.add_argument("--manipulation_shift", type=float, default=0)
     parser.add_argument("--number_of_manipulated_media", type=int, default=0)
     parser.add_argument("--target_media_opinion", type=float, default=0)
     parser.add_argument("--manipulation_day", type=int, default=1000)
     parser.add_argument("--media_feedback_turned_on_after", type=int, default=10 * 365)
 
+=======
+    parser.add_argument("--manipulation_shift", type=float, default=100)
+    parser.add_argument("--number_of_manipulated_media", type=int, default=1)
+    parser.add_argument("--target_media_opinion", type=float, default=0)
+    parser.add_argument("--manipulation_day", type=int, default=1000)
+    parser.add_argument("--opinion_dimension", type=int, default=2)
+>>>>>>> Stashed changes
     parser.add_argument("--parent_folder", type=str, default="Figure_collection")
 
     return parser.parse_args()
@@ -75,9 +90,6 @@ def main(args=None):
     mfeedback_threshold_replacement = args.media_feedback_threshold_replacement_neutral
     x = args.mupdate_parameter_1
     y = args.mupdate_parameter_2
-
-    mfeedback_on_after = args.media_feedback_turned_on_after
-
     # manipulation parameters
     manipulation_shift = args.manipulation_shift
     number_of_manipulated_media = args.number_of_manipulated_media
@@ -85,8 +97,13 @@ def main(args=None):
     manipulation_day = args.manipulation_day
     # parent folder
     parent_folder = args.parent_folder
+<<<<<<< Updated upstream
 
     mfeedback = False
+=======
+    dim_opinion = args.opinion_dimension
+    mfeedback=False
+>>>>>>> Stashed changes
 
     if regen_network:
         df_conx = init_df_conx(c_min, c_max, gamma, L)
@@ -100,6 +117,7 @@ def main(args=None):
 
     folder = make_foldername(base_name=parent_folder + "/figures")
     print_parameters(args, folder, "parameters.txt")
+<<<<<<< Updated upstream
     network = init_network(
         df_conx, L, mfeedback_prob, mfeedback_threshold_replacement
     )  # LxL network of voters
@@ -113,6 +131,15 @@ def main(args=None):
         network, folder, "initial_neighbour_dist.pdf"
     )  # may be turned off
     visualize_network(network, folder, "initial_network.pdf")  # may be turned off
+=======
+    network = init_network(df_conx, L, mfeedback_prob, mfeedback_threshold_replacement, dim_opinion)  # LxL network of voters
+    deg_distribution(network, folder, "deg_distribution.pdf")
+    media = generate_media_landscape(Nm, media_mode, dim_opinion)
+    media_conx(network, media, Nc)  # Nc random connections per media node
+    number_media_distribution(network, folder, "number_media_distribution.pdf")
+    neighbor_opinion_distribution(network, folder, dim_opinion, "initial_neighbour_dist.pdf")
+    visualize_network(network, folder, "initial_network.pdf", dim_opinion)
+>>>>>>> Stashed changes
 
     op_trend = pd.DataFrame()
     prob_to_change = []
@@ -124,15 +151,22 @@ def main(args=None):
     media_stats = pd.DataFrame()
 
     election_results = []
+<<<<<<< Updated upstream
 
+=======
+   
+    frames_heatmap = []
+    frames_share = []
+>>>>>>> Stashed changes
     for days in range(Ndays):
 
         # start with elections after the first year
         if days >= 365:
             # have elections
             if days % number_of_days_election_cycle == 0:
-                winner = get_election_winner(network)
+                winner = get_election_winner(network, dim_opinion)
                 election_results.append(winner)
+<<<<<<< Updated upstream
             media = update_media(
                 days,
                 media,
@@ -143,11 +177,14 @@ def main(args=None):
                 y,
                 manipulation_shift=manipulation_shift,
             )
+=======
+            media=update_media(days, media, election_results, mu, number_of_days_election_cycle, x, y, manipulation_shift, dim_opinion)
+>>>>>>> Stashed changes
 
-        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback)
+        changed_voters += network_update(network, media, Nv, w, t0, alpha, mfeedback, dim_opinion)
 
         # measure the network characteristics
-        network_polarization.append(polarization(network))
+        network_polarization.append(polarization(network, dim_opinion))
         network_std.append(std_opinion(network))
         network_clustering.append(clustering(network))
         media_stats = pd.concat(
@@ -167,14 +204,22 @@ def main(args=None):
 
         # every 5th day, for gif visualization, can be turned off to save performance
         if days % 5 == 0:
+<<<<<<< Updated upstream
             networks.append(copy.deepcopy(network))
+=======
+            # networks.append(copy.deepcopy(network))
+            new_row = opinion_share(network, dim_opinion)
+            new_row.index = [days]
+            op_trend = pd.concat([op_trend, new_row])
+>>>>>>> Stashed changes
 
         # turn media feedback on
-        if days == mfeedback_on_after:
+        if days == 10*365:
             mfeedback = mfeedback_on
 
         # turn on media_manipulation
         if days == manipulation_day:
+<<<<<<< Updated upstream
             turn_on_media_manipulation_by_opinion_distance(
                 media=media,
                 N=number_of_manipulated_media,
@@ -185,6 +230,29 @@ def main(args=None):
     combined_visualization(op_trend, networks, folder)  # can be turned off for increased performance
     opinion_trend(op_trend, folder, "opinion_share.pdf")
     voter_trend(op_trend, folder, "voter_share.pdf")
+=======
+            turn_on_media_manipulation_by_opinion_distance(media=media, N=number_of_manipulated_media, target_opinion=target_media_opinion)
+    # plot and save the network charactersitics 
+        if days % 10 == 0:
+            visualize_network(network, folder, "{}_network.png".format(days), dim_opinion)
+            frames_heatmap.append(os.path.join(folder, "{}_network.png".format(days)))
+            op_trend_agg = pd.DataFrame()
+            max_len = len(op_trend)
+            op_trend = op_trend.reindex(range(max_len))
+            op_trend.fillna(0, inplace=True)
+            op_trend_agg['Blue'] = op_trend['[-1, -1]'] + op_trend['[-1, 0]'] + op_trend['[0, -1]']
+            op_trend_agg['Red'] = op_trend['[1, 1]'] + op_trend['[1, 0]'] + op_trend['[0, 1]']
+            op_trend_agg['Gray'] = op_trend['[0, 0]']
+            op_trend_agg['Purple'] = op_trend['[-1, 1]'] + op_trend['[1, -1]']
+            opinion_trend(op_trend_agg, folder, '{}_opinion_share.png'.format(days), dim_opinion, days, Ndays)
+            frames_share.append(os.path.join(folder, "{}_opinion_share.png".format(days)))
+
+    create_heatmap_gif(folder, frames_heatmap, frames_share)
+
+    #combined_visualization(op_trend, networks, folder)
+    opinion_trend(op_trend, folder, "opinion_share.pdf", dim_opinion)
+    voter_trend(op_trend, folder, "voter_share.pdf", dim_opinion)
+>>>>>>> Stashed changes
     op_trend.to_csv(folder + "/opinion_trend.txt", sep="\t", index=False)
     plot_polarization(network_polarization, folder, "network_polarization.pdf")
     print_measure(network_polarization, folder, "network_polarizaiton.txt")
@@ -194,6 +262,7 @@ def main(args=None):
     print_prob_to_change(prob_to_change, folder, "prob_to_change.txt")
     plot_clustering(network_clustering, folder, "network_clustering.pdf")
     print_measure(network_clustering, folder, "network_clustering.txt")
+<<<<<<< Updated upstream
     neighbor_opinion_distribution(network, folder, "final_neighbour_dist.pdf")
     visualize_network(network, folder, "final_network.pdf")  # may be turned off
     print_media_statistics(df_stats=media_stats, output_folder=folder)
@@ -208,7 +277,18 @@ def main(args=None):
     print_election_results(
         election_results, folder=folder, filename="election_results.txt"
     )
+=======
+    neighbor_opinion_distribution(network, folder, dim_opinion, "final_neighbour_dist.pdf")
+    visualize_network(network, folder, "final_network.pdf", dim_opinion)
+    print_media_statistics(df_stats=media_stats, output_folder=folder)
+    plot_media_stats(df_stats=media_stats, output_folder=folder)
+    plot_media_shares(df_stats=media_stats, output_folder=folder)
+    df_consecutive_terms = get_consecutive_terms_counts(election_results=election_results)
+    plot_consecutive_terms_histogram(df_consecutive_terms, output_folder=folder, file_name="consecutive_terms.pdf")
+    print_election_results(election_results, folder=folder, filename="election_results.txt")
+>>>>>>> Stashed changes
 
+    combined_visualization(op_trend, networks, output_folder=folder)
 
 if __name__ == "__main__":
     _args = parse_args()

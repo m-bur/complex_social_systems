@@ -219,7 +219,7 @@ def update_df_conx(L, df_conx, connection_matrix):
 
 
 def init_network(
-    df_conx, L, media_feedback_probability, media_feedback_threshold_replacement_neutral
+    df_conx, L, media_feedback_probability, media_feedback_threshold_replacement_neutral, dim_opinion
 ):
     """
     Initializes a voter network based on a given connections dataframe.
@@ -264,6 +264,7 @@ def init_network(
                 False,
                 media_feedback_probability,
                 media_feedback_threshold_replacement_neutral,
+                dim_opinion
             )
             for i in range(L)
         ]
@@ -296,7 +297,12 @@ def init_network(
         voter = network[row["x"]][row["y"]]
 
         # Set an initial opinion for the voter, chosen randomly from [-1, 0, 1]
-        voter.set_opinion(opinion_list[i])
+        if dim_opinion == 1:
+            voter.set_opinion(opinion_list[i])
+        elif dim_opinion == 2:
+            voter.set_opinion([random.choice([-1, 0, 1]), random.choice([-1, 0, 1])])
+        else:
+            raise ValueError("Opinion dimension must be 1 or 2")
 
         # Add each neighbor to the voter's list of neighbors
         for ncoordinates in neighbors:
@@ -488,6 +494,7 @@ def turn_on_media_manipulation_by_opinion_distance(media, N, target_opinion):
     turn_on_media_manipulation_by_id(media=media, IDs=sorted_media_ids)
 
 
+<<<<<<< Updated upstream
 def update_media(
     days,
     media,
@@ -499,6 +506,9 @@ def update_media(
     manipulation_shift=0.0,
     media_update_cycle=1,
 ):
+=======
+def update_media(days, media, election_results, initial_media_opinion, number_of_days_election_cycle, x, y, manipulation_shift=0., media_update_cycle=1, dim_opinion=1):
+>>>>>>> Stashed changes
     """
     Updates the opinions of media entities based on daily cycles and election results.
 
@@ -539,6 +549,8 @@ def update_media(
     # random (ecconomy) term
     if days % media_update_cycle == 0:
         # Generate a random opinion change using a normal distribution, scaled by `x` and baseline opinion.
+        if dim_opinion > 1:
+            initial_media_opinion = initial_media_opinion[0]
         media_change = np.random.normal(initial_media_opinion, 0.00022 * x)
         media_change_manipulated = np.random.normal(
             initial_media_opinion + manipulation_shift, 0.00022 * x
@@ -548,19 +560,31 @@ def update_media(
         for i, _ in enumerate(media):
             # Calculate the new opinion by adding the change to the current opinion.
             if media[i].is_manipulated():
-                new_opinion = media[i].get_opinion() + media_change_manipulated
+                if dim_opinion == 1:
+                    shift = media[i].get_opinion()
+                else:
+                    shift = media[i].get_opinion()[0]
+                new_opinion = shift + media_change_manipulated
                 # make it such that the medium is shifted only once
                 media[i].set_manipulation(False)
             else:
                 new_opinion = media[i].get_opinion() + media_change
 
             # Ensure the opinion stays within bounds (-1 to 1).
-            if abs(new_opinion) < 1:
-                media[i].set_opinion(new_opinion)
-            elif new_opinion < 0:
-                media[i].set_opinion(-1)
-            elif new_opinion > 0:
-                media[i].set_opinion(1)
+            if dim_opinion == 1:
+                if abs(new_opinion) < 1:
+                    media[i].set_opinion(new_opinion)
+                elif new_opinion < 0:
+                    media[i].set_opinion(-1)
+                elif new_opinion > 0:
+                    media[i].set_opinion(1)
+            else:
+                if abs(new_opinion) < 1:
+                    media[i].set_opinion([new_opinion]*dim_opinion)
+                elif new_opinion < 0:
+                    media[i].set_opinion([-1]*dim_opinion)
+                elif new_opinion > 0:
+                    media[i].set_opinion([1]*dim_opinion)
 
     # duration term
     if days % number_of_days_election_cycle == 0:
@@ -597,6 +621,7 @@ def update_media(
 
 
 def generate_media_landscape(
+<<<<<<< Updated upstream
     number_of_media,
     mode="standard",
     mu=0,
@@ -604,6 +629,9 @@ def generate_media_landscape(
     lower_bound=-1,
     upper_bound=1,
     extr=0.5,
+=======
+    number_of_media, mode="standard", mu=0, sigma=0.25, lower_bound=-1, upper_bound=1, dim_opinion=1
+>>>>>>> Stashed changes
 ):
     """
     Generate a pandas DataFrame containing media nodes and their respective IDs,
@@ -651,7 +679,10 @@ def generate_media_landscape(
         opinions = opinions - np.mean(opinions)
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        if dim_opinion == 1:
+            media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        else:
+            media_nodes = [Media(ID, opinion=[opinion] * dim_opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "uniform":
@@ -661,13 +692,19 @@ def generate_media_landscape(
         opinions = opinions - np.mean(opinions)
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        if dim_opinion == 1:
+            media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        else:
+            media_nodes = [Media(ID, opinion=[opinion] * dim_opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "fixed":
         opinions = np.linspace(start=lower_bound, stop=upper_bound, num=number_of_media)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        if dim_opinion == 1:
+            media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        else:
+            media_nodes = [Media(ID, opinion=[opinion] * dim_opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
     elif mode == "gaussian":
@@ -685,7 +722,10 @@ def generate_media_landscape(
         opinions = opinions - np.mean(opinions)
         opinions = np.clip(opinions, -1, 1)
         IDs = np.arange(number_of_media)
-        media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        if dim_opinion == 1:
+            media_nodes = [Media(ID, opinion=opinion) for ID, opinion in zip(IDs, opinions)]
+        else:
+            media_nodes = [Media(ID, opinion=[opinion] * dim_opinion) for ID, opinion in zip(IDs, opinions)]
         return media_nodes
 
 
@@ -731,7 +771,7 @@ def media_conx(network, media, Nc):
     return network
 
 
-def voter_update(voter, h, S, alpha, t0):
+def voter_update(voter, h, S, alpha, t0, dim_opinion):
     """
     Update the opinion of a voter based on the local field and the current polarization state.
 
@@ -755,6 +795,7 @@ def voter_update(voter, h, S, alpha, t0):
             - `t0[0]`: Threshold to change from partisan (red/blue) to neutral.
             - `t0[1]`: Threshold to change from neutral to partisan (red/blue).
 
+
     Returns
     -------
     int
@@ -772,54 +813,110 @@ def voter_update(voter, h, S, alpha, t0):
     changed_opinion = 0
     opinion = voter.get_opinion()
 
-    if S > 0:  # Red majority
-        # Adjust thresholds
-        t_rn = t0[0]  # Red to neutral (unchanged)
-        t_bn = max(min(t0[0] + alpha * S, 0.5), 0)  # Blue to neutral
-        t_nr = max(min(t0[1] + alpha * S, 0.5), 0)  # Neutral to red
-        t_nb = max(min(t0[1] - alpha * S, 0.5), 0)  # Neutral to blue
+    if dim_opinion == 1:
+        if S > 0:  # Red majority
+            # Adjust thresholds
+            t_rn = t0[0]  # Red to neutral (unchanged)
+            t_bn = max(min(t0[0] + alpha * S, 0.5), 0)  # Blue to neutral
+            t_nr = max(min(t0[1] + alpha * S, 0.5), 0)  # Neutral to red
+            t_nb = max(min(t0[1] - alpha * S, 0.5), 0)  # Neutral to blue
 
-        # Update opinions based on the local field
-        if opinion == 1 and h < t_rn:  # Red to neutral
-            voter.set_opinion(0)
-            changed_opinion = 1
-        elif opinion == 0:
-            if h > t_nr:  # Neutral to red
-                voter.set_opinion(1)
+            # Update opinions based on the local field
+            if opinion == 1 and h < t_rn:  # Red to neutral
+                voter.set_opinion(0)
                 changed_opinion = 1
-            elif h < -t_nb:  # Neutral to blue
-                voter.set_opinion(-1)
+            elif opinion == 0:
+                if h > t_nr:  # Neutral to red
+                    voter.set_opinion(1)
+                    changed_opinion = 1
+                elif h < -t_nb:  # Neutral to blue
+                    voter.set_opinion(-1)
+                    changed_opinion = 1
+            elif opinion == -1 and h > t_bn:  # Blue to neutral
+                voter.set_opinion(0)
                 changed_opinion = 1
-        elif opinion == -1 and h > t_bn:  # Blue to neutral
-            voter.set_opinion(0)
-            changed_opinion = 1
 
-    elif S <= 0:  # Blue majority
-        # Adjust thresholds
-        t_bn = t0[0]  # Blue to neutral (unchanged)
-        t_rn = max(min(t0[0] - alpha * S, 0.5), 0)  # Red to neutral
-        t_nr = max(min(t0[1] + alpha * S, 0.5), 0)  # Neutral to red
-        t_nb = max(min(t0[1] - alpha * S, 0.5), 0)  # Neutral to blue
+        elif S <= 0:  # Blue majority
+            # Adjust thresholds
+            t_bn = t0[0]  # Blue to neutral (unchanged)
+            t_rn = max(min(t0[0] - alpha * S, 0.5), 0)  # Red to neutral
+            t_nr = max(min(t0[1] + alpha * S, 0.5), 0)  # Neutral to red
+            t_nb = max(min(t0[1] - alpha * S, 0.5), 0)  # Neutral to blue
 
-        # Update opinions based on the local field
-        if opinion == -1 and h > t_bn:  # Blue to neutral
-            voter.set_opinion(0)
-            changed_opinion = 1
-        elif opinion == 0:
-            if h > t_nr:  # Neutral to red
-                voter.set_opinion(1)
+            # Update opinions based on the local field
+            if opinion == -1 and h > t_bn:  # Blue to neutral
+                voter.set_opinion(0)
                 changed_opinion = 1
-            elif h < -t_nb:  # Neutral to blue
-                voter.set_opinion(-1)
+            elif opinion == 0:
+                if h > t_nr:  # Neutral to red
+                    voter.set_opinion(1)
+                    changed_opinion = 1
+                elif h < -t_nb:  # Neutral to blue
+                    voter.set_opinion(-1)
+                    changed_opinion = 1
+            elif opinion == 1 and h < -t_rn:  # Red to neutral
+                voter.set_opinion(0)
                 changed_opinion = 1
-        elif opinion == 1 and h < -t_rn:  # Red to neutral
-            voter.set_opinion(0)
-            changed_opinion = 1
+
+    else:
+        for i in range(dim_opinion):
+            s = S[i]
+            if s > 0:  # Red majority
+                # Adjust thresholds
+                t_rn = t0[0]  # Red to neutral (unchanged)
+                t_bn = max(min(t0[0] + alpha * s, 0.5), 0)  # Blue to neutral
+                t_nr = max(min(t0[1] + alpha * s, 0.5), 0)  # Neutral to red
+                t_nb = max(min(t0[1] - alpha * s, 0.5), 0)  # Neutral to blue
+
+                # Update opinions based on the local field
+                if opinion[i] == 1 and h[i] < t_rn:
+                    opinion[i] = 0
+                    voter.set_opinion(opinion)
+                    changed_opinon = 1
+                elif opinion[i] == 0:
+                    if h[i] > t_nr:
+                        opinion[i] = 1
+                        voter.set_opinion(opinion)
+                        changed_opinon = 1
+                    elif h[i] < -t_nb:
+                        opinion[i] = -1
+                        voter.set_opinion(opinion)
+                        changed_opinon = 1
+                elif opinion[i] == -1 and h[i] > t_bn:
+                    opinion[i] = 0
+                    voter.set_opinion(opinion)
+                    changed_opinon = 1
+
+            elif s <= 0:  # Blue majority
+                # Adjust thresholds
+                t_bn = t0[0]  # Blue to neutral (unchanged)
+                t_rn = max(min(t0[0] - alpha * s, 0.5), 0)  # Red to neutral
+                t_nr = max(min(t0[1] + alpha * s, 0.5), 0)  # Neutral to red
+                t_nb = max(min(t0[1] - alpha * s, 0.5), 0)  # Neutral to blue
+
+                # Update opinions based on the local field
+                if opinion[i] == 1 and h[i] < -t_rn:
+                    opinion[i] = 0
+                    voter.set_opinion(opinion)
+                    changed_opinon = 1
+                elif opinion[i] == 0:
+                    if h[i] > t_nr:
+                        opinion[i] = 1
+                        voter.set_opinion(opinion)
+                        changed_opinon = 1
+                    elif h[i] < -t_nb:
+                        opinion[i] = -1
+                        voter.set_opinion(opinion)
+                        changed_opinon = 1
+                elif opinion[i] == -1 and h[i] > t_bn:
+                    opinion[i] = 0
+                    voter.set_opinion(opinion)
+                    changed_opinon = 1
 
     return changed_opinion
 
 
-def local_field(voter, network, media, W):
+def local_field(voter, network, media, W, dim_opinion):
     """
     Compute the local opinion field experienced by a voter.
 
@@ -850,25 +947,32 @@ def local_field(voter, network, media, W):
     - The local field influences whether the voter changes their opinion during the update process.
     - Neighbors contribute equally, while media influence is scaled by the authority factor `W`.
     """
-    h = 0  # Initialize the local field
+
     neighbors = voter.get_neighbors()  # Get neighboring voter coordinates
     n = voter.get_number_of_neighbors()  # Number of neighbors
     con_media = voter.get_media_connections()  # List of connected media IDs
     m = len(con_media)  # Number of media connections
 
-    # Sum opinions of neighbors
-    for coordinate in neighbors:
-        h += network[coordinate[0]][coordinate[1]].get_opinion()
-
-    # Add weighted influence of connected media
-    for mid in con_media:
-        h += W * media[mid].get_opinion()
+    if dim_opinion == 1:
+        h = 0  # Initialize the local field
+        # Sum opinions of neighbors
+        for coordinate in neighbors:
+            h += network[coordinate[0]][coordinate[1]].get_opinion()
+        # Add weighted influence of connected media
+        for mid in con_media:
+            h += W * media[mid].get_opinion()
+    else:
+        h = np.array([0] * dim_opinion)
+        for coordinate in neighbors:
+            h += np.array(network[coordinate[0]][coordinate[1]].get_opinion())
+        for mid in con_media:
+            h = np.add(h, W * np.array(media[mid].get_opinion()))
 
     # Normalize by the total influence (neighbors + weighted media)
     return h / (n + W * m)
 
 
-def get_election_winner(network):
+def get_election_winner(network, dim_opinion):
     """
     Returns the party which has relative the majority in the network
 
@@ -877,15 +981,23 @@ def get_election_winner(network):
     int
         the winning party (can either be 1 or -1)
     """
-    opinion_share_df = opinion_share(network)
+    opinion_share_df = opinion_share(network, dim_opinion)
 
     # opinion_shared_df[-1][0] gives access to the share of the -1 (blue party)
     # opinion_shared_df[1][0] gives access to the share of the 1 (red party)
     # in case of a tie: 1 (red) wins
-    if opinion_share_df[-1][0] > opinion_share_df[1][0]:
-        return -1
-    else:
-        return 1
+    if dim_opinion == 1:
+        if opinion_share_df[-1][0] > opinion_share_df[1][0]:
+            return -1
+        else:
+            return 1
+    elif dim_opinion == 2:
+        if opinion_share_df['[-1, -1]'][0] + opinion_share_df['[-1, 0]'][0] + opinion_share_df['[0, -1]'][0] \
+                > opinion_share_df['[1, 1]'][0] + opinion_share_df['[1, 0]'][0] + opinion_share_df['[0, 1]'][0]:
+            return -1
+        else:
+            return 1
+        pass
 
 
 def get_number_of_consecutive_terms(election_results):
@@ -922,7 +1034,7 @@ def get_number_of_consecutive_terms(election_results):
     return count
 
 
-def network_update(network, media, Nv, W, t0, alpha, mfeedback):
+def network_update(network, media, Nv, W, t0, alpha, mfeedback, dim_opinion):
     """
     Update the network for one timestep by randomly selecting voters and updating their opinions.
 
@@ -973,13 +1085,13 @@ def network_update(network, media, Nv, W, t0, alpha, mfeedback):
         voter = network[x][y]  # Selected voter
 
         # Compute the local opinion field
-        h = local_field(voter, network, media, W)
+        h = local_field(voter, network, media, W, dim_opinion)
 
         # Compute the current polarization of the system
-        s = polarization(network)
+        s = polarization(network, dim_opinion)
 
         # Update the voter's opinion and track changes
-        changed_voters += voter_update(voter, h, s, alpha, t0)
+        changed_voters += voter_update(voter, h, s, alpha, t0, dim_opinion)
 
         # Apply media feedback if enabled
         if mfeedback:

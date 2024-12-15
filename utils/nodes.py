@@ -11,6 +11,7 @@ class Voter:
         media_feedback_turned_on=False,
         media_feedback_probability=0.1,
         meadia_feedback_threshold_replacement_neutral=0.1,
+        dim_opinion=1,
     ):
         """
         Initialize a Voter object, representing a voter with specific coordinates, opinion,
@@ -83,6 +84,9 @@ class Voter:
             meadia_feedback_threshold_replacement_neutral
         )
 
+        # the dimensionality of voter opinions
+        self.dim_opinion = dim_opinion
+
     def add_neighbor(self, neighbor_i, neighbor_j):
         """
         Adds a neighbor's coordinates to the list of neighbors.
@@ -102,18 +106,25 @@ class Voter:
 
         Parameters
         ----------
-        opinion : int
+        opinion : int, list
             The new opinion of the voter, which should be -1, 0, or 1.
 
         Raises
         ------
         ValueError
             If the opinion is not -1, 0, or 1.
+            Or the opinion is not a list
         """
-        if opinion in [-1, 0, 1]:
-            self.opinion = opinion
-        else:
-            raise ValueError("Opinion must be -1, 0, or 1")
+        if self.dim_opinion == 1:
+            if opinion in [-1, 0, 1]:
+                self.opinion = opinion
+            else:
+                raise ValueError("Opinion must be -1, 0, or 1")
+        elif self.dim_opinion > 1:
+            if isinstance(opinion, list):
+                self.opinion = opinion
+            else:
+                raise ValueError("Opinion must be a list")
 
     def add_media_connection(self, media_id):
         """

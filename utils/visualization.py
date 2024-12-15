@@ -143,7 +143,7 @@ def media_voter_histogramms(network, media):
     return
 
 
-def visualize_matrix(matrix, output_folder, filename=None):
+def visualize_matrix(matrix, output_folder, filename=None, dim_opinion=1):
     """
     Visualizes a matrix with values -1 (blue), 0 (grey), 1 (red) and saves it as an image.
 
@@ -162,12 +162,32 @@ def visualize_matrix(matrix, output_folder, filename=None):
     None
         The function saves the image file but does not return any value.
     """
+    if dim_opinion == 1:
+        # Create a color map: red for -1, grey for 0, blue for 1
+        cmap = ListedColormap(["blue", "grey", "red"])
+        bounds = [-1.5, -0.5, 0.5, 1.5]  # Boundaries for the values
+        norm = BoundaryNorm(bounds, cmap.N)
 
-    # Create a color map: red for -1, grey for 0, blue for 1
-    cmap = ListedColormap(["blue", "grey", "red"])
-    bounds = [-1.5, -0.5, 0.5, 1.5]  # Boundaries for the values
-    norm = BoundaryNorm(bounds, cmap.N)
+    elif dim_opinion == 2:
+        cmap = ListedColormap(
+            ['blue', 'lightskyblue', 'purple', 'lightskyblue', 'gray', 'lightcoral', 'purple', 'lightcoral', 'red'])
 
+        '''    
+        opinion_list = {
+            '[-1, -1]': 'brown',
+            '[-1, 0]': 'red',
+            '[-1, 1]': 'darkorange',
+            '[0, -1]': 'violet',
+            '[0, 0]': 'gray',
+            '[0, 1]': 'yellow',
+            '[1, -1]': 'purple',
+            '[1, 0]': 'blue',
+            '[1, 1]': 'lime',
+        }
+        cmap = ListedColormap(['brown', 'red', 'darkorange', 'violet', 'gray', 'yellow', 'purple', 'blue', 'lime',])
+        '''
+        bounds = [-4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5]  # Boundaries for the values
+        norm = BoundaryNorm(bounds, cmap.N)
     # Ensure the output folder exists
     os.makedirs(output_folder, exist_ok=True)
 
@@ -188,7 +208,7 @@ def visualize_matrix(matrix, output_folder, filename=None):
     plt.close(fig)
 
 
-def visualize_network(network, folder, filename):
+def visualize_network(network, folder, filename, dim_opinion):
     """
     Visualize the voter network by plotting the opinion distribution across the nodes.
 
@@ -212,15 +232,37 @@ def visualize_network(network, folder, filename):
 
     # Initialize a matrix to store the opinion values
     matrix = np.zeros((n[0], n[1]), dtype=int)
-
     # Loop through each node in the network and assign its opinion to the matrix
-    for i in range(n[0]):
-        for j in range(n[1]):
-            # Get the opinion of the current node and store it in the matrix
-            matrix[i, j] = network[i][j].get_opinion()
-
+    if dim_opinion == 1:
+        for i in range(n[0]):
+            for j in range(n[1]):
+                # Get the opinion of the current node and store it in the matrix
+                matrix[i, j] = network[i][j].get_opinion()
+    elif dim_opinion == 2:
+        for i in range(n[0]):
+            for j in range(n[1]):
+                val = str(network[i][j].get_opinion())
+                if val == '[-1, -1]':
+                    val = -4
+                elif val == '[-1, 0]':
+                    val = -3
+                elif val == '[-1, 1]':
+                    val = -2
+                elif val == '[0, -1]':
+                    val = -1
+                elif val == '[0, 0]':
+                    val = 0
+                elif val == '[0, 1]':
+                    val = 1
+                elif val == '[1, -1]':
+                    val = 2
+                elif val == '[1, 0]':
+                    val = 3
+                elif val == '[1, 1]':
+                    val = 4
+                matrix[i, j] = val
     # Visualize the matrix of opinions using the visualize_matrix function
-    visualize_matrix(matrix, folder, filename)
+    visualize_matrix(matrix, folder, filename, dim_opinion)
 
 
 def visualize_network_evolution(
@@ -419,3 +461,23 @@ def combined_visualization(
     # Save all frames as a GIF
     gif_path = os.path.join(output_folder, gif_filename)
     imageio.mimsave(gif_path, frames, duration=0.0005)
+<<<<<<< Updated upstream
+=======
+
+
+def create_heatmap_gif(folder, frames_heatmap, frames_share):
+    with imageio.get_writer(os.path.join(folder, 'heatmaps.gif'), mode='I', duration=0.05) as writer:
+        for filename in frames_heatmap:
+            image = imageio.v2.imread(filename)
+            writer.append_data(image)
+    for file in frames_heatmap:
+        os.remove(file)
+
+    with imageio.get_writer(os.path.join(folder, 'share.gif'), mode='I', duration=0.05) as writer:
+        for filename in frames_share:
+            image = imageio.v2.imread(filename)
+            writer.append_data(image)
+    for file in frames_share:
+        os.remove(file)
+
+>>>>>>> Stashed changes
