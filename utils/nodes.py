@@ -402,16 +402,44 @@ class Media:
         self.manipulation_turned_on = manipulation_turned_on
 
     def is_manipulated(self):
+        """
+        Check if manipulation is turned on.
 
+        Returns
+        -------
+        bool
+            True if manipulation is turned on, False otherwise.
+        """
         return self.manipulation_turned_on
 
     def set_manipulation(self, manipulation_bool):
+        """
+        Set the manipulation status.
 
+        Parameters
+        ----------
+        manipulation_bool : bool
+            A boolean value to turn manipulation on (True) or off (False).
+
+        Returns
+        -------
+        None
+        """
         self.manipulation_turned_on = manipulation_bool
 
     def update_category(self):
-        """updates the category of the media opinion"""
+        """
+        Update the category of the media opinion based on the opinion value.
 
+        The category is determined as follows:
+        - "red" if the opinion is greater than the category threshold.
+        - "blue" if the opinion is less than the negative of the category threshold.
+        - "neutral" otherwise.
+
+        Returns
+        -------
+        None
+        """
         if self.opinion > self.category_threshold:
             self.category = "red"
         elif self.opinion < -self.category_threshold:
