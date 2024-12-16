@@ -28,7 +28,7 @@ Furthermore, there is folder called [networks](networks), which contains precalc
 
 [calibration.py](calibration.py) was used to perform the calibration, the results can be found in the [calibration](calibrations) folder.
 
-The files named 'experiment' are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster simulation.
+The files named 'experiment' are scripts that allow for the parallel execution of the main file for different input parameters, this leads to a faster simulation.
 
 ### Multidimensional data
 
@@ -36,4 +36,23 @@ The code for the multidimensional opinion dynamics can be found in another branc
 
 ### Data availability:
 The results of the experiments that are analyzed in the [analysis.ipynb](analysis.ipynb) are available in this
-polybox [link](https://polybox.ethz.ch/index.php/s/SydFlQwt6FcSetc).  
+polybox [link](https://polybox.ethz.ch/index.php/s/SydFlQwt6FcSetc). 
+
+
+### Presentation and Report
+
+You can also find the report of the project in [complex_social_systems_report.pdf](complex_social_systems_report.pdf).
+
+The presentation is available is available via this polybox [link](https://polybox.ethz.ch/index.php/s/CcdPgqdmIzNWI4w).
+
+#### Abstract:
+
+This work aims to investigate the impact of media on the opinion dynamics of a simulated election via agent-based
+modeling. The complex relationship between voters and media is simplified by using a network of voters with hierarchical
+mutual connections on a two dimensional grid and a separate set of media nodes with random connections to voters.
+The results reveal a strong media influence on voter opinions, with significant implications for media-driven manipulation.
+When voters are allowed to choose the media outlets they are listening to, media manipulation becomes ineffective over
+almost the entire range of media opinions. Only if neutral media nodes are manipulated, a substantial lead of one opinion
+over the other emerges, suggesting that susceptibility to media manipulation concentrates among undecided voters in
+the presence of echo chambers.
+
