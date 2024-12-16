@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--threshold_parameter", type=float, default=0.5)
     parser.add_argument("--updated_voters", type=int, default=50)
     parser.add_argument("--initial_threshold", type=list, default=[0, 0.16])
-    parser.add_argument("--number_years", type=int, default=100)
+    parser.add_argument("--number_years", type=int, default=2)
     parser.add_argument("--media_feedback_turned_on", type=bool, default=False)
     parser.add_argument("--media_feedback_probability", type=float, default=0.1)
     parser.add_argument(
@@ -153,9 +153,7 @@ def main(args=None):
         media_stats = pd.concat(
             [media_stats, media_statistics(media=media)], ignore_index=True
         )
-        new_row = opinion_share(network)
-        new_row.index = [days]
-        op_trend = pd.concat([op_trend, new_row])
+
         # progress bar #####################
         sys.stdout.write(f"\rProgress: ({days + 1}/{Ndays}) days completed")
         sys.stdout.flush()
@@ -168,6 +166,9 @@ def main(args=None):
         # every 5th day, for gif visualization, can be turned off to save performance
         if days % 5 == 0:
             networks.append(copy.deepcopy(network))
+            new_row = opinion_share(network)
+            new_row.index = [days]
+            op_trend = pd.concat([op_trend, new_row])
 
         # turn media feedback on
         if days == mfeedback_on_after:
