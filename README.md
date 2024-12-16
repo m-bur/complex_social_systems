@@ -36,4 +36,11 @@ The code for the multidimensional opinion dynamics can be found in another branc
 
 ### Data availability:
 The results of the experiments that are analyzed in the [analysis.ipynb](analysis.ipynb) are available in this
-polybox [link](https://polybox.ethz.ch/index.php/s/SydFlQwt6FcSetc).  
+polybox [link](https://polybox.ethz.ch/index.php/s/SydFlQwt6FcSetc). 
+
+
+### Presentation and Report
+
+You can also find the report of the project in [complex_social_systems_report.pdf](complex_social_systems_report.pdf).
+
+The presentation is available is available via this polybox [link](https://polybox.ethz.ch/index.php/s/CcdPgqdmIzNWI4w)
