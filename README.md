@@ -28,8 +28,8 @@ Furthermore there are is folder called [networks](networks), which contains prec
 
 [calibration.py](calibration.py) was used to perform the calibration, the results can be found in the [calibration](calibrations) folder.
 
-The files named experiment are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster execution.
+The files named 'experiment' are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster execution.
 
-The code for the multidimensional opinion dynamics can be found in another branch calle ´opinion_multi-dimensionality´.
+The code for the multidimensional opinion dynamics can be found in another branch called ´opinion_multi-dimensionality´.
 
 
