@@ -30,4 +30,6 @@ Furthermore there are is folder called [networks](networks), which contains prec
 
 The files named experiment are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster execution.
 
+The code for the multidimensional opinion dynamics can be found in another branch calle ´opinion_multi-dimensionality´.
+
 
