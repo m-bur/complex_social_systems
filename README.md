@@ -28,7 +28,7 @@ Furthermore, there is folder called [networks](networks), which contains precalc
 
 [calibration.py](calibration.py) was used to perform the calibration, the results can be found in the [calibration](calibrations) folder.
 
-The files named 'experiment' are scripts that allow for the parallel execution of the main file for different input parameters, this allows for a faster simulation.
+The files named 'experiment' are scripts that allow for the parallel execution of the main file for different input parameters, this leads to a faster simulation.
 
 ### Multidimensional data
 
@@ -43,4 +43,4 @@ polybox [link](https://polybox.ethz.ch/index.php/s/SydFlQwt6FcSetc).
 
 You can also find the report of the project in [complex_social_systems_report.pdf](complex_social_systems_report.pdf).
 
-The presentation is available is available via this polybox [link](https://polybox.ethz.ch/index.php/s/CcdPgqdmIzNWI4w)
+The presentation is available is available via this polybox [link](https://polybox.ethz.ch/index.php/s/CcdPgqdmIzNWI4w).
