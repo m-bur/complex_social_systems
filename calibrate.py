@@ -743,10 +743,13 @@ def plot_extremism():
 
 if __name__ == "__main__":
     _args = parse_args()
+
+    # uncomment for plots and calibration
+
     # calibrate_parameters(_args)
     # plot_calibration_media_feedback()
     # plot_calibration_media_number()
-    plot_calibration_init_threshold()
+    # plot_calibration_init_threshold()
     # plot_calibration_alpha()
     # plot_calibration_heatmap()
     # plot_extremism()
